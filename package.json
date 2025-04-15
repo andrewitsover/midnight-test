@@ -1,0 +1,23 @@
+{
+  "name": "flyweight-test",
+  "version": "3.0.72",
+  "description": "Flyweight tests",
+  "type": "module",
+  "scripts": {
+    "sqlite": "node ./src/main.js sqlite false",
+    "turso": "node ./src/main.js turso false",
+    "rewrite": "node ./src/main.js sqlite true"
+  },
+  "author": "Andrew Jones",
+  "license": "MIT",
+  "devDependencies": {
+    "@libsql/client": "^0.15.3",
+    "better-sqlite3": "^11.9.1",
+    "flyweight-client": "file:../flyweight-client",
+    "flyweightjs": "file:../flyweight",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=22.13.1"
+  }
+}
