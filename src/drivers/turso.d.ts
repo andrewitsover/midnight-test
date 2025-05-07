@@ -77,7 +77,7 @@ export class D1Database extends Database {
   batch(handler: (batcher: any) => any[]): Promise<any[]>;
 }
 
-type ExtractIncludedKeys<U> = U extends Record<string, any> ? keyof U : keyof {};
+type ExtractKeys<U> = U extends Record<string, any> ? keyof U : keyof {};
 
 export interface Keywords<T> {
   orderBy?: T;
@@ -91,19 +91,23 @@ export interface Includes<T, R> {
   [key: string]: (tables: T, columns: R) => any;
 }
 
-type MergeIncludes<T, U> = 
+type ObjectFunction = {
+  [key: string]: (...args: any) => any;
+}
+
+type MergeIncludes<T, U extends ObjectFunction> = 
   T & { [K in keyof U]: ReturnType<U[K]> extends Promise<infer R> ? R : never;
 };
 
-type ReturnTypes<T> = {
+type ReturnTypes<T extends ObjectFunction> = {
   [K in keyof T]: ReturnType<T[K]>;
 };
 
-type ConvertAlias<T, U> = 
+type ConvertAlias<T, U extends ObjectFunction> = 
   T & { [K in keyof U]: ReturnType<U[K]> extends Promise<infer R> ? R : never;
 };
 
-type IncludeWhere<T, U> = {
+type IncludeWhere<U extends ObjectFunction> = {
   [K in keyof U]: ReturnType<U[K]> extends Promise<infer R>
     ? R extends string | number | Date | boolean ? R | Array<R> | WhereFunction<R> | null : never : never;
 }
@@ -147,16 +151,6 @@ export interface VirtualQuerySelector<W, T, N> extends VirtualQuery<W, T> {
   select: (selector: T) => N;
 }
 
-export interface CountQuery<W, K> {
-  where?: W;
-  column?: K;
-  distinct?: K;
-}
-
-export interface CountQueryDebug<W, K> extends CountQuery<W, K> {
-  debug: true;
-}
-
 export interface AggregateQuery<W, K> {
   where?: W;
   column?: K;
@@ -167,8 +161,59 @@ export interface AggregateQueryDebug<W, K> extends AggregateQuery<W, K> {
   debug: true;
 }
 
+export interface AggregateGroupQuery<T> {
+  column?: keyof T;
+  distinct?: keyof T;
+}
+
+export interface AggregateSelector<T> {
+  count: (options?: AggregateGroupQuery<T>) => number;
+  avg: (options: AggregateGroupQuery<T>) => number;
+  min: (options: AggregateGroupQuery<T>) => number;
+  max: (options: AggregateGroupQuery<T>) => number;
+  sum: (options: AggregateGroupQuery<T>) => number;
+  array<K extends keyof T>(select: K[]) : Array<Pick<T, K>>;
+  array<K extends keyof T>(select: K) : Array<T[K]>;
+  array() : Array<T>;
+}
+
 export interface Alias<T> {
   [key: string]: (columns: T) => any;
+}
+
+type PrimitiveMatch = string | number | Date | boolean;
+
+type TransformAlias<T extends ObjectFunction> = {
+  [K in keyof T as ReturnType<T[K]> extends PrimitiveMatch ? K : never]:
+    ReturnType<T[K]> | Array<ReturnType<T[K]>> | WhereFunction<ReturnType<T[K]>> | null;
+};
+
+export interface GroupResult<T> {
+  group: T[];
+}
+
+export interface GroupAlias<T> {
+  [key: string]: (aggregate: AggregateSelector<T>) => any;
+}
+
+export interface GroupQueryAlias<W, T, K extends keyof T, U extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<U> | Array<keyof T | ExtractKeys<U>>> {
+  by: K | (keyof T)[] | K[];
+  alias: U;
+  where?: W | Partial<TransformAlias<U>>;
+}
+
+export interface GroupQueryAliasDebug<W, T, K extends keyof T, U extends ObjectFunction> extends GroupQueryAlias<W, T, K, U> {
+  debug: true;
+}
+
+export interface GroupQueryObject<W, B> extends Keywords<B> {
+  by: B;
+  alias: undefined;
+  where?: W;
+}
+
+export interface GroupQueryObjectDebug<W, B> extends GroupQueryObject<W, B> {
+  debug: true;
 }
 
 export interface ComplexQuery<W, T> extends Keywords<Array<keyof T> | keyof T> {
@@ -183,8 +228,8 @@ export interface ComplexQueryDebug<W, T> extends ComplexQuery<W, T> {
   debug: true;
 }
 
-export interface ComplexQueryAlias<W, T, N> extends Keywords<Array<keyof T | ExtractIncludedKeys<N>> | keyof T | ExtractIncludedKeys<N>> {
-  where?: W;
+export interface ComplexQueryAlias<W, T, N extends ObjectFunction> extends Keywords<Array<keyof T | ExtractKeys<N>> | keyof T | ExtractKeys<N>> {
+  where?: W | Partial<TransformAlias<N>>;
   select?: undefined;
   include?: undefined;
   alias: N;
@@ -195,39 +240,39 @@ export interface ComplexQueryAliasDebug<W, T, N> extends ComplexQueryAlias<W, T,
   debug: true;
 }
 
-export interface ComplexQueryInclude<W, T, U> extends Keywords<Array<keyof T | ExtractIncludedKeys<U>> | keyof T | ExtractIncludedKeys<U>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryInclude<W, T, U extends ObjectFunction> extends Keywords<Array<keyof T | ExtractKeys<U>> | keyof T | ExtractKeys<U>> {
+  where?: W | Partial<IncludeWhere<U>>;
   select?: undefined;
   include: U;
   alias?: undefined;
   with?: undefined;
 }
 
-export interface ComplexQueryIncludeDebug<W, T, U> extends ComplexQueryInclude<W, T, U> {
+export interface ComplexQueryIncludeDebug<W, T, U extends ObjectFunction> extends ComplexQueryInclude<W, T, U> {
   debug: true;
 }
 
-export interface ComplexQueryIncludeAlias<W, T, U, N> extends Keywords<Array<keyof T | ExtractIncludedKeys<U & N>> | keyof T | ExtractIncludedKeys<U & N>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryIncludeAlias<W, T, U extends ObjectFunction, N extends ObjectFunction> extends Keywords<Array<keyof T | ExtractKeys<U & N>> | keyof T | ExtractKeys<U & N>> {
+  where?: W | Partial<IncludeWhere<U>> | Partial<TransformAlias<N>>;
   select?: undefined;
   include: U;
   alias: N;
   with?: undefined;
 }
 
-export interface ComplexQueryIncludeAliasDebug<W, T, U, N> extends ComplexQueryIncludeAlias<W, T, U, N> {
+export interface ComplexQueryIncludeAliasDebug<W, T, U extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, U, N> {
   debug: true;
 }
 
-export interface ComplexQueryAlias<W, T, N> extends Keywords<Array<keyof T | ExtractIncludedKeys<N>> | keyof T | ExtractIncludedKeys<N>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryAlias<W, T, N> extends Keywords<Array<keyof T | ExtractKeys<N>> | keyof T | ExtractKeys<N>> {
+  where?: W | Partial<TransformAlias<N>>;
   select?: undefined;
   include?: undefined;
   alias: N;
   with?: undefined;
 }
 
-export interface ComplexQueryAliasDebug<W, T, N> extends ComplexQueryAlias<W, T, N> {
+export interface ComplexQueryAliasDebug<W, T, N extends ObjectFunction> extends ComplexQueryAlias<W, T, N> {
   debug: true;
 }
 
@@ -256,20 +301,20 @@ export interface ComplexQueryObjectOmitDebug<W, K, T> extends ComplexQueryObject
   debug: true;
 }
 
-export interface ComplexQueryObjectAlias<W, K, T, N> extends Keywords<keyof T | ExtractIncludedKeys<N> | Array<keyof T | ExtractIncludedKeys<N>>> {
-  where?: W;
+export interface ComplexQueryObjectAlias<W, K, T, N extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<N> | Array<keyof T | ExtractKeys<N>>> {
+  where?: W | Partial<TransformAlias<N>>;
   select: (keyof T)[] | K[];
   include?: undefined;
   alias: N;
   with?: undefined;
 }
 
-export interface ComplexQueryObjectAliasDebug<W, K, T, N> extends ComplexQueryObjectAlias<W, K, T, N> {
+export interface ComplexQueryObjectAliasDebug<W, K, T, N extends ObjectFunction> extends ComplexQueryObjectAlias<W, K, T, N> {
   debug: true;
 }
 
-export interface ComplexQueryObjectAliasOmit<W, K, T, N> extends Keywords<keyof T | ExtractIncludedKeys<N> | Array<keyof T | ExtractIncludedKeys<N>>> {
-  where?: W;
+export interface ComplexQueryObjectAliasOmit<W, K, T, N extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<N> | Array<keyof T | ExtractKeys<N>>> {
+  where?: W | Partial<TransformAlias<N>>;
   select?: undefined;
   omit: (keyof T)[] | K[] | K;
   include?: undefined;
@@ -277,24 +322,24 @@ export interface ComplexQueryObjectAliasOmit<W, K, T, N> extends Keywords<keyof 
   with?: undefined;
 }
 
-export interface ComplexQueryObjectAliasOmitDebug<W, K, T, N> extends ComplexQueryObjectAliasOmit<W, K, T, N> {
+export interface ComplexQueryObjectAliasOmitDebug<W, K, T, N extends ObjectFunction> extends ComplexQueryObjectAliasOmit<W, K, T, N> {
   debug: true;
 }
 
-export interface ComplexQueryObjectInclude<W, K, T, U> extends Keywords<keyof T | ExtractIncludedKeys<U> | Array<keyof T | ExtractIncludedKeys<U>>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryObjectInclude<W, K, T, U extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<U> | Array<keyof T | ExtractKeys<U>>> {
+  where?: W | Partial<IncludeWhere<U>>;
   select: (keyof T)[] | K[];
   include: U;
   alias?: undefined;
   with?: undefined;
 }
 
-export interface ComplexQueryObjectIncludeDebug<W, K, T, U> extends ComplexQueryObjectInclude<W, K, T, U> {
+export interface ComplexQueryObjectIncludeDebug<W, K, T, U extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, U> {
   debug: true;
 }
 
-export interface ComplexQueryObjectIncludeOmit<W, K, T, U> extends Keywords<keyof T | ExtractIncludedKeys<U> | Array<keyof T | ExtractIncludedKeys<U>>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryObjectIncludeOmit<W, K, T, U extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<U> | Array<keyof T | ExtractKeys<U>>> {
+  where?: W | Partial<IncludeWhere<U>>;
   select?: undefined;
   omit: (keyof T)[] | K[] | K;
   include: U;
@@ -302,24 +347,24 @@ export interface ComplexQueryObjectIncludeOmit<W, K, T, U> extends Keywords<keyo
   with?: undefined;
 }
 
-export interface ComplexQueryObjectIncludeOmitDebug<W, K, T, U> extends ComplexQueryObjectIncludeOmit<W, K, T, U> {
+export interface ComplexQueryObjectIncludeOmitDebug<W, K, T, U extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, U> {
   debug: true;
 }
 
-export interface ComplexQueryObjectIncludeAlias<W, K, T, U, N> extends Keywords<keyof T | ExtractIncludedKeys<U & N> | Array<keyof T | ExtractIncludedKeys<U & N>>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryObjectIncludeAlias<W, K, T, U extends ObjectFunction, N extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<U & N> | Array<keyof T | ExtractKeys<U & N>>> {
+  where?: W | Partial<IncludeWhere<U>> | Partial<TransformAlias<N>>;
   select: (keyof T)[] | K[];
   include: U;
   alias: N;
   with?: undefined;
 }
 
-export interface ComplexQueryObjectIncludeAliasDebug<W, K, T, U, N> extends ComplexQueryObjectIncludeAlias<W, K, T, U, N> {
+export interface ComplexQueryObjectIncludeAliasDebug<W, K, T, U extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, U, N> {
   debug: true;
 }
 
-export interface ComplexQueryObjectIncludeAliasOmit<W, K, T, U, N> extends Keywords<keyof T | ExtractIncludedKeys<U & N> | Array<keyof T | ExtractIncludedKeys<U & N>>> {
-  where?: W | IncludeWhere<T, U>;
+export interface ComplexQueryObjectIncludeAliasOmit<W, K, T, U extends ObjectFunction, N extends ObjectFunction> extends Keywords<keyof T | ExtractKeys<U & N> | Array<keyof T | ExtractKeys<U & N>>> {
+  where?: W | Partial<IncludeWhere<U>> | Partial<TransformAlias<N>>;
   select?: undefined;
   omit: (keyof T)[] | K[] | K;
   include: U;
@@ -327,7 +372,7 @@ export interface ComplexQueryObjectIncludeAliasOmit<W, K, T, U, N> extends Keywo
   with?: undefined;
 }
 
-export interface ComplexQueryObjectIncludeAliasOmitDebug<W, K, T, U, N> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, U, N> {
+export interface ComplexQueryObjectIncludeAliasOmitDebug<W, K, T, U extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, U, N> {
   debug: true;
 }
 
@@ -476,8 +521,8 @@ export interface Queries<T, I, W, R, Y> {
   first<U extends Includes<Y, T>, N extends Alias<T>>(query: ComplexQueryIncludeAliasDebug<W, T, U, N>): Promise<DebugResult<(MergeIncludes<T, U> & ReturnTypes<N>) | undefined>>;
   first<N>(query: ComplexQuerySelector<W, T, N>): Promise<N | undefined>;
   first<N>(query: ComplexQuerySelectorDebug<W, T, N>): Promise<DebugResult<N | undefined>>;
-  count<K extends keyof T>(query?: CountQuery<W, K>): Promise<number>;
-  count<K extends keyof T>(query?: CountQueryDebug<W, K>): Promise<DebugResult<number>>;
+  count<K extends keyof T>(query?: AggregateQuery<W, K>): Promise<number>;
+  count<K extends keyof T>(query?: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
   avg<K extends keyof T>(query: AggregateQuery<W, K>): Promise<number>;
   avg<K extends keyof T>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
   max<K extends keyof T>(query: AggregateQuery<W, K>): Promise<number>;
@@ -487,6 +532,10 @@ export interface Queries<T, I, W, R, Y> {
   sum<K extends keyof T>(query: AggregateQuery<W, K>): Promise<number>;
   sum<K extends keyof T>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
   exists(params: W | null): Promise<boolean>;
+  group<K extends keyof T, B extends K | (keyof T)[] | K[]>(params: GroupQueryObject<W, B>): Promise<Array<Pick<T, B extends any[] ? B[number] : B> & GroupResult<T>>>;
+  group<K extends keyof T, B extends K | (keyof T)[] | K[]>(params: GroupQueryObjectDebug<W, B>): Promise<DebugResult<Array<Pick<T, B extends any[] ? B[number] : B> & GroupResult<T>>>>;
+  group<K extends keyof T, U extends GroupAlias<T>>(params: GroupQueryAlias<W, T, K, U>): Promise<Array<Pick<T, K> & ReturnTypes<U>>>;
+  group<K extends keyof T, U extends GroupAlias<T>>(params: GroupQueryAliasDebug<W, T, K, U>): Promise<DebugResult<Array<Pick<T, K> & ReturnTypes<U>>>>;
   remove(params?: W): Promise<number>;
 }
 
