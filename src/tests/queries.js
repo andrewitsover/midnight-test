@@ -304,6 +304,16 @@ test('queries', async (context) => {
   });
   assert.equal(debug.result.length, 3);
   assert.equal(debug.queries.length, 2);
+  const test = await db.locations.query({
+    include: {
+      methods: (t, c) => t.locations.byMethod({
+        params: { 
+          id: 2
+        }
+      })
+    },
+    limit: 1
+  });
 });
 
 cleanUp('queries', async (context) => {

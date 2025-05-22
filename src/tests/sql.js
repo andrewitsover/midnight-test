@@ -4,26 +4,45 @@ import { test } from '../run.js';
 
 test('sql', async (context) => {
   const { db, rewrite } = context.common;
-  const locations = await db.locations.byMethod({ id: 1 });
-  const record = await db.fights.byFighter({ id: 342 });
-  const common = await db.fighters.common({ fighter1: 17, fighter2: 2624 });
-  const methods = await db.methods.byFighter({ fighterId: 17 });
+  const locations = await db.locations.byMethod({
+    params: { 
+      id: 1 
+    }
+  });
+  compare(locations, 'locationsByMethod', rewrite);
+  const record = await db.fights.byFighter({
+    params: { 
+      id: 342 
+    }
+  });
+  compare(record, 'fightsByFighter', rewrite);
+  const common = await db.fighters.common({
+    params: { 
+      fighter1: 17,
+      fighter2: 2624
+    }
+  });
+  compare(common, 'fightersCommon', rewrite);
+  const methods = await db.methods.byFighter({
+    params: { 
+      fighterId: 17
+    }
+  });
+  compare(methods, 'methodsByFighter', rewrite);
   const result = await db.methods.topSubmission();
   const submission = result.at(0);
-  const winners = await db.locations.winners();
-  const orderBy = await db.locations.events();
-  const detailedEvents = await db.locations.detailedEvents();
-  const extract = await db.fighters.extract({ path: '$.instagram' });
-  await db.coaches.from();
-
-  compare(locations, 'locationsByMethod', rewrite);
-  compare(record, 'fightsByFighter', rewrite);
-  compare(common, 'fightersCommon', rewrite);
-  compare(methods, 'methodsByFighter', rewrite);
-  compare(winners, 'locationWinners', rewrite);
-  compare(orderBy, 'aggregateOrderBy', rewrite);
-  compare(detailedEvents, 'detailedEvents', rewrite);
-  compare(extract, 'fightersExtract', rewrite);
-
   assert.equal(submission, 'Rear-naked choke');
+  const winners = await db.locations.winners();
+  compare(winners, 'locationWinners', rewrite);
+  const orderBy = await db.locations.events();
+  compare(orderBy, 'aggregateOrderBy', rewrite);
+  const detailedEvents = await db.locations.detailedEvents();
+  compare(detailedEvents, 'detailedEvents', rewrite);
+  const extract = await db.fighters.extract({
+    params: { 
+      path: '$.instagram'
+    }
+  });
+  compare(extract, 'fightersExtract', rewrite);
+  await db.coaches.from();  
 });

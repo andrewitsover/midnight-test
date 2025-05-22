@@ -4,7 +4,11 @@ import { test } from '../run.js';
 
 test('json', async (context) => {
   const { db, rewrite } = context.common;
-  const result = await db.fighters.lastFights({ id: 17 });
+  const result = await db.fighters.lastFights({
+    params: { 
+      id: 17
+    }
+  });
   const lastFights = result.at(0);
   for (const date of lastFights.dates) {
     assert.equal(date instanceof Date, true);
