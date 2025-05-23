@@ -31,7 +31,7 @@ test('sql', async (context) => {
   compare(methods, 'methodsByFighter', rewrite);
   const result = await db.methods.topSubmission();
   const submission = result.at(0);
-  assert.equal(submission, 'Rear-naked choke');
+  assert.equal(submission.methodDescription, 'Rear-naked choke');
   const winners = await db.locations.winners();
   compare(winners, 'locationWinners', rewrite);
   const orderBy = await db.locations.events();
@@ -44,5 +44,5 @@ test('sql', async (context) => {
     }
   });
   compare(extract, 'fightersExtract', rewrite);
-  await db.coaches.from();  
+  await db.coaches.from();
 });
