@@ -109,7 +109,7 @@ type ConvertAlias<T, U extends ObjectFunction> =
 
 type IncludeWhere<U extends ObjectFunction> = {
   [K in keyof U]: ReturnType<U[K]> extends Promise<infer R>
-    ? P extends string | number | Date | boolean ? R | Array<R> | WhereFunction<R> | null : never : never;
+    ? R extends string | number | Date | boolean ? R | Array<R> | WhereFunction<R> | null : never : never;
 }
 
 export interface VirtualKeywords<T> {
@@ -317,39 +317,39 @@ export interface ComplexQueryInclude<W, T, U extends ObjectFunction> extends Key
   alias?: undefined;
 }
 
-export interface ComplexSqlQueryIncludeParamsUnsafe<P, U, W, T, P extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
+export interface ComplexSqlQueryIncludeParamsUnsafe<P, U, W, T, R extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryIncludeParams<P, W, T, P extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
+export interface ComplexSqlQueryIncludeParams<P, W, T, R extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryIncludeUnsafe<U, W, T, P extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
+export interface ComplexSqlQueryIncludeUnsafe<U, W, T, R extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryInclude<W, T, P extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
+export interface ComplexSqlQueryInclude<W, T, R extends ObjectFunction> extends ComplexQueryInclude<W, T, R> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryIncludeParamsUnsafeDebug<P, U, W, T, P extends ObjectFunction> extends ComplexSqlQueryIncludeParamsUnsafe<P, U, W, T, R> {
+export interface ComplexSqlQueryIncludeParamsUnsafeDebug<P, U, W, T, R extends ObjectFunction> extends ComplexSqlQueryIncludeParamsUnsafe<P, U, W, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeParamsDebug<P, W, T, P extends ObjectFunction> extends ComplexSqlQueryIncludeParams<P, W, T, R> {
+export interface ComplexSqlQueryIncludeParamsDebug<P, W, T, R extends ObjectFunction> extends ComplexSqlQueryIncludeParams<P, W, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeUnsafeDebug<U, W, T, P extends ObjectFunction> extends ComplexSqlQueryIncludeUnsafe<U, W, T, R> {
+export interface ComplexSqlQueryIncludeUnsafeDebug<U, W, T, R extends ObjectFunction> extends ComplexSqlQueryIncludeUnsafe<U, W, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeDebug<W, T, P extends ObjectFunction> extends ComplexSqlQueryInclude<W, T, R> {
+export interface ComplexSqlQueryIncludeDebug<W, T, R extends ObjectFunction> extends ComplexSqlQueryInclude<W, T, R> {
   debug: true;
 }
 
@@ -364,39 +364,39 @@ export interface ComplexQueryIncludeAlias<W, T, U extends ObjectFunction, N exte
   alias: N;
 }
 
-export interface ComplexSqlQueryIncludeAliasParamsUnsafe<P, U, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasParamsUnsafe<P, U, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryIncludeAliasParams<P, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasParams<P, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryIncludeAliasUnsafe<U, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasUnsafe<U, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryIncludeAlias<W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
+export interface ComplexSqlQueryIncludeAlias<W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryIncludeAlias<W, T, R, N> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryIncludeAliasParamsUnsafeDebug<P, U, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasParamsUnsafe<P, U, W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasParamsUnsafeDebug<P, U, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasParamsUnsafe<P, U, W, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeAliasParamsDebug<P, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasParams<P, W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasParamsDebug<P, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasParams<P, W, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeAliasUnsafeDebug<U, W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasUnsafe<U, W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasUnsafeDebug<U, W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAliasUnsafe<U, W, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryIncludeAliasDebug<W, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAlias<W, T, R, N> {
+export interface ComplexSqlQueryIncludeAliasDebug<W, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryIncludeAlias<W, T, R, N> {
   debug: true;
 }
 
@@ -648,39 +648,39 @@ export interface ComplexQueryObjectInclude<W, K, T, U extends ObjectFunction> ex
   alias?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeParamsUnsafe<P, U, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeParamsUnsafe<P, U, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeParams<P, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeParams<P, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeUnsafe<U, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeUnsafe<U, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectInclude<W, K, T, P extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
+export interface ComplexSqlQueryObjectInclude<W, K, T, R extends ObjectFunction> extends ComplexQueryObjectInclude<W, K, T, R> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeParamsUnsafeDebug<P, U, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeParamsUnsafe<P, U, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeParamsUnsafeDebug<P, U, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeParamsUnsafe<P, U, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeParamsDebug<P, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeParams<P, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeParamsDebug<P, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeParams<P, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeUnsafeDebug<U, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeUnsafe<U, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeUnsafeDebug<U, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeUnsafe<U, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeDebug<W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectInclude<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeDebug<W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectInclude<W, K, T, R> {
   debug: true;
 }
 
@@ -696,39 +696,39 @@ export interface ComplexQueryObjectIncludeOmit<W, K, T, U extends ObjectFunction
   alias?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitParamsUnsafe<P, U, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitParamsUnsafe<P, U, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitParams<P, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitParams<P, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitUnsafe<U, W, K, T, P extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitUnsafe<U, W, K, T, R extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmit<W, K, T, P extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmit<W, K, T, R extends ObjectFunction> extends ComplexQueryObjectIncludeOmit<W, K, T, R> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitParamsUnsafeDebug<P, U, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitParamsUnsafe<P, U, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitParamsUnsafeDebug<P, U, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitParamsUnsafe<P, U, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitParamsDebug<P, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitParams<P, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitParamsDebug<P, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitParams<P, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitUnsafeDebug<U, W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitUnsafe<U, W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitUnsafeDebug<U, W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmitUnsafe<U, W, K, T, R> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeOmitDebug<W, K, T, P extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmit<W, K, T, R> {
+export interface ComplexSqlQueryObjectIncludeOmitDebug<W, K, T, R extends ObjectFunction> extends ComplexSqlQueryObjectIncludeOmit<W, K, T, R> {
   debug: true;
 }
 
@@ -743,39 +743,39 @@ export interface ComplexQueryObjectIncludeAlias<W, K, T, U extends ObjectFunctio
   alias: N;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasParamsUnsafe<P, U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasParamsUnsafe<P, U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasParams<P, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasParams<P, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasUnsafe<U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasUnsafe<U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeAlias<W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAlias<W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAlias<W, K, T, R, N> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasParamsUnsafeDebug<P, U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasParamsUnsafe<P, U, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasParamsUnsafeDebug<P, U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasParamsUnsafe<P, U, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasParamsDebug<P, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasParams<P, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasParamsDebug<P, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasParams<P, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasUnsafeDebug<U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasUnsafe<U, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasUnsafeDebug<U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasUnsafe<U, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasDebug<W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAlias<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasDebug<W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAlias<W, K, T, R, N> {
   debug: true;
 }
 
@@ -791,39 +791,39 @@ export interface ComplexQueryObjectIncludeAliasOmit<W, K, T, U extends ObjectFun
   alias: N;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafe<P, U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafe<P, U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
   params: P;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitParams<P, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitParams<P, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
   params: P;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitUnsafe<U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitUnsafe<U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
   params?: undefined;
   unsafe: U;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmit<W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmit<W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexQueryObjectIncludeAliasOmit<W, K, T, R, N> {
   params?: undefined;
   unsafe?: undefined;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafeDebug<P, U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafe<P, U, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafeDebug<P, U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitParamsUnsafe<P, U, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<P, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitParams<P, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<P, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitParams<P, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitUnsafeDebug<U, W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitUnsafe<U, W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitUnsafeDebug<U, W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmitUnsafe<U, W, K, T, R, N> {
   debug: true;
 }
 
-export interface ComplexSqlQueryObjectIncludeAliasOmitDebug<W, K, T, P extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmit<W, K, T, R, N> {
+export interface ComplexSqlQueryObjectIncludeAliasOmitDebug<W, K, T, R extends ObjectFunction, N extends ObjectFunction> extends ComplexSqlQueryObjectIncludeAliasOmit<W, K, T, R, N> {
   debug: true;
 }
 
@@ -1252,6 +1252,15 @@ export interface LocationDetailedEvents {
   events: Array<{ id: number, name: string }>;
 }
 
+export interface LocationDistanceFrom {
+  id: number;
+  name: string;
+  address: string;
+  lat: number;
+  long: number;
+  distanceKm: number | null;
+}
+
 export interface LocationEvents {
   name: string;
   events: Array<string>;
@@ -1271,7 +1280,14 @@ export interface LocationByMethodParams {
   id: any;
 }
 
+export interface LocationDistanceFromParams {
+  lat: any;
+  long: any;
+}
+
 export interface LocationQueries {
+  byId(query: ComplexSqlQueryParams<LocationByIdParams, ToWhere<LocationById>, LocationById>): Promise<Array<LocationById>>;
+  byId(query: ComplexSqlQueryParamsDebug<LocationByIdParams, ToWhere<LocationById>, LocationById>): Promise<DebugResult<Array<LocationById>>>;
   byId<N extends Alias<LocationById>>(query: ComplexSqlQueryAliasParams<LocationByIdParams, ToWhere<LocationById>, LocationById, N>): Promise<Array<LocationById & ReturnTypes<N>>>;
   byId<N extends Alias<LocationById>>(query: ComplexSqlQueryAliasParamsDebug<LocationByIdParams, ToWhere<LocationById>, LocationById, N>): Promise<DebugResult<Array<LocationById & ReturnTypes<N>>>>;
   byId<U extends Includes<TypedDb, LocationById>>(query: ComplexSqlQueryIncludeParams<LocationByIdParams, ToWhere<LocationById>, LocationById, U>): Promise<Array<MergeIncludes<LocationById, U>>>;
@@ -1296,10 +1312,10 @@ export interface LocationQueries {
   byId<K extends keyof LocationById, U extends Includes<TypedDb, LocationById>, N extends Alias<LocationById>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<LocationByIdParams, ToWhere<LocationById>, K, LocationById, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationById, K>, U> & ReturnTypes<N>>>>;
   byId<K extends keyof LocationById>(query: ComplexSqlQueryValueParams<LocationByIdParams, ToWhere<LocationById>, K, LocationById>): Promise<Array<LocationById[K]>>;
   byId<K extends keyof LocationById>(query: ComplexSqlQueryValueParamsDebug<LocationByIdParams, ToWhere<LocationById>, K, LocationById>): Promise<DebugResult<Array<LocationById[K]>>>;
-  byId(query: ComplexSqlQueryParams<LocationByIdParams, ToWhere<LocationById>, LocationById>): Promise<Array<LocationById>>;
-  byId(query: ComplexSqlQueryParamsDebug<LocationByIdParams, ToWhere<LocationById>, LocationById>): Promise<DebugResult<Array<LocationById>>>;
   byId<N>(query: ComplexSqlQuerySelectorParams<LocationByIdParams, ToWhere<LocationById>, LocationById, N>): Promise<Array<N>>;
   byId<N>(query: ComplexSqlQuerySelectorParamsDebug<LocationByIdParams, ToWhere<LocationById>, LocationById, N>): Promise<DebugResult<Array<N>>>;
+  byMethod(query: ComplexSqlQueryParams<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod>): Promise<Array<LocationByMethod>>;
+  byMethod(query: ComplexSqlQueryParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod>): Promise<DebugResult<Array<LocationByMethod>>>;
   byMethod<N extends Alias<LocationByMethod>>(query: ComplexSqlQueryAliasParams<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod, N>): Promise<Array<LocationByMethod & ReturnTypes<N>>>;
   byMethod<N extends Alias<LocationByMethod>>(query: ComplexSqlQueryAliasParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod, N>): Promise<DebugResult<Array<LocationByMethod & ReturnTypes<N>>>>;
   byMethod<U extends Includes<TypedDb, LocationByMethod>>(query: ComplexSqlQueryIncludeParams<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod, U>): Promise<Array<MergeIncludes<LocationByMethod, U>>>;
@@ -1324,10 +1340,10 @@ export interface LocationQueries {
   byMethod<K extends keyof LocationByMethod, U extends Includes<TypedDb, LocationByMethod>, N extends Alias<LocationByMethod>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, K, LocationByMethod, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationByMethod, K>, U> & ReturnTypes<N>>>>;
   byMethod<K extends keyof LocationByMethod>(query: ComplexSqlQueryValueParams<LocationByMethodParams, ToWhere<LocationByMethod>, K, LocationByMethod>): Promise<Array<LocationByMethod[K]>>;
   byMethod<K extends keyof LocationByMethod>(query: ComplexSqlQueryValueParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, K, LocationByMethod>): Promise<DebugResult<Array<LocationByMethod[K]>>>;
-  byMethod(query: ComplexSqlQueryParams<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod>): Promise<Array<LocationByMethod>>;
-  byMethod(query: ComplexSqlQueryParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod>): Promise<DebugResult<Array<LocationByMethod>>>;
   byMethod<N>(query: ComplexSqlQuerySelectorParams<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod, N>): Promise<Array<N>>;
   byMethod<N>(query: ComplexSqlQuerySelectorParamsDebug<LocationByMethodParams, ToWhere<LocationByMethod>, LocationByMethod, N>): Promise<DebugResult<Array<N>>>;
+  detailedEvents(query: ComplexSqlQuery<ToWhere<LocationDetailedEvents>, LocationDetailedEvents>): Promise<Array<LocationDetailedEvents>>;
+  detailedEvents(query: ComplexSqlQueryDebug<ToWhere<LocationDetailedEvents>, LocationDetailedEvents>): Promise<DebugResult<Array<LocationDetailedEvents>>>;
   detailedEvents<N extends Alias<LocationDetailedEvents>>(query: ComplexSqlQueryAlias<ToWhere<LocationDetailedEvents>, LocationDetailedEvents, N>): Promise<Array<LocationDetailedEvents & ReturnTypes<N>>>;
   detailedEvents<N extends Alias<LocationDetailedEvents>>(query: ComplexSqlQueryAliasDebug<ToWhere<LocationDetailedEvents>, LocationDetailedEvents, N>): Promise<DebugResult<Array<LocationDetailedEvents & ReturnTypes<N>>>>;
   detailedEvents<U extends Includes<TypedDb, LocationDetailedEvents>>(query: ComplexSqlQueryInclude<ToWhere<LocationDetailedEvents>, LocationDetailedEvents, U>): Promise<Array<MergeIncludes<LocationDetailedEvents, U>>>;
@@ -1352,10 +1368,38 @@ export interface LocationQueries {
   detailedEvents<K extends keyof LocationDetailedEvents, U extends Includes<TypedDb, LocationDetailedEvents>, N extends Alias<LocationDetailedEvents>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<LocationDetailedEvents>, K, LocationDetailedEvents, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationDetailedEvents, K>, U> & ReturnTypes<N>>>>;
   detailedEvents<K extends keyof LocationDetailedEvents>(query: ComplexSqlQueryValue<ToWhere<LocationDetailedEvents>, K, LocationDetailedEvents>): Promise<Array<LocationDetailedEvents[K]>>;
   detailedEvents<K extends keyof LocationDetailedEvents>(query: ComplexSqlQueryValueDebug<ToWhere<LocationDetailedEvents>, K, LocationDetailedEvents>): Promise<DebugResult<Array<LocationDetailedEvents[K]>>>;
-  detailedEvents(query: ComplexSqlQuery<ToWhere<LocationDetailedEvents>, LocationDetailedEvents>): Promise<Array<LocationDetailedEvents>>;
-  detailedEvents(query: ComplexSqlQueryDebug<ToWhere<LocationDetailedEvents>, LocationDetailedEvents>): Promise<DebugResult<Array<LocationDetailedEvents>>>;
   detailedEvents<N>(query: ComplexSqlQuerySelector<ToWhere<LocationDetailedEvents>, LocationDetailedEvents, N>): Promise<Array<N>>;
   detailedEvents<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<LocationDetailedEvents>, LocationDetailedEvents, N>): Promise<DebugResult<Array<N>>>;
+  distanceFrom(query: ComplexSqlQueryParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom>): Promise<Array<LocationDistanceFrom>>;
+  distanceFrom(query: ComplexSqlQueryParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom>): Promise<DebugResult<Array<LocationDistanceFrom>>>;
+  distanceFrom<N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryAliasParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, N>): Promise<Array<LocationDistanceFrom & ReturnTypes<N>>>;
+  distanceFrom<N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryAliasParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, N>): Promise<DebugResult<Array<LocationDistanceFrom & ReturnTypes<N>>>>;
+  distanceFrom<U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryIncludeParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, U>): Promise<Array<MergeIncludes<LocationDistanceFrom, U>>>;
+  distanceFrom<U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryIncludeParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, U>): Promise<DebugResult<Array<MergeIncludes<LocationDistanceFrom, U>>>>;
+  distanceFrom<U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryIncludeAliasParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, U, N>): Promise<Array<MergeIncludes<LocationDistanceFrom, U> & ReturnTypes<N>>>;
+  distanceFrom<U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryIncludeAliasParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, U, N>): Promise<DebugResult<Array<MergeIncludes<LocationDistanceFrom, U> & ReturnTypes<N>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectAliasParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, N>): Promise<Array<Pick<LocationDistanceFrom, K> & ReturnTypes<N>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectAliasParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, N>): Promise<DebugResult<Array<Pick<LocationDistanceFrom, K> & ReturnTypes<N>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryObjectParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<Array<Pick<LocationDistanceFrom, K>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryObjectParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<DebugResult<Array<Pick<LocationDistanceFrom, K>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryObjectOmitParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<Array<Omit<LocationDistanceFrom, K>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryObjectOmitParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<DebugResult<Array<Omit<LocationDistanceFrom, K>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectAliasOmitParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, N>): Promise<Array<Omit<LocationDistanceFrom, K> & ReturnTypes<N>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectAliasOmitParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, N>): Promise<DebugResult<Array<Omit<LocationDistanceFrom, K> & ReturnTypes<N>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U>): Promise<Array<MergeIncludes<Pick<LocationDistanceFrom, K>, U>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U>): Promise<DebugResult<Array<MergeIncludes<Pick<LocationDistanceFrom, K>, U>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeOmitParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U>): Promise<Array<MergeIncludes<Omit<LocationDistanceFrom, K>, U>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeOmitParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationDistanceFrom, K>, U>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeAliasParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U, N>): Promise<Array<MergeIncludes<Pick<LocationDistanceFrom, K>, U> & ReturnTypes<N>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeAliasParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U, N>): Promise<DebugResult<Array<MergeIncludes<Pick<LocationDistanceFrom, K>, U> & ReturnTypes<N>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeAliasOmitParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U, N>): Promise<Array<MergeIncludes<Omit<LocationDistanceFrom, K>, U> & ReturnTypes<N>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom, U extends Includes<TypedDb, LocationDistanceFrom>, N extends Alias<LocationDistanceFrom>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationDistanceFrom, K>, U> & ReturnTypes<N>>>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryValueParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<Array<LocationDistanceFrom[K]>>;
+  distanceFrom<K extends keyof LocationDistanceFrom>(query: ComplexSqlQueryValueParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, K, LocationDistanceFrom>): Promise<DebugResult<Array<LocationDistanceFrom[K]>>>;
+  distanceFrom<N>(query: ComplexSqlQuerySelectorParams<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, N>): Promise<Array<N>>;
+  distanceFrom<N>(query: ComplexSqlQuerySelectorParamsDebug<LocationDistanceFromParams, ToWhere<LocationDistanceFrom>, LocationDistanceFrom, N>): Promise<DebugResult<Array<N>>>;
+  events(query: ComplexSqlQuery<ToWhere<LocationEvents>, LocationEvents>): Promise<Array<LocationEvents>>;
+  events(query: ComplexSqlQueryDebug<ToWhere<LocationEvents>, LocationEvents>): Promise<DebugResult<Array<LocationEvents>>>;
   events<N extends Alias<LocationEvents>>(query: ComplexSqlQueryAlias<ToWhere<LocationEvents>, LocationEvents, N>): Promise<Array<LocationEvents & ReturnTypes<N>>>;
   events<N extends Alias<LocationEvents>>(query: ComplexSqlQueryAliasDebug<ToWhere<LocationEvents>, LocationEvents, N>): Promise<DebugResult<Array<LocationEvents & ReturnTypes<N>>>>;
   events<U extends Includes<TypedDb, LocationEvents>>(query: ComplexSqlQueryInclude<ToWhere<LocationEvents>, LocationEvents, U>): Promise<Array<MergeIncludes<LocationEvents, U>>>;
@@ -1380,10 +1424,10 @@ export interface LocationQueries {
   events<K extends keyof LocationEvents, U extends Includes<TypedDb, LocationEvents>, N extends Alias<LocationEvents>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<LocationEvents>, K, LocationEvents, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationEvents, K>, U> & ReturnTypes<N>>>>;
   events<K extends keyof LocationEvents>(query: ComplexSqlQueryValue<ToWhere<LocationEvents>, K, LocationEvents>): Promise<Array<LocationEvents[K]>>;
   events<K extends keyof LocationEvents>(query: ComplexSqlQueryValueDebug<ToWhere<LocationEvents>, K, LocationEvents>): Promise<DebugResult<Array<LocationEvents[K]>>>;
-  events(query: ComplexSqlQuery<ToWhere<LocationEvents>, LocationEvents>): Promise<Array<LocationEvents>>;
-  events(query: ComplexSqlQueryDebug<ToWhere<LocationEvents>, LocationEvents>): Promise<DebugResult<Array<LocationEvents>>>;
   events<N>(query: ComplexSqlQuerySelector<ToWhere<LocationEvents>, LocationEvents, N>): Promise<Array<N>>;
   events<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<LocationEvents>, LocationEvents, N>): Promise<DebugResult<Array<N>>>;
+  winners(query: ComplexSqlQuery<ToWhere<LocationWinners>, LocationWinners>): Promise<Array<LocationWinners>>;
+  winners(query: ComplexSqlQueryDebug<ToWhere<LocationWinners>, LocationWinners>): Promise<DebugResult<Array<LocationWinners>>>;
   winners<N extends Alias<LocationWinners>>(query: ComplexSqlQueryAlias<ToWhere<LocationWinners>, LocationWinners, N>): Promise<Array<LocationWinners & ReturnTypes<N>>>;
   winners<N extends Alias<LocationWinners>>(query: ComplexSqlQueryAliasDebug<ToWhere<LocationWinners>, LocationWinners, N>): Promise<DebugResult<Array<LocationWinners & ReturnTypes<N>>>>;
   winners<U extends Includes<TypedDb, LocationWinners>>(query: ComplexSqlQueryInclude<ToWhere<LocationWinners>, LocationWinners, U>): Promise<Array<MergeIncludes<LocationWinners, U>>>;
@@ -1408,8 +1452,6 @@ export interface LocationQueries {
   winners<K extends keyof LocationWinners, U extends Includes<TypedDb, LocationWinners>, N extends Alias<LocationWinners>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<LocationWinners>, K, LocationWinners, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<LocationWinners, K>, U> & ReturnTypes<N>>>>;
   winners<K extends keyof LocationWinners>(query: ComplexSqlQueryValue<ToWhere<LocationWinners>, K, LocationWinners>): Promise<Array<LocationWinners[K]>>;
   winners<K extends keyof LocationWinners>(query: ComplexSqlQueryValueDebug<ToWhere<LocationWinners>, K, LocationWinners>): Promise<DebugResult<Array<LocationWinners[K]>>>;
-  winners(query: ComplexSqlQuery<ToWhere<LocationWinners>, LocationWinners>): Promise<Array<LocationWinners>>;
-  winners(query: ComplexSqlQueryDebug<ToWhere<LocationWinners>, LocationWinners>): Promise<DebugResult<Array<LocationWinners>>>;
   winners<N>(query: ComplexSqlQuerySelector<ToWhere<LocationWinners>, LocationWinners, N>): Promise<Array<N>>;
   winners<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<LocationWinners>, LocationWinners, N>): Promise<DebugResult<Array<N>>>;
 }
@@ -1463,6 +1505,8 @@ export interface EventTest {
 }
 
 export interface EventQueries {
+  from(query: ComplexSqlQuery<ToWhere<EventFrom>, EventFrom>): Promise<Array<EventFrom>>;
+  from(query: ComplexSqlQueryDebug<ToWhere<EventFrom>, EventFrom>): Promise<DebugResult<Array<EventFrom>>>;
   from<N extends Alias<EventFrom>>(query: ComplexSqlQueryAlias<ToWhere<EventFrom>, EventFrom, N>): Promise<Array<EventFrom & ReturnTypes<N>>>;
   from<N extends Alias<EventFrom>>(query: ComplexSqlQueryAliasDebug<ToWhere<EventFrom>, EventFrom, N>): Promise<DebugResult<Array<EventFrom & ReturnTypes<N>>>>;
   from<U extends Includes<TypedDb, EventFrom>>(query: ComplexSqlQueryInclude<ToWhere<EventFrom>, EventFrom, U>): Promise<Array<MergeIncludes<EventFrom, U>>>;
@@ -1487,10 +1531,10 @@ export interface EventQueries {
   from<K extends keyof EventFrom, U extends Includes<TypedDb, EventFrom>, N extends Alias<EventFrom>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<EventFrom>, K, EventFrom, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<EventFrom, K>, U> & ReturnTypes<N>>>>;
   from<K extends keyof EventFrom>(query: ComplexSqlQueryValue<ToWhere<EventFrom>, K, EventFrom>): Promise<Array<EventFrom[K]>>;
   from<K extends keyof EventFrom>(query: ComplexSqlQueryValueDebug<ToWhere<EventFrom>, K, EventFrom>): Promise<DebugResult<Array<EventFrom[K]>>>;
-  from(query: ComplexSqlQuery<ToWhere<EventFrom>, EventFrom>): Promise<Array<EventFrom>>;
-  from(query: ComplexSqlQueryDebug<ToWhere<EventFrom>, EventFrom>): Promise<DebugResult<Array<EventFrom>>>;
   from<N>(query: ComplexSqlQuerySelector<ToWhere<EventFrom>, EventFrom, N>): Promise<Array<N>>;
   from<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<EventFrom>, EventFrom, N>): Promise<DebugResult<Array<N>>>;
+  lag(query: ComplexSqlQuery<ToWhere<EventLag>, EventLag>): Promise<Array<EventLag>>;
+  lag(query: ComplexSqlQueryDebug<ToWhere<EventLag>, EventLag>): Promise<DebugResult<Array<EventLag>>>;
   lag<N extends Alias<EventLag>>(query: ComplexSqlQueryAlias<ToWhere<EventLag>, EventLag, N>): Promise<Array<EventLag & ReturnTypes<N>>>;
   lag<N extends Alias<EventLag>>(query: ComplexSqlQueryAliasDebug<ToWhere<EventLag>, EventLag, N>): Promise<DebugResult<Array<EventLag & ReturnTypes<N>>>>;
   lag<U extends Includes<TypedDb, EventLag>>(query: ComplexSqlQueryInclude<ToWhere<EventLag>, EventLag, U>): Promise<Array<MergeIncludes<EventLag, U>>>;
@@ -1515,10 +1559,10 @@ export interface EventQueries {
   lag<K extends keyof EventLag, U extends Includes<TypedDb, EventLag>, N extends Alias<EventLag>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<EventLag>, K, EventLag, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<EventLag, K>, U> & ReturnTypes<N>>>>;
   lag<K extends keyof EventLag>(query: ComplexSqlQueryValue<ToWhere<EventLag>, K, EventLag>): Promise<Array<EventLag[K]>>;
   lag<K extends keyof EventLag>(query: ComplexSqlQueryValueDebug<ToWhere<EventLag>, K, EventLag>): Promise<DebugResult<Array<EventLag[K]>>>;
-  lag(query: ComplexSqlQuery<ToWhere<EventLag>, EventLag>): Promise<Array<EventLag>>;
-  lag(query: ComplexSqlQueryDebug<ToWhere<EventLag>, EventLag>): Promise<DebugResult<Array<EventLag>>>;
   lag<N>(query: ComplexSqlQuerySelector<ToWhere<EventLag>, EventLag, N>): Promise<Array<N>>;
   lag<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<EventLag>, EventLag, N>): Promise<DebugResult<Array<N>>>;
+  operator(query: ComplexSqlQuery<ToWhere<EventOperator>, EventOperator>): Promise<Array<EventOperator>>;
+  operator(query: ComplexSqlQueryDebug<ToWhere<EventOperator>, EventOperator>): Promise<DebugResult<Array<EventOperator>>>;
   operator<N extends Alias<EventOperator>>(query: ComplexSqlQueryAlias<ToWhere<EventOperator>, EventOperator, N>): Promise<Array<EventOperator & ReturnTypes<N>>>;
   operator<N extends Alias<EventOperator>>(query: ComplexSqlQueryAliasDebug<ToWhere<EventOperator>, EventOperator, N>): Promise<DebugResult<Array<EventOperator & ReturnTypes<N>>>>;
   operator<U extends Includes<TypedDb, EventOperator>>(query: ComplexSqlQueryInclude<ToWhere<EventOperator>, EventOperator, U>): Promise<Array<MergeIncludes<EventOperator, U>>>;
@@ -1543,10 +1587,10 @@ export interface EventQueries {
   operator<K extends keyof EventOperator, U extends Includes<TypedDb, EventOperator>, N extends Alias<EventOperator>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<EventOperator>, K, EventOperator, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<EventOperator, K>, U> & ReturnTypes<N>>>>;
   operator<K extends keyof EventOperator>(query: ComplexSqlQueryValue<ToWhere<EventOperator>, K, EventOperator>): Promise<Array<EventOperator[K]>>;
   operator<K extends keyof EventOperator>(query: ComplexSqlQueryValueDebug<ToWhere<EventOperator>, K, EventOperator>): Promise<DebugResult<Array<EventOperator[K]>>>;
-  operator(query: ComplexSqlQuery<ToWhere<EventOperator>, EventOperator>): Promise<Array<EventOperator>>;
-  operator(query: ComplexSqlQueryDebug<ToWhere<EventOperator>, EventOperator>): Promise<DebugResult<Array<EventOperator>>>;
   operator<N>(query: ComplexSqlQuerySelector<ToWhere<EventOperator>, EventOperator, N>): Promise<Array<N>>;
   operator<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<EventOperator>, EventOperator, N>): Promise<DebugResult<Array<N>>>;
+  spaces(query: ComplexSqlQuery<ToWhere<EventSpaces>, EventSpaces>): Promise<Array<EventSpaces>>;
+  spaces(query: ComplexSqlQueryDebug<ToWhere<EventSpaces>, EventSpaces>): Promise<DebugResult<Array<EventSpaces>>>;
   spaces<N extends Alias<EventSpaces>>(query: ComplexSqlQueryAlias<ToWhere<EventSpaces>, EventSpaces, N>): Promise<Array<EventSpaces & ReturnTypes<N>>>;
   spaces<N extends Alias<EventSpaces>>(query: ComplexSqlQueryAliasDebug<ToWhere<EventSpaces>, EventSpaces, N>): Promise<DebugResult<Array<EventSpaces & ReturnTypes<N>>>>;
   spaces<U extends Includes<TypedDb, EventSpaces>>(query: ComplexSqlQueryInclude<ToWhere<EventSpaces>, EventSpaces, U>): Promise<Array<MergeIncludes<EventSpaces, U>>>;
@@ -1571,10 +1615,10 @@ export interface EventQueries {
   spaces<K extends keyof EventSpaces, U extends Includes<TypedDb, EventSpaces>, N extends Alias<EventSpaces>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<EventSpaces>, K, EventSpaces, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<EventSpaces, K>, U> & ReturnTypes<N>>>>;
   spaces<K extends keyof EventSpaces>(query: ComplexSqlQueryValue<ToWhere<EventSpaces>, K, EventSpaces>): Promise<Array<EventSpaces[K]>>;
   spaces<K extends keyof EventSpaces>(query: ComplexSqlQueryValueDebug<ToWhere<EventSpaces>, K, EventSpaces>): Promise<DebugResult<Array<EventSpaces[K]>>>;
-  spaces(query: ComplexSqlQuery<ToWhere<EventSpaces>, EventSpaces>): Promise<Array<EventSpaces>>;
-  spaces(query: ComplexSqlQueryDebug<ToWhere<EventSpaces>, EventSpaces>): Promise<DebugResult<Array<EventSpaces>>>;
   spaces<N>(query: ComplexSqlQuerySelector<ToWhere<EventSpaces>, EventSpaces, N>): Promise<Array<N>>;
   spaces<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<EventSpaces>, EventSpaces, N>): Promise<DebugResult<Array<N>>>;
+  test(query: ComplexSqlQuery<ToWhere<EventTest>, EventTest>): Promise<Array<EventTest>>;
+  test(query: ComplexSqlQueryDebug<ToWhere<EventTest>, EventTest>): Promise<DebugResult<Array<EventTest>>>;
   test<N extends Alias<EventTest>>(query: ComplexSqlQueryAlias<ToWhere<EventTest>, EventTest, N>): Promise<Array<EventTest & ReturnTypes<N>>>;
   test<N extends Alias<EventTest>>(query: ComplexSqlQueryAliasDebug<ToWhere<EventTest>, EventTest, N>): Promise<DebugResult<Array<EventTest & ReturnTypes<N>>>>;
   test<U extends Includes<TypedDb, EventTest>>(query: ComplexSqlQueryInclude<ToWhere<EventTest>, EventTest, U>): Promise<Array<MergeIncludes<EventTest, U>>>;
@@ -1599,8 +1643,6 @@ export interface EventQueries {
   test<K extends keyof EventTest, U extends Includes<TypedDb, EventTest>, N extends Alias<EventTest>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<EventTest>, K, EventTest, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<EventTest, K>, U> & ReturnTypes<N>>>>;
   test<K extends keyof EventTest>(query: ComplexSqlQueryValue<ToWhere<EventTest>, K, EventTest>): Promise<Array<EventTest[K]>>;
   test<K extends keyof EventTest>(query: ComplexSqlQueryValueDebug<ToWhere<EventTest>, K, EventTest>): Promise<DebugResult<Array<EventTest[K]>>>;
-  test(query: ComplexSqlQuery<ToWhere<EventTest>, EventTest>): Promise<Array<EventTest>>;
-  test(query: ComplexSqlQueryDebug<ToWhere<EventTest>, EventTest>): Promise<DebugResult<Array<EventTest>>>;
   test<N>(query: ComplexSqlQuerySelector<ToWhere<EventTest>, EventTest, N>): Promise<Array<N>>;
   test<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<EventTest>, EventTest, N>): Promise<DebugResult<Array<N>>>;
 }
@@ -1659,6 +1701,8 @@ export interface CoachFrom {
 }
 
 export interface CoachQueries {
+  from(query: ComplexSqlQuery<ToWhere<CoachFrom>, CoachFrom>): Promise<Array<CoachFrom>>;
+  from(query: ComplexSqlQueryDebug<ToWhere<CoachFrom>, CoachFrom>): Promise<DebugResult<Array<CoachFrom>>>;
   from<N extends Alias<CoachFrom>>(query: ComplexSqlQueryAlias<ToWhere<CoachFrom>, CoachFrom, N>): Promise<Array<CoachFrom & ReturnTypes<N>>>;
   from<N extends Alias<CoachFrom>>(query: ComplexSqlQueryAliasDebug<ToWhere<CoachFrom>, CoachFrom, N>): Promise<DebugResult<Array<CoachFrom & ReturnTypes<N>>>>;
   from<U extends Includes<TypedDb, CoachFrom>>(query: ComplexSqlQueryInclude<ToWhere<CoachFrom>, CoachFrom, U>): Promise<Array<MergeIncludes<CoachFrom, U>>>;
@@ -1683,8 +1727,6 @@ export interface CoachQueries {
   from<K extends keyof CoachFrom, U extends Includes<TypedDb, CoachFrom>, N extends Alias<CoachFrom>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<CoachFrom>, K, CoachFrom, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<CoachFrom, K>, U> & ReturnTypes<N>>>>;
   from<K extends keyof CoachFrom>(query: ComplexSqlQueryValue<ToWhere<CoachFrom>, K, CoachFrom>): Promise<Array<CoachFrom[K]>>;
   from<K extends keyof CoachFrom>(query: ComplexSqlQueryValueDebug<ToWhere<CoachFrom>, K, CoachFrom>): Promise<DebugResult<Array<CoachFrom[K]>>>;
-  from(query: ComplexSqlQuery<ToWhere<CoachFrom>, CoachFrom>): Promise<Array<CoachFrom>>;
-  from(query: ComplexSqlQueryDebug<ToWhere<CoachFrom>, CoachFrom>): Promise<DebugResult<Array<CoachFrom>>>;
   from<N>(query: ComplexSqlQuerySelector<ToWhere<CoachFrom>, CoachFrom, N>): Promise<Array<N>>;
   from<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<CoachFrom>, CoachFrom, N>): Promise<DebugResult<Array<N>>>;
 }
@@ -1843,6 +1885,8 @@ export interface FighterWeightClassesParams {
 }
 
 export interface FighterQueries {
+  byHeight(query: ComplexSqlQuery<ToWhere<FighterByHeight>, FighterByHeight>): Promise<Array<FighterByHeight>>;
+  byHeight(query: ComplexSqlQueryDebug<ToWhere<FighterByHeight>, FighterByHeight>): Promise<DebugResult<Array<FighterByHeight>>>;
   byHeight<N extends Alias<FighterByHeight>>(query: ComplexSqlQueryAlias<ToWhere<FighterByHeight>, FighterByHeight, N>): Promise<Array<FighterByHeight & ReturnTypes<N>>>;
   byHeight<N extends Alias<FighterByHeight>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterByHeight>, FighterByHeight, N>): Promise<DebugResult<Array<FighterByHeight & ReturnTypes<N>>>>;
   byHeight<U extends Includes<TypedDb, FighterByHeight>>(query: ComplexSqlQueryInclude<ToWhere<FighterByHeight>, FighterByHeight, U>): Promise<Array<MergeIncludes<FighterByHeight, U>>>;
@@ -1867,10 +1911,10 @@ export interface FighterQueries {
   byHeight<K extends keyof FighterByHeight, U extends Includes<TypedDb, FighterByHeight>, N extends Alias<FighterByHeight>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterByHeight>, K, FighterByHeight, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterByHeight, K>, U> & ReturnTypes<N>>>>;
   byHeight<K extends keyof FighterByHeight>(query: ComplexSqlQueryValue<ToWhere<FighterByHeight>, K, FighterByHeight>): Promise<Array<FighterByHeight[K]>>;
   byHeight<K extends keyof FighterByHeight>(query: ComplexSqlQueryValueDebug<ToWhere<FighterByHeight>, K, FighterByHeight>): Promise<DebugResult<Array<FighterByHeight[K]>>>;
-  byHeight(query: ComplexSqlQuery<ToWhere<FighterByHeight>, FighterByHeight>): Promise<Array<FighterByHeight>>;
-  byHeight(query: ComplexSqlQueryDebug<ToWhere<FighterByHeight>, FighterByHeight>): Promise<DebugResult<Array<FighterByHeight>>>;
   byHeight<N>(query: ComplexSqlQuerySelector<ToWhere<FighterByHeight>, FighterByHeight, N>): Promise<Array<N>>;
   byHeight<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterByHeight>, FighterByHeight, N>): Promise<DebugResult<Array<N>>>;
+  common(query: ComplexSqlQueryParams<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon>): Promise<Array<FighterCommon>>;
+  common(query: ComplexSqlQueryParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon>): Promise<DebugResult<Array<FighterCommon>>>;
   common<N extends Alias<FighterCommon>>(query: ComplexSqlQueryAliasParams<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon, N>): Promise<Array<FighterCommon & ReturnTypes<N>>>;
   common<N extends Alias<FighterCommon>>(query: ComplexSqlQueryAliasParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon, N>): Promise<DebugResult<Array<FighterCommon & ReturnTypes<N>>>>;
   common<U extends Includes<TypedDb, FighterCommon>>(query: ComplexSqlQueryIncludeParams<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon, U>): Promise<Array<MergeIncludes<FighterCommon, U>>>;
@@ -1895,10 +1939,10 @@ export interface FighterQueries {
   common<K extends keyof FighterCommon, U extends Includes<TypedDb, FighterCommon>, N extends Alias<FighterCommon>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, K, FighterCommon, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterCommon, K>, U> & ReturnTypes<N>>>>;
   common<K extends keyof FighterCommon>(query: ComplexSqlQueryValueParams<FighterCommonParams, ToWhere<FighterCommon>, K, FighterCommon>): Promise<Array<FighterCommon[K]>>;
   common<K extends keyof FighterCommon>(query: ComplexSqlQueryValueParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, K, FighterCommon>): Promise<DebugResult<Array<FighterCommon[K]>>>;
-  common(query: ComplexSqlQueryParams<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon>): Promise<Array<FighterCommon>>;
-  common(query: ComplexSqlQueryParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon>): Promise<DebugResult<Array<FighterCommon>>>;
   common<N>(query: ComplexSqlQuerySelectorParams<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon, N>): Promise<Array<N>>;
   common<N>(query: ComplexSqlQuerySelectorParamsDebug<FighterCommonParams, ToWhere<FighterCommon>, FighterCommon, N>): Promise<DebugResult<Array<N>>>;
+  extract(query: ComplexSqlQueryParams<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract>): Promise<Array<FighterExtract>>;
+  extract(query: ComplexSqlQueryParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract>): Promise<DebugResult<Array<FighterExtract>>>;
   extract<N extends Alias<FighterExtract>>(query: ComplexSqlQueryAliasParams<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract, N>): Promise<Array<FighterExtract & ReturnTypes<N>>>;
   extract<N extends Alias<FighterExtract>>(query: ComplexSqlQueryAliasParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract, N>): Promise<DebugResult<Array<FighterExtract & ReturnTypes<N>>>>;
   extract<U extends Includes<TypedDb, FighterExtract>>(query: ComplexSqlQueryIncludeParams<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract, U>): Promise<Array<MergeIncludes<FighterExtract, U>>>;
@@ -1923,10 +1967,10 @@ export interface FighterQueries {
   extract<K extends keyof FighterExtract, U extends Includes<TypedDb, FighterExtract>, N extends Alias<FighterExtract>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, K, FighterExtract, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterExtract, K>, U> & ReturnTypes<N>>>>;
   extract<K extends keyof FighterExtract>(query: ComplexSqlQueryValueParams<FighterExtractParams, ToWhere<FighterExtract>, K, FighterExtract>): Promise<Array<FighterExtract[K]>>;
   extract<K extends keyof FighterExtract>(query: ComplexSqlQueryValueParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, K, FighterExtract>): Promise<DebugResult<Array<FighterExtract[K]>>>;
-  extract(query: ComplexSqlQueryParams<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract>): Promise<Array<FighterExtract>>;
-  extract(query: ComplexSqlQueryParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract>): Promise<DebugResult<Array<FighterExtract>>>;
   extract<N>(query: ComplexSqlQuerySelectorParams<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract, N>): Promise<Array<N>>;
   extract<N>(query: ComplexSqlQuerySelectorParamsDebug<FighterExtractParams, ToWhere<FighterExtract>, FighterExtract, N>): Promise<DebugResult<Array<N>>>;
+  filter(query: ComplexSqlQuery<ToWhere<FighterFilter>, FighterFilter>): Promise<Array<FighterFilter>>;
+  filter(query: ComplexSqlQueryDebug<ToWhere<FighterFilter>, FighterFilter>): Promise<DebugResult<Array<FighterFilter>>>;
   filter<N extends Alias<FighterFilter>>(query: ComplexSqlQueryAlias<ToWhere<FighterFilter>, FighterFilter, N>): Promise<Array<FighterFilter & ReturnTypes<N>>>;
   filter<N extends Alias<FighterFilter>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterFilter>, FighterFilter, N>): Promise<DebugResult<Array<FighterFilter & ReturnTypes<N>>>>;
   filter<U extends Includes<TypedDb, FighterFilter>>(query: ComplexSqlQueryInclude<ToWhere<FighterFilter>, FighterFilter, U>): Promise<Array<MergeIncludes<FighterFilter, U>>>;
@@ -1951,10 +1995,10 @@ export interface FighterQueries {
   filter<K extends keyof FighterFilter, U extends Includes<TypedDb, FighterFilter>, N extends Alias<FighterFilter>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterFilter>, K, FighterFilter, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterFilter, K>, U> & ReturnTypes<N>>>>;
   filter<K extends keyof FighterFilter>(query: ComplexSqlQueryValue<ToWhere<FighterFilter>, K, FighterFilter>): Promise<Array<FighterFilter[K]>>;
   filter<K extends keyof FighterFilter>(query: ComplexSqlQueryValueDebug<ToWhere<FighterFilter>, K, FighterFilter>): Promise<DebugResult<Array<FighterFilter[K]>>>;
-  filter(query: ComplexSqlQuery<ToWhere<FighterFilter>, FighterFilter>): Promise<Array<FighterFilter>>;
-  filter(query: ComplexSqlQueryDebug<ToWhere<FighterFilter>, FighterFilter>): Promise<DebugResult<Array<FighterFilter>>>;
   filter<N>(query: ComplexSqlQuerySelector<ToWhere<FighterFilter>, FighterFilter, N>): Promise<Array<N>>;
   filter<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterFilter>, FighterFilter, N>): Promise<DebugResult<Array<N>>>;
+  instagram(query: ComplexSqlQuery<ToWhere<FighterInstagram>, FighterInstagram>): Promise<Array<FighterInstagram>>;
+  instagram(query: ComplexSqlQueryDebug<ToWhere<FighterInstagram>, FighterInstagram>): Promise<DebugResult<Array<FighterInstagram>>>;
   instagram<N extends Alias<FighterInstagram>>(query: ComplexSqlQueryAlias<ToWhere<FighterInstagram>, FighterInstagram, N>): Promise<Array<FighterInstagram & ReturnTypes<N>>>;
   instagram<N extends Alias<FighterInstagram>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterInstagram>, FighterInstagram, N>): Promise<DebugResult<Array<FighterInstagram & ReturnTypes<N>>>>;
   instagram<U extends Includes<TypedDb, FighterInstagram>>(query: ComplexSqlQueryInclude<ToWhere<FighterInstagram>, FighterInstagram, U>): Promise<Array<MergeIncludes<FighterInstagram, U>>>;
@@ -1979,10 +2023,10 @@ export interface FighterQueries {
   instagram<K extends keyof FighterInstagram, U extends Includes<TypedDb, FighterInstagram>, N extends Alias<FighterInstagram>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterInstagram>, K, FighterInstagram, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterInstagram, K>, U> & ReturnTypes<N>>>>;
   instagram<K extends keyof FighterInstagram>(query: ComplexSqlQueryValue<ToWhere<FighterInstagram>, K, FighterInstagram>): Promise<Array<FighterInstagram[K]>>;
   instagram<K extends keyof FighterInstagram>(query: ComplexSqlQueryValueDebug<ToWhere<FighterInstagram>, K, FighterInstagram>): Promise<DebugResult<Array<FighterInstagram[K]>>>;
-  instagram(query: ComplexSqlQuery<ToWhere<FighterInstagram>, FighterInstagram>): Promise<Array<FighterInstagram>>;
-  instagram(query: ComplexSqlQueryDebug<ToWhere<FighterInstagram>, FighterInstagram>): Promise<DebugResult<Array<FighterInstagram>>>;
   instagram<N>(query: ComplexSqlQuerySelector<ToWhere<FighterInstagram>, FighterInstagram, N>): Promise<Array<N>>;
   instagram<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterInstagram>, FighterInstagram, N>): Promise<DebugResult<Array<N>>>;
+  lastFights(query: ComplexSqlQueryParams<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights>): Promise<Array<FighterLastFights>>;
+  lastFights(query: ComplexSqlQueryParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights>): Promise<DebugResult<Array<FighterLastFights>>>;
   lastFights<N extends Alias<FighterLastFights>>(query: ComplexSqlQueryAliasParams<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights, N>): Promise<Array<FighterLastFights & ReturnTypes<N>>>;
   lastFights<N extends Alias<FighterLastFights>>(query: ComplexSqlQueryAliasParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights, N>): Promise<DebugResult<Array<FighterLastFights & ReturnTypes<N>>>>;
   lastFights<U extends Includes<TypedDb, FighterLastFights>>(query: ComplexSqlQueryIncludeParams<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights, U>): Promise<Array<MergeIncludes<FighterLastFights, U>>>;
@@ -2007,10 +2051,10 @@ export interface FighterQueries {
   lastFights<K extends keyof FighterLastFights, U extends Includes<TypedDb, FighterLastFights>, N extends Alias<FighterLastFights>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, K, FighterLastFights, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterLastFights, K>, U> & ReturnTypes<N>>>>;
   lastFights<K extends keyof FighterLastFights>(query: ComplexSqlQueryValueParams<FighterLastFightsParams, ToWhere<FighterLastFights>, K, FighterLastFights>): Promise<Array<FighterLastFights[K]>>;
   lastFights<K extends keyof FighterLastFights>(query: ComplexSqlQueryValueParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, K, FighterLastFights>): Promise<DebugResult<Array<FighterLastFights[K]>>>;
-  lastFights(query: ComplexSqlQueryParams<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights>): Promise<Array<FighterLastFights>>;
-  lastFights(query: ComplexSqlQueryParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights>): Promise<DebugResult<Array<FighterLastFights>>>;
   lastFights<N>(query: ComplexSqlQuerySelectorParams<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights, N>): Promise<Array<N>>;
   lastFights<N>(query: ComplexSqlQuerySelectorParamsDebug<FighterLastFightsParams, ToWhere<FighterLastFights>, FighterLastFights, N>): Promise<DebugResult<Array<N>>>;
+  left(query: ComplexSqlQuery<ToWhere<FighterLeft>, FighterLeft>): Promise<Array<FighterLeft>>;
+  left(query: ComplexSqlQueryDebug<ToWhere<FighterLeft>, FighterLeft>): Promise<DebugResult<Array<FighterLeft>>>;
   left<N extends Alias<FighterLeft>>(query: ComplexSqlQueryAlias<ToWhere<FighterLeft>, FighterLeft, N>): Promise<Array<FighterLeft & ReturnTypes<N>>>;
   left<N extends Alias<FighterLeft>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterLeft>, FighterLeft, N>): Promise<DebugResult<Array<FighterLeft & ReturnTypes<N>>>>;
   left<U extends Includes<TypedDb, FighterLeft>>(query: ComplexSqlQueryInclude<ToWhere<FighterLeft>, FighterLeft, U>): Promise<Array<MergeIncludes<FighterLeft, U>>>;
@@ -2035,10 +2079,10 @@ export interface FighterQueries {
   left<K extends keyof FighterLeft, U extends Includes<TypedDb, FighterLeft>, N extends Alias<FighterLeft>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterLeft>, K, FighterLeft, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterLeft, K>, U> & ReturnTypes<N>>>>;
   left<K extends keyof FighterLeft>(query: ComplexSqlQueryValue<ToWhere<FighterLeft>, K, FighterLeft>): Promise<Array<FighterLeft[K]>>;
   left<K extends keyof FighterLeft>(query: ComplexSqlQueryValueDebug<ToWhere<FighterLeft>, K, FighterLeft>): Promise<DebugResult<Array<FighterLeft[K]>>>;
-  left(query: ComplexSqlQuery<ToWhere<FighterLeft>, FighterLeft>): Promise<Array<FighterLeft>>;
-  left(query: ComplexSqlQueryDebug<ToWhere<FighterLeft>, FighterLeft>): Promise<DebugResult<Array<FighterLeft>>>;
   left<N>(query: ComplexSqlQuerySelector<ToWhere<FighterLeft>, FighterLeft, N>): Promise<Array<N>>;
   left<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterLeft>, FighterLeft, N>): Promise<DebugResult<Array<N>>>;
+  methods(query: ComplexSqlQueryParams<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods>): Promise<Array<FighterMethods>>;
+  methods(query: ComplexSqlQueryParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods>): Promise<DebugResult<Array<FighterMethods>>>;
   methods<N extends Alias<FighterMethods>>(query: ComplexSqlQueryAliasParams<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods, N>): Promise<Array<FighterMethods & ReturnTypes<N>>>;
   methods<N extends Alias<FighterMethods>>(query: ComplexSqlQueryAliasParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods, N>): Promise<DebugResult<Array<FighterMethods & ReturnTypes<N>>>>;
   methods<U extends Includes<TypedDb, FighterMethods>>(query: ComplexSqlQueryIncludeParams<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods, U>): Promise<Array<MergeIncludes<FighterMethods, U>>>;
@@ -2063,10 +2107,10 @@ export interface FighterQueries {
   methods<K extends keyof FighterMethods, U extends Includes<TypedDb, FighterMethods>, N extends Alias<FighterMethods>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, K, FighterMethods, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterMethods, K>, U> & ReturnTypes<N>>>>;
   methods<K extends keyof FighterMethods>(query: ComplexSqlQueryValueParams<FighterMethodsParams, ToWhere<FighterMethods>, K, FighterMethods>): Promise<Array<FighterMethods[K]>>;
   methods<K extends keyof FighterMethods>(query: ComplexSqlQueryValueParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, K, FighterMethods>): Promise<DebugResult<Array<FighterMethods[K]>>>;
-  methods(query: ComplexSqlQueryParams<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods>): Promise<Array<FighterMethods>>;
-  methods(query: ComplexSqlQueryParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods>): Promise<DebugResult<Array<FighterMethods>>>;
   methods<N>(query: ComplexSqlQuerySelectorParams<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods, N>): Promise<Array<N>>;
   methods<N>(query: ComplexSqlQuerySelectorParamsDebug<FighterMethodsParams, ToWhere<FighterMethods>, FighterMethods, N>): Promise<DebugResult<Array<N>>>;
+  opponents(query: ComplexSqlQuery<ToWhere<FighterOpponents>, FighterOpponents>): Promise<Array<FighterOpponents>>;
+  opponents(query: ComplexSqlQueryDebug<ToWhere<FighterOpponents>, FighterOpponents>): Promise<DebugResult<Array<FighterOpponents>>>;
   opponents<N extends Alias<FighterOpponents>>(query: ComplexSqlQueryAlias<ToWhere<FighterOpponents>, FighterOpponents, N>): Promise<Array<FighterOpponents & ReturnTypes<N>>>;
   opponents<N extends Alias<FighterOpponents>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterOpponents>, FighterOpponents, N>): Promise<DebugResult<Array<FighterOpponents & ReturnTypes<N>>>>;
   opponents<U extends Includes<TypedDb, FighterOpponents>>(query: ComplexSqlQueryInclude<ToWhere<FighterOpponents>, FighterOpponents, U>): Promise<Array<MergeIncludes<FighterOpponents, U>>>;
@@ -2091,10 +2135,10 @@ export interface FighterQueries {
   opponents<K extends keyof FighterOpponents, U extends Includes<TypedDb, FighterOpponents>, N extends Alias<FighterOpponents>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterOpponents>, K, FighterOpponents, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterOpponents, K>, U> & ReturnTypes<N>>>>;
   opponents<K extends keyof FighterOpponents>(query: ComplexSqlQueryValue<ToWhere<FighterOpponents>, K, FighterOpponents>): Promise<Array<FighterOpponents[K]>>;
   opponents<K extends keyof FighterOpponents>(query: ComplexSqlQueryValueDebug<ToWhere<FighterOpponents>, K, FighterOpponents>): Promise<DebugResult<Array<FighterOpponents[K]>>>;
-  opponents(query: ComplexSqlQuery<ToWhere<FighterOpponents>, FighterOpponents>): Promise<Array<FighterOpponents>>;
-  opponents(query: ComplexSqlQueryDebug<ToWhere<FighterOpponents>, FighterOpponents>): Promise<DebugResult<Array<FighterOpponents>>>;
   opponents<N>(query: ComplexSqlQuerySelector<ToWhere<FighterOpponents>, FighterOpponents, N>): Promise<Array<N>>;
   opponents<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterOpponents>, FighterOpponents, N>): Promise<DebugResult<Array<N>>>;
+  otherNames(query: ComplexSqlQuery<ToWhere<FighterOtherNames>, FighterOtherNames>): Promise<Array<FighterOtherNames>>;
+  otherNames(query: ComplexSqlQueryDebug<ToWhere<FighterOtherNames>, FighterOtherNames>): Promise<DebugResult<Array<FighterOtherNames>>>;
   otherNames<N extends Alias<FighterOtherNames>>(query: ComplexSqlQueryAlias<ToWhere<FighterOtherNames>, FighterOtherNames, N>): Promise<Array<FighterOtherNames & ReturnTypes<N>>>;
   otherNames<N extends Alias<FighterOtherNames>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterOtherNames>, FighterOtherNames, N>): Promise<DebugResult<Array<FighterOtherNames & ReturnTypes<N>>>>;
   otherNames<U extends Includes<TypedDb, FighterOtherNames>>(query: ComplexSqlQueryInclude<ToWhere<FighterOtherNames>, FighterOtherNames, U>): Promise<Array<MergeIncludes<FighterOtherNames, U>>>;
@@ -2119,10 +2163,10 @@ export interface FighterQueries {
   otherNames<K extends keyof FighterOtherNames, U extends Includes<TypedDb, FighterOtherNames>, N extends Alias<FighterOtherNames>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterOtherNames>, K, FighterOtherNames, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterOtherNames, K>, U> & ReturnTypes<N>>>>;
   otherNames<K extends keyof FighterOtherNames>(query: ComplexSqlQueryValue<ToWhere<FighterOtherNames>, K, FighterOtherNames>): Promise<Array<FighterOtherNames[K]>>;
   otherNames<K extends keyof FighterOtherNames>(query: ComplexSqlQueryValueDebug<ToWhere<FighterOtherNames>, K, FighterOtherNames>): Promise<DebugResult<Array<FighterOtherNames[K]>>>;
-  otherNames(query: ComplexSqlQuery<ToWhere<FighterOtherNames>, FighterOtherNames>): Promise<Array<FighterOtherNames>>;
-  otherNames(query: ComplexSqlQueryDebug<ToWhere<FighterOtherNames>, FighterOtherNames>): Promise<DebugResult<Array<FighterOtherNames>>>;
   otherNames<N>(query: ComplexSqlQuerySelector<ToWhere<FighterOtherNames>, FighterOtherNames, N>): Promise<Array<N>>;
   otherNames<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterOtherNames>, FighterOtherNames, N>): Promise<DebugResult<Array<N>>>;
+  right(query: ComplexSqlQuery<ToWhere<FighterRight>, FighterRight>): Promise<Array<FighterRight>>;
+  right(query: ComplexSqlQueryDebug<ToWhere<FighterRight>, FighterRight>): Promise<DebugResult<Array<FighterRight>>>;
   right<N extends Alias<FighterRight>>(query: ComplexSqlQueryAlias<ToWhere<FighterRight>, FighterRight, N>): Promise<Array<FighterRight & ReturnTypes<N>>>;
   right<N extends Alias<FighterRight>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterRight>, FighterRight, N>): Promise<DebugResult<Array<FighterRight & ReturnTypes<N>>>>;
   right<U extends Includes<TypedDb, FighterRight>>(query: ComplexSqlQueryInclude<ToWhere<FighterRight>, FighterRight, U>): Promise<Array<MergeIncludes<FighterRight, U>>>;
@@ -2147,10 +2191,10 @@ export interface FighterQueries {
   right<K extends keyof FighterRight, U extends Includes<TypedDb, FighterRight>, N extends Alias<FighterRight>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterRight>, K, FighterRight, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterRight, K>, U> & ReturnTypes<N>>>>;
   right<K extends keyof FighterRight>(query: ComplexSqlQueryValue<ToWhere<FighterRight>, K, FighterRight>): Promise<Array<FighterRight[K]>>;
   right<K extends keyof FighterRight>(query: ComplexSqlQueryValueDebug<ToWhere<FighterRight>, K, FighterRight>): Promise<DebugResult<Array<FighterRight[K]>>>;
-  right(query: ComplexSqlQuery<ToWhere<FighterRight>, FighterRight>): Promise<Array<FighterRight>>;
-  right(query: ComplexSqlQueryDebug<ToWhere<FighterRight>, FighterRight>): Promise<DebugResult<Array<FighterRight>>>;
   right<N>(query: ComplexSqlQuerySelector<ToWhere<FighterRight>, FighterRight, N>): Promise<Array<N>>;
   right<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterRight>, FighterRight, N>): Promise<DebugResult<Array<N>>>;
+  weightClasses(query: ComplexSqlQueryParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses>): Promise<Array<FighterWeightClasses>>;
+  weightClasses(query: ComplexSqlQueryParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses>): Promise<DebugResult<Array<FighterWeightClasses>>>;
   weightClasses<N extends Alias<FighterWeightClasses>>(query: ComplexSqlQueryAliasParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses, N>): Promise<Array<FighterWeightClasses & ReturnTypes<N>>>;
   weightClasses<N extends Alias<FighterWeightClasses>>(query: ComplexSqlQueryAliasParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses, N>): Promise<DebugResult<Array<FighterWeightClasses & ReturnTypes<N>>>>;
   weightClasses<U extends Includes<TypedDb, FighterWeightClasses>>(query: ComplexSqlQueryIncludeParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses, U>): Promise<Array<MergeIncludes<FighterWeightClasses, U>>>;
@@ -2175,10 +2219,10 @@ export interface FighterQueries {
   weightClasses<K extends keyof FighterWeightClasses, U extends Includes<TypedDb, FighterWeightClasses>, N extends Alias<FighterWeightClasses>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, K, FighterWeightClasses, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterWeightClasses, K>, U> & ReturnTypes<N>>>>;
   weightClasses<K extends keyof FighterWeightClasses>(query: ComplexSqlQueryValueParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, K, FighterWeightClasses>): Promise<Array<FighterWeightClasses[K]>>;
   weightClasses<K extends keyof FighterWeightClasses>(query: ComplexSqlQueryValueParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, K, FighterWeightClasses>): Promise<DebugResult<Array<FighterWeightClasses[K]>>>;
-  weightClasses(query: ComplexSqlQueryParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses>): Promise<Array<FighterWeightClasses>>;
-  weightClasses(query: ComplexSqlQueryParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses>): Promise<DebugResult<Array<FighterWeightClasses>>>;
   weightClasses<N>(query: ComplexSqlQuerySelectorParams<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses, N>): Promise<Array<N>>;
   weightClasses<N>(query: ComplexSqlQuerySelectorParamsDebug<FighterWeightClassesParams, ToWhere<FighterWeightClasses>, FighterWeightClasses, N>): Promise<DebugResult<Array<N>>>;
+  withReach(query: ComplexSqlQuery<ToWhere<FighterWithReach>, FighterWithReach>): Promise<Array<FighterWithReach>>;
+  withReach(query: ComplexSqlQueryDebug<ToWhere<FighterWithReach>, FighterWithReach>): Promise<DebugResult<Array<FighterWithReach>>>;
   withReach<N extends Alias<FighterWithReach>>(query: ComplexSqlQueryAlias<ToWhere<FighterWithReach>, FighterWithReach, N>): Promise<Array<FighterWithReach & ReturnTypes<N>>>;
   withReach<N extends Alias<FighterWithReach>>(query: ComplexSqlQueryAliasDebug<ToWhere<FighterWithReach>, FighterWithReach, N>): Promise<DebugResult<Array<FighterWithReach & ReturnTypes<N>>>>;
   withReach<U extends Includes<TypedDb, FighterWithReach>>(query: ComplexSqlQueryInclude<ToWhere<FighterWithReach>, FighterWithReach, U>): Promise<Array<MergeIncludes<FighterWithReach, U>>>;
@@ -2203,8 +2247,6 @@ export interface FighterQueries {
   withReach<K extends keyof FighterWithReach, U extends Includes<TypedDb, FighterWithReach>, N extends Alias<FighterWithReach>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<FighterWithReach>, K, FighterWithReach, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FighterWithReach, K>, U> & ReturnTypes<N>>>>;
   withReach<K extends keyof FighterWithReach>(query: ComplexSqlQueryValue<ToWhere<FighterWithReach>, K, FighterWithReach>): Promise<Array<FighterWithReach[K]>>;
   withReach<K extends keyof FighterWithReach>(query: ComplexSqlQueryValueDebug<ToWhere<FighterWithReach>, K, FighterWithReach>): Promise<DebugResult<Array<FighterWithReach[K]>>>;
-  withReach(query: ComplexSqlQuery<ToWhere<FighterWithReach>, FighterWithReach>): Promise<Array<FighterWithReach>>;
-  withReach(query: ComplexSqlQueryDebug<ToWhere<FighterWithReach>, FighterWithReach>): Promise<DebugResult<Array<FighterWithReach>>>;
   withReach<N>(query: ComplexSqlQuerySelector<ToWhere<FighterWithReach>, FighterWithReach, N>): Promise<Array<N>>;
   withReach<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<FighterWithReach>, FighterWithReach, N>): Promise<DebugResult<Array<N>>>;
 }
@@ -2322,6 +2364,8 @@ export interface MethodByFighterParams {
 }
 
 export interface MethodQueries {
+  byFighter(query: ComplexSqlQueryParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter>): Promise<Array<MethodByFighter>>;
+  byFighter(query: ComplexSqlQueryParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter>): Promise<DebugResult<Array<MethodByFighter>>>;
   byFighter<N extends Alias<MethodByFighter>>(query: ComplexSqlQueryAliasParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, N>): Promise<Array<MethodByFighter & ReturnTypes<N>>>;
   byFighter<N extends Alias<MethodByFighter>>(query: ComplexSqlQueryAliasParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, N>): Promise<DebugResult<Array<MethodByFighter & ReturnTypes<N>>>>;
   byFighter<U extends Includes<TypedDb, MethodByFighter>>(query: ComplexSqlQueryIncludeParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, U>): Promise<Array<MergeIncludes<MethodByFighter, U>>>;
@@ -2346,10 +2390,10 @@ export interface MethodQueries {
   byFighter<K extends keyof MethodByFighter, U extends Includes<TypedDb, MethodByFighter>, N extends Alias<MethodByFighter>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, K, MethodByFighter, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<MethodByFighter, K>, U> & ReturnTypes<N>>>>;
   byFighter<K extends keyof MethodByFighter>(query: ComplexSqlQueryValueParams<MethodByFighterParams, ToWhere<MethodByFighter>, K, MethodByFighter>): Promise<Array<MethodByFighter[K]>>;
   byFighter<K extends keyof MethodByFighter>(query: ComplexSqlQueryValueParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, K, MethodByFighter>): Promise<DebugResult<Array<MethodByFighter[K]>>>;
-  byFighter(query: ComplexSqlQueryParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter>): Promise<Array<MethodByFighter>>;
-  byFighter(query: ComplexSqlQueryParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter>): Promise<DebugResult<Array<MethodByFighter>>>;
   byFighter<N>(query: ComplexSqlQuerySelectorParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, N>): Promise<Array<N>>;
   byFighter<N>(query: ComplexSqlQuerySelectorParamsDebug<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, N>): Promise<DebugResult<Array<N>>>;
+  coach(query: ComplexSqlQuery<ToWhere<MethodCoach>, MethodCoach>): Promise<Array<MethodCoach>>;
+  coach(query: ComplexSqlQueryDebug<ToWhere<MethodCoach>, MethodCoach>): Promise<DebugResult<Array<MethodCoach>>>;
   coach<N extends Alias<MethodCoach>>(query: ComplexSqlQueryAlias<ToWhere<MethodCoach>, MethodCoach, N>): Promise<Array<MethodCoach & ReturnTypes<N>>>;
   coach<N extends Alias<MethodCoach>>(query: ComplexSqlQueryAliasDebug<ToWhere<MethodCoach>, MethodCoach, N>): Promise<DebugResult<Array<MethodCoach & ReturnTypes<N>>>>;
   coach<U extends Includes<TypedDb, MethodCoach>>(query: ComplexSqlQueryInclude<ToWhere<MethodCoach>, MethodCoach, U>): Promise<Array<MergeIncludes<MethodCoach, U>>>;
@@ -2374,10 +2418,10 @@ export interface MethodQueries {
   coach<K extends keyof MethodCoach, U extends Includes<TypedDb, MethodCoach>, N extends Alias<MethodCoach>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<MethodCoach>, K, MethodCoach, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<MethodCoach, K>, U> & ReturnTypes<N>>>>;
   coach<K extends keyof MethodCoach>(query: ComplexSqlQueryValue<ToWhere<MethodCoach>, K, MethodCoach>): Promise<Array<MethodCoach[K]>>;
   coach<K extends keyof MethodCoach>(query: ComplexSqlQueryValueDebug<ToWhere<MethodCoach>, K, MethodCoach>): Promise<DebugResult<Array<MethodCoach[K]>>>;
-  coach(query: ComplexSqlQuery<ToWhere<MethodCoach>, MethodCoach>): Promise<Array<MethodCoach>>;
-  coach(query: ComplexSqlQueryDebug<ToWhere<MethodCoach>, MethodCoach>): Promise<DebugResult<Array<MethodCoach>>>;
   coach<N>(query: ComplexSqlQuerySelector<ToWhere<MethodCoach>, MethodCoach, N>): Promise<Array<N>>;
   coach<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<MethodCoach>, MethodCoach, N>): Promise<DebugResult<Array<N>>>;
+  topSubmission(query: ComplexSqlQuery<ToWhere<MethodTopSubmission>, MethodTopSubmission>): Promise<Array<MethodTopSubmission>>;
+  topSubmission(query: ComplexSqlQueryDebug<ToWhere<MethodTopSubmission>, MethodTopSubmission>): Promise<DebugResult<Array<MethodTopSubmission>>>;
   topSubmission<N extends Alias<MethodTopSubmission>>(query: ComplexSqlQueryAlias<ToWhere<MethodTopSubmission>, MethodTopSubmission, N>): Promise<Array<MethodTopSubmission & ReturnTypes<N>>>;
   topSubmission<N extends Alias<MethodTopSubmission>>(query: ComplexSqlQueryAliasDebug<ToWhere<MethodTopSubmission>, MethodTopSubmission, N>): Promise<DebugResult<Array<MethodTopSubmission & ReturnTypes<N>>>>;
   topSubmission<U extends Includes<TypedDb, MethodTopSubmission>>(query: ComplexSqlQueryInclude<ToWhere<MethodTopSubmission>, MethodTopSubmission, U>): Promise<Array<MergeIncludes<MethodTopSubmission, U>>>;
@@ -2402,8 +2446,6 @@ export interface MethodQueries {
   topSubmission<K extends keyof MethodTopSubmission, U extends Includes<TypedDb, MethodTopSubmission>, N extends Alias<MethodTopSubmission>>(query: ComplexSqlQueryObjectIncludeAliasOmitDebug<ToWhere<MethodTopSubmission>, K, MethodTopSubmission, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<MethodTopSubmission, K>, U> & ReturnTypes<N>>>>;
   topSubmission<K extends keyof MethodTopSubmission>(query: ComplexSqlQueryValue<ToWhere<MethodTopSubmission>, K, MethodTopSubmission>): Promise<Array<MethodTopSubmission[K]>>;
   topSubmission<K extends keyof MethodTopSubmission>(query: ComplexSqlQueryValueDebug<ToWhere<MethodTopSubmission>, K, MethodTopSubmission>): Promise<DebugResult<Array<MethodTopSubmission[K]>>>;
-  topSubmission(query: ComplexSqlQuery<ToWhere<MethodTopSubmission>, MethodTopSubmission>): Promise<Array<MethodTopSubmission>>;
-  topSubmission(query: ComplexSqlQueryDebug<ToWhere<MethodTopSubmission>, MethodTopSubmission>): Promise<DebugResult<Array<MethodTopSubmission>>>;
   topSubmission<N>(query: ComplexSqlQuerySelector<ToWhere<MethodTopSubmission>, MethodTopSubmission, N>): Promise<Array<N>>;
   topSubmission<N>(query: ComplexSqlQuerySelectorDebug<ToWhere<MethodTopSubmission>, MethodTopSubmission, N>): Promise<DebugResult<Array<N>>>;
 }
@@ -2486,6 +2528,8 @@ export interface FightByFighterParams {
 }
 
 export interface FightQueries {
+  byFighter(query: ComplexSqlQueryParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter>): Promise<Array<FightByFighter>>;
+  byFighter(query: ComplexSqlQueryParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter>): Promise<DebugResult<Array<FightByFighter>>>;
   byFighter<N extends Alias<FightByFighter>>(query: ComplexSqlQueryAliasParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, N>): Promise<Array<FightByFighter & ReturnTypes<N>>>;
   byFighter<N extends Alias<FightByFighter>>(query: ComplexSqlQueryAliasParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, N>): Promise<DebugResult<Array<FightByFighter & ReturnTypes<N>>>>;
   byFighter<U extends Includes<TypedDb, FightByFighter>>(query: ComplexSqlQueryIncludeParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, U>): Promise<Array<MergeIncludes<FightByFighter, U>>>;
@@ -2510,8 +2554,6 @@ export interface FightQueries {
   byFighter<K extends keyof FightByFighter, U extends Includes<TypedDb, FightByFighter>, N extends Alias<FightByFighter>>(query: ComplexSqlQueryObjectIncludeAliasOmitParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter, U, N>): Promise<DebugResult<Array<MergeIncludes<Omit<FightByFighter, K>, U> & ReturnTypes<N>>>>;
   byFighter<K extends keyof FightByFighter>(query: ComplexSqlQueryValueParams<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter>): Promise<Array<FightByFighter[K]>>;
   byFighter<K extends keyof FightByFighter>(query: ComplexSqlQueryValueParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter>): Promise<DebugResult<Array<FightByFighter[K]>>>;
-  byFighter(query: ComplexSqlQueryParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter>): Promise<Array<FightByFighter>>;
-  byFighter(query: ComplexSqlQueryParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter>): Promise<DebugResult<Array<FightByFighter>>>;
   byFighter<N>(query: ComplexSqlQuerySelectorParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, N>): Promise<Array<N>>;
   byFighter<N>(query: ComplexSqlQuerySelectorParamsDebug<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, N>): Promise<DebugResult<Array<N>>>;
 }

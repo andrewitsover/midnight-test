@@ -45,4 +45,13 @@ test('sql', async (context) => {
   });
   compare(extract, 'fightersExtract', rewrite);
   await db.coaches.from();
+  const closest = await db.locations.distanceFrom({
+    params: {
+      lat: 3.342,
+      long: 10.435
+    },
+    orderBy: 'distanceKm',
+    limit: 3
+  });
+  console.log(closest);
 });
