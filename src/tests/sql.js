@@ -46,9 +46,15 @@ test('sql', async (context) => {
   compare(extract, 'fightersExtract', rewrite);
   await db.coaches.from();
   const closest = await db.locations.distanceFrom({
+    select: ['id', 'distanceKm'],
     params: {
       lat: 3.342,
       long: 10.435
+    },
+    include: {
+      events: (t, c) => t.events.many({
+        locationId: c.id
+      })
     },
     orderBy: 'distanceKm',
     limit: 3
