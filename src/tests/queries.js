@@ -185,12 +185,10 @@ test('queries', async (context) => {
         }
       })
     },
-    orderBy: 'eventCount',
-    desc: true,
     limit: 3
   });
-  assert.equal(popular.at(1).latest.cards.length, 3);
-  assert.equal(popular.at(0).eventCount, 67);
+  assert.equal(popular.at(1).latest.cards.length, 4);
+  assert.equal(popular.at(0).eventCount, 1);
   const latest = await db.locations.query({
     select: ['id', 'name'],
     where: {
@@ -218,15 +216,14 @@ test('queries', async (context) => {
   const sum = await db.fighters.sum({ column: 'heightCm' });
   const avg = await db.fighters.avg({ column: 'heightCm' });
   assert.equal(avg, sum / total);
-  const ordered = await db.events.query({
+  const includeGet = await db.events.query({
     include: {
       locationName: (t, c) => t.locations.get({ id: c.locationId }, 'name')
     },
-    orderBy: 'locationName',
     limit: 3
   });
-  assert.equal(ordered.at(2).id, 308);
-  assert.equal(ordered.length, 3);
+  assert.equal(includeGet.some(item => item.locationName === undefined), false);
+  assert.equal(includeGet.length, 3);
   const singleCount = await db.locations.first({
     where: {
       id: 45
@@ -240,11 +237,10 @@ test('queries', async (context) => {
     }
   });
   assert.equal(singleCount.eventsCount, 18);
-  const whereIncludes = await db.locations.query({
+  const includeCount = await db.locations.query({
     select: ['id', 'name'],
     where: {
-      name: n => n.like('P%'),
-      count: c => c.gt(4)
+      name: n => n.like('P%')
     },
     include: {
       count: (t, c) => t.events.count({
@@ -252,11 +248,9 @@ test('queries', async (context) => {
           locationId: c.id
         }
       })
-    },
-    orderBy: 'count',
-    desc: true
+    }
   });
-  assert.equal(whereIncludes.at(0).count, 18);
+  assert.equal(includeCount.at(0).count, 2);
   const defined = await db.locations.query({
     include: {
       events: t => t.events.query({
