@@ -7,9 +7,7 @@ test('group', async (context) => {
     .groupBy('hometown')
     .avg({
       column: 'heightCm',
-      where: {
-        hometown: 'Brisbane'
-      }
-    })
-  towns.at(0);
+      limit: 3
+    });
+  console.log(towns);
 });
