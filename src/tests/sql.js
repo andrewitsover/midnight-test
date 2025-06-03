@@ -59,5 +59,7 @@ test('sql', async (context) => {
     orderBy: 'distanceKm',
     limit: 3
   });
-  console.log(closest);
+  const location = closest.at(0);
+  const event = location.events.at(0);
+  assert.equal(event.id, 353);
 });

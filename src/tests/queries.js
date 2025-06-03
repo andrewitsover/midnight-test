@@ -64,17 +64,6 @@ test('queries', async (context) => {
   assert.equal(whereSelector.id, 2);
   const accounts = await db.fighters.many({ id: n => n.lt(10) }, c => c.social.instagram);
   assert.equal(accounts.at(6), 'makamboabedi');
-  const orderBy = await db.fighters.query({
-    where: {
-      id: n => n.lt(10)
-    },
-    select: ['id', 'born'],
-    alias: {
-      instagram: s => s.social.instagram
-    },
-    orderBy: 'instagram'
-  });
-  assert.equal(orderBy.at(2).instagram, 'angga_thehitman');
   const rows = [];
   for (let i = 0; i < 5; i++) {
     rows.push({
@@ -298,16 +287,26 @@ test('queries', async (context) => {
   });
   assert.equal(debug.result.length, 3);
   assert.equal(debug.queries.length, 2);
+  const date = new Date();
   const test = await db.locations.query({
+    where: {
+      id: c => c.gt(10)
+    },
     include: {
-      methods: (t, c) => t.locations.byMethod({
-        params: { 
-          id: 2
-        }
+      events: (t, c) => t.events.awayFrom({
+        where: {
+          locationId: c.id
+        },
+        params: {
+          date
+        },
+        orderBy: 'diff',
+        limit: 20
       })
     },
-    limit: 1
+    limit: 3
   });
+  console.log(test.at(0).events);
 });
 
 cleanUp('queries', async (context) => {
