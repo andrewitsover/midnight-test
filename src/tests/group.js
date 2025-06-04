@@ -7,7 +7,11 @@ test('group', async (context) => {
     .groupBy('hometown')
     .avg({
       column: 'heightCm',
-      limit: 3
+      limit: 3,
+      alias: 'height',
+      where: {
+        avg: a => a.gt(170)
+      }
     });
-  console.log(towns);
+  assert.equal(towns.at(1).height, 173);
 });
