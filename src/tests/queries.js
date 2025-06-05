@@ -240,17 +240,6 @@ test('queries', async (context) => {
     }
   });
   assert.equal(includeCount.at(0).count, 2);
-  const defined = await db.locations.query({
-    include: {
-      events: t => t.events.query({
-        limit: 3,
-        orderBy: 'startTime',
-        desc: true
-      })
-    },
-    limit: 3
-  });
-  assert.equal(defined.at(1).events.length, 2);
   const time = new Date();
   time.setFullYear(1997);
   const conditions = await db.events.query({
@@ -306,7 +295,18 @@ test('queries', async (context) => {
     },
     limit: 3
   });
-  console.log(test.at(0).events);
+  const fighters = await db.fighters.query({
+    include: {
+      fights: (t, c) => t.fights.many({
+        or: [
+          { redId: c.id },
+          { blueId: c.id }
+        ]
+      })
+    },
+    limit: 3
+  });
+  console.log(fighters);
 });
 
 cleanUp('queries', async (context) => {

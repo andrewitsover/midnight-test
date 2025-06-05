@@ -37,5 +37,5 @@ test('groupBy', async (context) => {
     },
     limit: 3
   });
-  console.log(locations.at(0).events);
+  console.log(locations.at(1).events);
 });

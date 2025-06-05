@@ -51,9 +51,6 @@ const makeContext = async () => {
     ...paths
   });
   const db = database.getClient();
-  db.locations.define((t, c) => t.events.where({
-    locationId: c.id
-  }));
   return {
     db,
     database,
