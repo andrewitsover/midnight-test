@@ -277,7 +277,7 @@ test('queries', async (context) => {
   assert.equal(debug.result.length, 3);
   assert.equal(debug.queries.length, 2);
   const date = new Date();
-  const test = await db.locations.query({
+  const times = await db.locations.query({
     where: {
       id: c => c.gt(10)
     },
@@ -295,6 +295,11 @@ test('queries', async (context) => {
     },
     limit: 3
   });
+  const filtered = times
+    .flatMap(t => t.events)
+    .map(e => typeof e.diff)
+    .filter(t => t === 'string');
+  assert.equal(filtered.length, 5);
   const fighters = await db.fighters.query({
     include: {
       fights: (t, c) => t.fights.many({
@@ -306,7 +311,7 @@ test('queries', async (context) => {
     },
     limit: 3
   });
-  console.log(fighters);
+  assert.equal(fighters.at(2).fights.length, 18);
 });
 
 cleanUp('queries', async (context) => {

@@ -37,5 +37,27 @@ test('groupBy', async (context) => {
     },
     limit: 3
   });
-  console.log(locations.at(1).events);
+  const filtered = locations
+    .flatMap(l => l.events)
+    .filter(e => e.count === 1);
+  assert.equal(filtered.length, 2);
+  const cards = await db.cards.query({
+    where: {
+      id: [8, 15, 20, 30, 34]
+    },
+    include: {
+      methods: (t, c) => t.fights
+        .groupBy(['cardId', 'methodId'])
+        .max({
+          column: 'id',
+          where: {
+            cardId: c.id
+          },
+          orderBy: 'max',
+          limit: 2
+        })
+    }
+  });
+  const max = cards.at(0).methods.at(1).max;
+  assert.equal(max, 23);
 });
