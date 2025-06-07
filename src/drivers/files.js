@@ -181,7 +181,8 @@ select
     methodId
 from eventFights;`,
     queries: {coaches: {from: `select id from coaches;
-`},events: {from: `select 1 + 2 as test`,lag: `select 
+`},events: {awayFrom: `select *, timediff(startTime, $date) as diff from events;
+`,from: `select 1 + 2 as test`,lag: `select 
     lag(locationId + 1) over win as test1,
     lag(locationId + 1, 1) over win as test2,
     first_value((locationId + 1) * 2) over win as test3
@@ -381,6 +382,24 @@ from
     events e on e.locationId = l.id
 where l.id in (27, 28)
 group by l.id;
+`,distanceFrom: `select
+    *,
+    6371 * 2 *
+    atan2(
+        sqrt(
+        sin((lat - $lat) * pi() / 180 / 2) * sin((lat - $lat) * pi() / 180 / 2) +
+        cos($lat * pi() / 180) * cos(lat * pi() / 180) *
+        sin((long - $long) * pi() / 180 / 2) * sin((long - $long) * pi() / 180 / 2)
+        ),
+        sqrt(
+        1 - (
+            sin((lat - $lat) * pi() / 180 / 2) * sin((lat - $lat) * pi() / 180 / 2) +
+            cos($lat * pi() / 180) * cos(lat * pi() / 180) *
+            sin((long - $long) * pi() / 180 / 2) * sin((long - $long) * pi() / 180 / 2)
+        )
+        )
+    ) as distanceKm
+from locations;
 `,events: `select
     l.name,
     groupArray(e.name order by e.name desc) as events
