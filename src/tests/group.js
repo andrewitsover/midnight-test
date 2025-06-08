@@ -60,4 +60,21 @@ test('groupBy', async (context) => {
   });
   const max = cards.at(0).methods.at(1).max;
   assert.equal(max, 23);
+  const groupArray = await db.events
+    .groupBy('locationId')
+    .array({
+      alias: 'events',
+      limit: 3
+    });
+  const group = groupArray.at(1);
+  assert.equal(group.events.at(0).id, group.locationId);
+  const groupValues = await db.events
+    .groupBy('locationId')
+    .array({
+      select: 'startTime',
+      alias: 'startTimes',
+      limit: 3
+    });
+  const startTimes = groupValues.at(1).startTimes;
+  assert.equal(startTimes.every(s => s instanceof Date), true);
 });
