@@ -6,7 +6,10 @@ import { createProgram, getPreEmitDiagnostics } from 'typescript';
 import { test } from '../run.js';
 
 test('types', async (context) => {
-  const { database, paths, rewrite } = context.common;
+  const { db, database, paths, rewrite } = context.common;
+  db.fighters.compute({
+    displayName: (c, f) => f.concat(c.name, ' (', c.nickname, ')')
+  });
   await makeTypes({
     db: database,
     paths,

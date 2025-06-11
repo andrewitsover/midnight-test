@@ -312,6 +312,7 @@ test('queries', async (context) => {
     limit: 3
   });
   assert.equal(fighters.at(2).fights.length, 18);
+  const fighter = await db.fighters.get(null, 'displayName');
 });
 
 cleanUp('queries', async (context) => {

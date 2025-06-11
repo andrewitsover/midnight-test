@@ -977,6 +977,10 @@ export interface InsertFighter {
   documents?: Json;
 }
 
+export interface ComputedFighter {
+  displayName?: string;
+}
+
 export interface FighterByHeight {
   name: string;
   heightCm: number | null;
@@ -1356,7 +1360,7 @@ export interface TypedDb {
   events: Queries<Event, InsertEvent, ToWhere<Event & unknown>, unknown, number, TypedDb> & EventQueries;
   cards: Queries<Card, InsertCard, ToWhere<Card & unknown>, unknown, number, TypedDb>;
   coaches: Queries<Coach, InsertCoach, ToWhere<Coach & unknown>, unknown, number, TypedDb> & CoachQueries;
-  fighters: Queries<Fighter, InsertFighter, ToWhere<Fighter & unknown>, unknown, number, TypedDb> & FighterQueries;
+  fighters: Queries<Fighter, InsertFighter, ToWhere<Fighter & ComputedFighter>, ComputedFighter, number, TypedDb> & FighterQueries;
   otherNames: Queries<OtherName, InsertOtherName, ToWhere<OtherName & unknown>, unknown, number, TypedDb>;
   fighterCoaches: Queries<FighterCoach, InsertFighterCoach, ToWhere<FighterCoach & unknown>, unknown, number, TypedDb>;
   rankings: Queries<Ranking, InsertRanking, ToWhere<Ranking & unknown>, unknown, number, TypedDb>;
