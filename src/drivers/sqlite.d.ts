@@ -979,6 +979,7 @@ export interface InsertFighter {
 
 export interface ComputedFighter {
   displayName?: string;
+  instagram?: string;
 }
 
 export interface FighterByHeight {
