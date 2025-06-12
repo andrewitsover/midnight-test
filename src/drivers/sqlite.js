@@ -43,7 +43,8 @@ const makeContext = async () => {
     views: path('views'),
     types: path('drivers/sqlite.d.ts'),
     json: path('drivers/types.json'),
-    migrations: path('migrations')
+    migrations: path('migrations'),
+    computed: path('drivers/computed.json')
   }
   const database = new SQLiteDatabase({
     db: path('../databases/test.db'),

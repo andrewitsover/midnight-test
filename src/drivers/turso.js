@@ -14,7 +14,8 @@ const makeContext = async () => {
     types: path('drivers/turso.d.ts'),
     json: path('drivers/types.json'),
     migrations: path('migrations'),
-    files: path('drivers/files.js')
+    files: path('drivers/files.js'),
+    computed: path('drivers/computed.json')
   };
   await makeFiles(paths);
   const client = createClient({
