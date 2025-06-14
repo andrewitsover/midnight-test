@@ -26,6 +26,10 @@ const makeContext = async () => {
     files
   });
   const db = database.getClient();
+  db.fighters.compute({
+    displayName: (c, f) => f.concat(c.name, ' (', c.nickname, ')'),
+    instagram: c => c.social.instagram
+  });
   return {
     db,
     database,

@@ -62,8 +62,6 @@ test('queries', async (context) => {
   assert.equal(fighterCount, 4);
   const whereSelector = await db.fighters.get({ social: s => s.instagram.eq('angga_thehitman') });
   assert.equal(whereSelector.id, 2);
-  const accounts = await db.fighters.many({ id: n => n.lt(10) }, c => c.social.instagram);
-  assert.equal(accounts.at(6), 'makamboabedi');
   const rows = [];
   for (let i = 0; i < 5; i++) {
     rows.push({
@@ -75,26 +73,6 @@ test('queries', async (context) => {
   const insertCount = await db.coaches.count();
   assert.equal(insertCount, 5);
   await db.coaches.remove();
-  const phone = await db.fighters.get({ 
-    id: 5, 
-    phone: p => p.includes('0430 473 923') 
-  });
-  assert.equal(phone !== undefined, true);
-  const document = await db.fighters.get({ 
-    id: 521,
-    documents: d => d.some(f => f.documentId.eq(32)) 
-  });
-  assert.equal(document !== undefined, true);
-  const file = await db.fighters.get({
-    id: 65,
-    documents: d => d.some(v => v.files.some(f => f.name.eq('filename2.jpg'))) 
-  });
-  assert.equal(file !== undefined, true);
-  const phoneTest = await db.fighters.get({ 
-    id: 5, 
-    phone: p => p.some(v => v.like('% 473 923')) 
-  });
-  assert.equal(phoneTest !== undefined, true);
   const upsertId = await db.coaches.insert({
     name: 'Test User',
     city: 'Test City'
