@@ -11,6 +11,7 @@ export interface SQLiteConfig extends DatabaseConfig {
   sql: string | URL;
   tables: string | URL;
   views: string | URL;
+  computed: string | URL;
   extensions?: string | URL | Array<string | URL>;
   adaptor: any;
 }
@@ -42,6 +43,7 @@ export interface Paths {
   migrations: string;
   wrangler?: string;
   files?: string;
+  computed: string;
 }
 
 export class Database {
@@ -79,8 +81,8 @@ export class D1Database extends Database {
 
 type ExtractKeys<U> = U extends Record<string, any> ? keyof U : keyof {};
 
-export interface Keywords<T> {
-  orderBy?: T;
+export interface Keywords<T, K> {
+  orderBy?: K | ((method: ComputeMethods, column: T) => void);
   desc?: boolean;
   limit?: number;
   offset?: number;
@@ -165,7 +167,7 @@ export interface GroupQueryObjectAliasDebug<T, W, K, U, A> extends GroupQueryObj
   debug: true;
 }
 
-export interface ComplexQueryInclude<W, T, U extends ObjectFunction, C> extends Keywords<Array<keyof (T & C)> | keyof (T & C)> {
+export interface ComplexQueryInclude<W, T, U extends ObjectFunction, C> extends Keywords<T & C, Array<keyof (T & C)> | keyof (T & C)> {
   where?: W;
   select?: undefined;
   include?: U;
@@ -211,7 +213,7 @@ export interface ComplexQueryIncludeDebug<W, T, U extends ObjectFunction, C> ext
   debug: true;
 }
 
-export interface ComplexQueryObjectInclude<W, K, T, U extends ObjectFunction, C> extends Keywords<keyof (T & C) | Array<keyof (T & C)>> {
+export interface ComplexQueryObjectInclude<W, K, T, U extends ObjectFunction, C> extends Keywords<T & C, keyof (T & C) | Array<keyof (T & C)>> {
   where?: W;
   select: (keyof (T & C))[] | K[];
   include?: U;
@@ -257,7 +259,7 @@ export interface ComplexQueryObjectIncludeDebug<W, K, T, U extends ObjectFunctio
   debug: true;
 }
 
-export interface ComplexQueryObjectIncludeOmit<W, K, T, U extends ObjectFunction, C> extends Keywords<keyof (T & C) | Array<keyof (T & C)>> {
+export interface ComplexQueryObjectIncludeOmit<W, K, T, U extends ObjectFunction, C> extends Keywords<T & C, keyof (T & C) | Array<keyof (T & C)>> {
   where?: W;
   select?: undefined;
   omit: (keyof T)[] | K[] | K;
@@ -304,7 +306,7 @@ export interface ComplexQueryObjectIncludeOmitDebug<W, K, T, U extends ObjectFun
   debug: true;
 }
 
-export interface ComplexQueryValue<W, K, T, C> extends Keywords<Array<keyof (T & C)> | keyof (T & C)> {
+export interface ComplexQueryValue<W, K, T, C> extends Keywords<T & C, Array<keyof (T & C)> | keyof (T & C)> {
   where?: W;
   select: K;
   omit?: undefined;
@@ -558,20 +560,20 @@ export interface Queries<T, I, W, C, R, Y> {
   many(params?: W): Promise<Array<T>>;
   many<K extends keyof (T & C)>(params: W | null, columns: (keyof (T & C))[] | K[]): Promise<Array<Pick<(T & C), K>>>;
   many<K extends keyof (T & C)>(params: W | null, column: K): Promise<Array<(T & C)[K]>>;
+  query<K extends keyof (T & C)>(query: ComplexQueryValue<W, K, T, C>): Promise<Array<(T & C)[K]>>;
+  query<K extends keyof (T & C)>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<Array<(T & C)[K]>>>;
   query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectInclude<W, K, T, U, C>): Promise<Array<MergeIncludes<Pick<(T & C), K>, U>>>;
-  query<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeDebug<W, K, T, U, C>): Promise<DebugResult<Array<MergeIncludes<Pick<(T & C), K>, U>>>>;
-  query<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmit<W, K, T, U, C>): Promise<Array<MergeIncludes<Omit<T, K>, U>>>;
-  query<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmitDebug<W, K, T, U, C>): Promise<DebugResult<Array<MergeIncludes<Omit<T, K>, U>>>>;
-  query<K extends keyof T>(query: ComplexQueryValue<W, K, T, C>): Promise<Array<(T & C)[K]>>;
-  query<K extends keyof T>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<Array<(T & C)[K]>>>;
+  query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeDebug<W, K, T, U, C>): Promise<DebugResult<Array<MergeIncludes<Pick<(T & C), K>, U>>>>;
+  query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmit<W, K, T, U, C>): Promise<Array<MergeIncludes<Omit<T, K>, U>>>;
+  query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmitDebug<W, K, T, U, C>): Promise<DebugResult<Array<MergeIncludes<Omit<T, K>, U>>>>;
   query<U extends Includes<Y, T>>(query: ComplexQueryInclude<W, T, U, C>): Promise<Array<MergeIncludes<T, U>>>;
   query<U extends Includes<Y, T>>(query: ComplexQueryIncludeDebug<W, T, U, C>): Promise<DebugResult<Array<MergeIncludes<T, U>>>>;
-  first<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectInclude<W, K, T, U, C>): Promise<MergeIncludes<Pick<(T & C), K>, U> | undefined>;
-  first<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeDebug<W, K, T, U, C>): Promise<DebugResult<MergeIncludes<Pick<(T & C), K>, U> | undefined>>;
-  first<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmit<W, K, T, U, C>): Promise<MergeIncludes<Omit<T, K>, U> | undefined>;
-  first<K extends keyof T, U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmitDebug<W, K, T, U, C>): Promise<DebugResult<MergeIncludes<Omit<T, K>, U> | undefined>>;
-  first<K extends keyof T>(query: ComplexQueryValue<W, K, T, C>): Promise<(T & C)[K] | undefined>;
-  first<K extends keyof T>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<(T & C)[K] | undefined>>;
+  first<K extends keyof (T & C)>(query: ComplexQueryValue<W, K, T, C>): Promise<(T & C)[K] | undefined>;
+  first<K extends keyof (T & C)>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<(T & C)[K] | undefined>>;
+  first<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectInclude<W, K, T, U, C>): Promise<MergeIncludes<Pick<(T & C), K>, U> | undefined>;
+  first<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeDebug<W, K, T, U, C>): Promise<DebugResult<MergeIncludes<Pick<(T & C), K>, U> | undefined>>;
+  first<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmit<W, K, T, U, C>): Promise<MergeIncludes<Omit<T, K>, U> | undefined>;
+  first<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmitDebug<W, K, T, U, C>): Promise<DebugResult<MergeIncludes<Omit<T, K>, U> | undefined>>;
   first<U extends Includes<Y, T>>(query: ComplexQueryInclude<W, T, U, C>): Promise<MergeIncludes<(T & C), U> | undefined>;
   first<U extends Includes<Y, T>>(query: ComplexQueryIncludeDebug<W, T, U, C>): Promise<DebugResult<MergeIncludes<(T & C), U> | undefined>>;
   count<K extends keyof (T & C)>(query?: AggregateQuery<W, K>): Promise<number>;
@@ -590,13 +592,6 @@ export interface Queries<T, I, W, C, R, Y> {
   remove(params?: W): Promise<number>;
 }
 
-interface Range<T> {
-	gt?: T;
-	gte?: T;
-	lt?: T;
-	lte?: T;
-}
-
 type CompareMethods<T> = {
   not: (value: T) => void;
 	gt: (value: T) => void;
@@ -605,7 +600,6 @@ type CompareMethods<T> = {
 	like: (pattern: string) => void;
 	match: (pattern: string) => void;
 	glob: (pattern: string) => void;
-	range: (limits: Range<T>) => void;
 	eq: (value: T) => void;
 }
 
@@ -978,8 +972,8 @@ export interface InsertFighter {
 }
 
 export interface ComputedFighter {
-  displayName?: string;
-  instagram?: string;
+  displayName: string;
+  instagram: string;
 }
 
 export interface FighterByHeight {

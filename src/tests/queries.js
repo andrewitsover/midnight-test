@@ -55,12 +55,15 @@ test('queries', async (context) => {
   assert.equal(count, 2);
   await db.coaches.remove();
   const fighterCount = await db.fighters.count({
-    where: { 
-      id: n => n.range({ gt: 10, lt: 15 }) 
+    where: {
+      and: [
+        { id: c => c.gt(10) },
+        { id: c => c.lt(15) }
+      ]
     }
   });
   assert.equal(fighterCount, 4);
-  const whereSelector = await db.fighters.get({ social: s => s.instagram.eq('angga_thehitman') });
+  const whereSelector = await db.fighters.get({ social: c => c.instagram.eq('angga_thehitman') });
   assert.equal(whereSelector.id, 2);
   const rows = [];
   for (let i = 0; i < 5; i++) {
@@ -99,7 +102,10 @@ test('queries', async (context) => {
   assert.equal(first.id, 3);
   const locations = await db.locations.query({
     where: {
-      id: n => n.range({ gt: 109, lt: 120 })
+      and: [
+        { id: c => c.gt(109) },
+        { id: c => c.lt(120) }
+      ]
     },
     include: {
       events: (t, c) => t.events.query({
@@ -159,7 +165,10 @@ test('queries', async (context) => {
   const latest = await db.locations.query({
     select: ['id', 'name'],
     where: {
-      id: n => n.range({ gt: 109, lt: 120 })
+      and: [
+        { id: c => c.gt(109) },
+        { id: c => c.lt(120) }
+      ]
     },
     include: {
       latest: (t, c) => t.events.first({
@@ -290,7 +299,6 @@ test('queries', async (context) => {
     limit: 3
   });
   assert.equal(fighters.at(2).fights.length, 18);
-  const fighter = await db.fighters.get(null, 'displayName');
 });
 
 cleanUp('queries', async (context) => {
