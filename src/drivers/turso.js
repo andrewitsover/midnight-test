@@ -1,29 +1,21 @@
 import { TursoDatabase } from 'flyweightjs';
 import { createClient } from '@libsql/client';
-import files from './files.js';
 import { join } from 'path';
-import { makeFiles } from 'flyweight-client';
+import getPaths from './paths.js';
+import adaptor from './adaptor.js';
 
 const path = (subPath) => join(import.meta.dirname, `../${subPath}`);
 
+const paths = getPaths('drivers/turso.d.ts');
+
 const makeContext = async () => {
-  const paths = {
-    sql: path('sql'),
-    tables: path('sql/tables.sql'),
-    views: path('views'),
-    types: path('drivers/turso.d.ts'),
-    json: path('drivers/types.json'),
-    migrations: path('migrations'),
-    files: path('drivers/files.js'),
-    computed: path('drivers/computed.json')
-  };
-  await makeFiles(paths);
   const client = createClient({
     url: `file:${path('../databases/test.db')}`
   });
   const database = new TursoDatabase({
     db: client,
-    files
+    adaptor,
+    paths
   });
   const db = database.getClient();
   db.fighters.compute({

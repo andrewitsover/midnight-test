@@ -1,55 +1,22 @@
 import { SQLiteDatabase } from 'flyweightjs';
 import { join } from 'path';
 import sqlite3 from 'better-sqlite3';
-import { readFile, writeFile, readdir } from 'fs/promises';
-
-const readSql = async (path) => {
-  let sql = '';
-  if (path.endsWith('.sql')) {
-    sql = await readFile(path, 'utf8');
-  }
-  else {
-    const names = await readdir(path);
-    for (const name of names) {
-      if (name.endsWith('.sql')) {
-        let text = await readFile(join(path, name), 'utf8');
-        text = text.trim();
-        if (!text.endsWith(';')) {
-          text += ';';
-        }
-        text += '\n\n';
-        sql += text;
-      }
-    }
-  }
-  return sql.trim() + '\n';
-}
-
-const adaptor = {
-  sqlite3,
-  readFile,
-  writeFile,
-  readdir,
-  join,
-  readSql
-};
+import getPaths from './paths.js';
+import fileSystem from './adaptor.js';
 
 const path = (subPath) => join(import.meta.dirname, `../${subPath}`);
 
+const adaptor = { sqlite3, ...fileSystem };
+const common = getPaths('drivers/sqlite.d.ts');
+const paths = {
+  ...common,
+  db: path('../databases/test.db')
+};
+
 const makeContext = async () => {
-  const paths = {
-    sql: path('sql'),
-    tables: path('sql/tables.sql'),
-    views: path('views'),
-    types: path('drivers/sqlite.d.ts'),
-    json: path('drivers/types.json'),
-    migrations: path('migrations'),
-    computed: path('drivers/computed.json')
-  }
   const database = new SQLiteDatabase({
-    db: path('../databases/test.db'),
     adaptor,
-    ...paths
+    paths
   });
   const db = database.getClient();
   db.fighters.compute({
