@@ -29,4 +29,9 @@ test('computed', async (context) => {
     limit: 5
   });
   assert.equal(subMethod.at(0).id, 547);
+  const heights = await db.fighters.query({
+    select: ['id', 'heightCm', 'heightInches'],
+    limit: 5
+  });
+  assert.equal(heights.at(0).heightInches, 67);
 });

@@ -20,7 +20,8 @@ const makeContext = async () => {
   const db = database.getClient();
   db.fighters.compute({
     displayName: (c, f) => f.concat(c.name, ' (', c.nickname, ')'),
-    instagram: c => c.social.instagram
+    instagram: c => c.social.instagram,
+    heightInches: (c, f) => f.round(f.divide(c.heightCm, 2.54))
   });
   return {
     db,

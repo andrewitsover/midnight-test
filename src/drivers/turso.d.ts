@@ -511,6 +511,10 @@ interface ComputeMethods {
   trunc: (value: number) => void;
   json: (text: string | Buffer) => void;
   jsonExtract: (json: string | Buffer, path: string) => void;
+  plus: (...args: number[]) => void;
+  minus: (...args: number[]) => void;
+  divide: (...args: number[]) => void;
+  multiply: (...args: number[]) => void;
 }
 
 interface Compute<T> {
@@ -935,6 +939,7 @@ export interface InsertFighter {
 export interface ComputedFighter {
   displayName: string;
   instagram: string | null;
+  heightInches: number | null;
 }
 
 export interface FighterByHeight {
