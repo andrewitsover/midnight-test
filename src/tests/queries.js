@@ -299,6 +299,21 @@ test('queries', async (context) => {
     limit: 3
   });
   assert.equal(fighters.at(2).fights.length, 18);
+  const coachId = await db.coaches.insert({
+    name: 'Test',
+    city: 'Brisbane'
+  });
+  await db.coaches.update({
+    set: {
+      city: (c, f) => f.concat(c.city, ', Australia')
+    },
+    where: {
+      id: coachId
+    }
+  });
+  const coach = await db.coaches.get({ id: coachId });
+  assert.equal(coach.city, 'Brisbane, Australia');
+  await db.coaches.remove();
 });
 
 cleanUp('queries', async (context) => {
