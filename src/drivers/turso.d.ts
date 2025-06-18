@@ -110,7 +110,7 @@ interface VirtualKeywords<T> {
   offset?: number;
 }
 
-interface Highlight<T> extends VirtualKeywords<T> {
+interface Highlighter<T> extends VirtualKeywords<T> {
   highlight: { column: keyof T, tags: [string, string] };
 }
 
@@ -118,7 +118,7 @@ interface Snippet<T> extends VirtualKeywords<T> {
   snippet: { column: keyof T, tags: [string, string], trailing: string, tokens: number };
 }
 
-interface HighlightQuery<W, T> extends Highlight<T> {
+interface HighlightQuery<W, T> extends Highlighter<T> {
   where?: W;
 }
 
