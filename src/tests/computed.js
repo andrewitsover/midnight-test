@@ -20,8 +20,13 @@ test('computed', async (context) => {
         { instagram: c => c.not(null) }
       ]
     },
-    orderBy: (f, c) => f.lower(c.instagram)
+    orderBy: (c, f) => f.lower(c.instagram)
   });
   assert.equal(orderBy.at(2), 'aoriqileng');
   assert.equal(orderBy.at(-3), 'SertanejoUFC');
+  const subMethod = await db.events.query({
+    orderBy: (c, f) => f.lower(f.substring(c.name, 7, 2)),
+    limit: 5
+  });
+  assert.equal(subMethod.at(0).id, 547);
 });

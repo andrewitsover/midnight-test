@@ -71,7 +71,7 @@ export class TursoDatabase extends Database {
 type ExtractKeys<U> = U extends Record<string, any> ? keyof U : keyof {};
 
 interface Keywords<T, K> {
-  orderBy?: K | ((method: ComputeMethods, column: T) => void);
+  orderBy?: K | ((column: T, method: ComputeMethods) => void);
   desc?: boolean;
   limit?: number;
   offset?: number;
