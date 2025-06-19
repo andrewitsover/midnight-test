@@ -9,10 +9,10 @@ test('groupBy', async (context) => {
       column: {
         height: 'heightCm'
       },
-      limit: 3,
       where: {
         avg: a => a.gt(170)
-      }
+      },
+      limit: 3
     });
   assert.equal(towns.at(1).height, 173);
   const events = await db.events
