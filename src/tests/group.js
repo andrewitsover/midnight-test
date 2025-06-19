@@ -6,9 +6,10 @@ test('groupBy', async (context) => {
   const towns = await db.fighters
     .groupBy('hometown')
     .avg({
-      column: 'heightCm',
+      column: {
+        height: 'heightCm'
+      },
       limit: 3,
-      alias: 'height',
       where: {
         avg: a => a.gt(170)
       }
@@ -17,6 +18,9 @@ test('groupBy', async (context) => {
   const events = await db.events
     .groupBy('locationId')
     .count({
+      column: {
+        count: true
+      },
       include: {
         location: (t, c) => t.locations.get({ id: c.locationId })
       },
@@ -30,6 +34,9 @@ test('groupBy', async (context) => {
       events: (t, c) => t.events
         .groupBy('locationId')
         .count({
+          column: {
+            count: true
+          },
           where: {
             locationId: c.id
           }
@@ -49,7 +56,9 @@ test('groupBy', async (context) => {
       methods: (t, c) => t.fights
         .groupBy(['cardId', 'methodId'])
         .max({
-          column: 'id',
+          column: {
+            max: 'id'
+          },
           where: {
             cardId: c.id
           },
@@ -63,7 +72,9 @@ test('groupBy', async (context) => {
   const groupArray = await db.events
     .groupBy('locationId')
     .array({
-      alias: 'events',
+      select: {
+        events: true
+      },
       limit: 3
     });
   const group = groupArray.at(1);
@@ -71,8 +82,9 @@ test('groupBy', async (context) => {
   const groupValues = await db.events
     .groupBy('locationId')
     .array({
-      select: 'startTime',
-      alias: 'startTimes',
+      select: {
+        startTimes: 'startTime'
+      },
       limit: 3
     });
   const startTimes = groupValues.at(1).startTimes;
