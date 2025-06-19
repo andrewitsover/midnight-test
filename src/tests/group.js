@@ -10,7 +10,7 @@ test('groupBy', async (context) => {
         height: 'heightCm'
       },
       where: {
-        avg: a => a.gt(170)
+        avg: c => c.gt(170)
       },
       limit: 3
     });
