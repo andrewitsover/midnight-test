@@ -24,6 +24,31 @@ const makeContext = async () => {
     instagram: c => c.social.instagram,
     heightInches: (c, f) => f.round(f.divide(c.heightCm, 2.54))
   });
+  await db.view(tables => {
+    const {
+      fighters: f,
+      weightClasses: w,
+      fighterCoaches: fc,
+      coaches: c
+    } = tables;
+
+    const select = {
+      ...f,
+      weightClass: w.name,
+      coach: c.name
+    };
+    
+    const join = [
+      [f.weightClassId, w.id],
+      [f.id, fc.figherId],
+      [c.id, fc.coachId]
+    ];
+    return {
+      select,
+      join,
+      as: 'detailedFighters'
+    }
+  });
   return {
     db,
     database,

@@ -520,6 +520,25 @@ interface Compute<T> {
   [key: string]: (column: T, method: ComputeMethods) => void;
 }
 
+interface Tables {
+  weightClasses: WeightClass;
+  locations: Location;
+  events: Event;
+  cards: Card;
+  coaches: Coach;
+  fighters: Fighter;
+  otherNames: OtherName;
+  fighterCoaches: FighterCoach;
+  rankings: Ranking;
+  methods: Method;
+  fights: Fight;
+  cancelledFights: CancelledFight;
+  titleRemovals: TitleRemoval;
+  fighterProfiles: FighterProfile;
+  opponents: Opponent;
+  detailedFighters: DetailedFighter;
+}
+
 interface VirtualQueries<T, W> {
   [key: string]: any;
   get(params?: W | null): Promise<T | undefined>;
@@ -581,6 +600,7 @@ interface Queries<T, I, W, C, R, Y> {
   exists(params: W | null): Promise<boolean>;
   groupBy<K extends keyof (T & C)>(columns: K | Array<K>): AggregateMethods<T, W, C, K, Y>;
   compute(properties: Compute<T>): void;
+  view(expression: (tables: Tables) => any): Promise<void>;
   remove(params?: W): Promise<number>;
 }
 
@@ -663,21 +683,21 @@ type ToWhere<T> = {
 };
 
 
-export interface WeightClass {
+interface WeightClass {
   id: number;
   name: string;
   weightLbs: number;
   gender: string;
 }
 
-export interface InsertWeightClass {
+interface InsertWeightClass {
   id?: number;
   name: string;
   weightLbs: number;
   gender: string;
 }
 
-export interface Location {
+interface Location {
   id: number;
   name: string;
   address: string;
@@ -685,7 +705,7 @@ export interface Location {
   long: number;
 }
 
-export interface InsertLocation {
+interface InsertLocation {
   id?: number;
   name: string;
   address: string;
@@ -693,7 +713,7 @@ export interface InsertLocation {
   long: number;
 }
 
-export interface LocationById {
+interface LocationById {
   id: number;
   name: string;
   address: string;
@@ -701,18 +721,18 @@ export interface LocationById {
   long: number;
 }
 
-export interface LocationByMethod {
+interface LocationByMethod {
   id: number;
   name: string;
   count: number;
 }
 
-export interface LocationDetailedEvents {
+interface LocationDetailedEvents {
   name: string;
   events: Array<{ id: number, name: string }>;
 }
 
-export interface LocationDistanceFrom {
+interface LocationDistanceFrom {
   id: number;
   name: string;
   address: string;
@@ -721,31 +741,31 @@ export interface LocationDistanceFrom {
   distanceKm: number | null;
 }
 
-export interface LocationEvents {
+interface LocationEvents {
   name: string;
   events: Array<string>;
 }
 
-export interface LocationWinners {
+interface LocationWinners {
   location: string;
   fighter: string;
   wins: number;
 }
 
-export interface LocationByIdParams {
+interface LocationByIdParams {
   id: any;
 }
 
-export interface LocationByMethodParams {
+interface LocationByMethodParams {
   id: any;
 }
 
-export interface LocationDistanceFromParams {
+interface LocationDistanceFromParams {
   lat: any;
   long: any;
 }
 
-export interface LocationQueries {
+interface LocationQueries {
   byId<U extends Includes<TypedDb, LocationById>>(query: ComplexSqlQueryIncludeParams<LocationByIdParams, ToWhere<LocationById>, LocationById, U>): Promise<Array<MergeIncludes<LocationById, U>>>;
   byId<K extends keyof LocationById, U extends Includes<TypedDb, LocationById>>(query: ComplexSqlQueryObjectIncludeParams<LocationByIdParams, ToWhere<LocationById>, K, LocationById, U>): Promise<Array<MergeIncludes<Pick<LocationById, K>, U>>>;
   byId<K extends keyof LocationById, U extends Includes<TypedDb, LocationById>>(query: ComplexSqlQueryObjectIncludeOmitParams<LocationByIdParams, ToWhere<LocationById>, K, LocationById, U>): Promise<Array<MergeIncludes<Omit<LocationById, K>, U>>>;
@@ -772,21 +792,21 @@ export interface LocationQueries {
   winners<K extends keyof LocationWinners>(query: ComplexSqlQueryValue<ToWhere<LocationWinners>, K, LocationWinners>): Promise<Array<LocationWinners[K]>>;
 }
 
-export interface Event {
+interface Event {
   id: number;
   name: string;
   startTime: Date;
   locationId: number | null;
 }
 
-export interface InsertEvent {
+interface InsertEvent {
   id?: number;
   name: string;
   startTime: Date;
   locationId?: number;
 }
 
-export interface EventAwayFrom {
+interface EventAwayFrom {
   id: number;
   name: string;
   startTime: Date;
@@ -794,36 +814,36 @@ export interface EventAwayFrom {
   diff: string | null;
 }
 
-export interface EventFrom {
+interface EventFrom {
   test: number | null;
 }
 
-export interface EventLag {
+interface EventLag {
   test1: number | null;
   test2: number | null;
   test3: number | null;
 }
 
-export interface EventOperator {
+interface EventOperator {
   result: number;
 }
 
-export interface EventSpaces {
+interface EventSpaces {
   id: number;
   name: string;
   test: Array<{ id: number, name: string }>;
 }
 
-export interface EventTest {
+interface EventTest {
   id: number;
   nest: { name: string, startTime: Date };
 }
 
-export interface EventAwayFromParams {
+interface EventAwayFromParams {
   date: any;
 }
 
-export interface EventQueries {
+interface EventQueries {
   awayFrom<U extends Includes<TypedDb, EventAwayFrom>>(query: ComplexSqlQueryIncludeParams<EventAwayFromParams, ToWhere<EventAwayFrom>, EventAwayFrom, U>): Promise<Array<MergeIncludes<EventAwayFrom, U>>>;
   awayFrom<K extends keyof EventAwayFrom, U extends Includes<TypedDb, EventAwayFrom>>(query: ComplexSqlQueryObjectIncludeParams<EventAwayFromParams, ToWhere<EventAwayFrom>, K, EventAwayFrom, U>): Promise<Array<MergeIncludes<Pick<EventAwayFrom, K>, U>>>;
   awayFrom<K extends keyof EventAwayFrom, U extends Includes<TypedDb, EventAwayFrom>>(query: ComplexSqlQueryObjectIncludeOmitParams<EventAwayFromParams, ToWhere<EventAwayFrom>, K, EventAwayFrom, U>): Promise<Array<MergeIncludes<Omit<EventAwayFrom, K>, U>>>;
@@ -850,7 +870,7 @@ export interface EventQueries {
   test<K extends keyof EventTest>(query: ComplexSqlQueryValue<ToWhere<EventTest>, K, EventTest>): Promise<Array<EventTest[K]>>;
 }
 
-export interface Card {
+interface Card {
   id: number;
   eventId: number;
   cardName: string;
@@ -858,7 +878,7 @@ export interface Card {
   startTime: Date | null;
 }
 
-export interface InsertCard {
+interface InsertCard {
   id?: number;
   eventId: number;
   cardName: string;
@@ -866,32 +886,32 @@ export interface InsertCard {
   startTime?: Date;
 }
 
-export interface Coach {
+interface Coach {
   id: number;
   name: string;
   city: string;
   profile: [] | null;
 }
 
-export interface InsertCoach {
+interface InsertCoach {
   id?: number;
   name: string;
   city: string;
   profile?: Json;
 }
 
-export interface CoachFrom {
+interface CoachFrom {
   id: number;
 }
 
-export interface CoachQueries {
+interface CoachQueries {
   from<U extends Includes<TypedDb, CoachFrom>>(query: ComplexSqlQueryInclude<ToWhere<CoachFrom>, CoachFrom, U>): Promise<Array<MergeIncludes<CoachFrom, U>>>;
   from<K extends keyof CoachFrom, U extends Includes<TypedDb, CoachFrom>>(query: ComplexSqlQueryObjectInclude<ToWhere<CoachFrom>, K, CoachFrom, U>): Promise<Array<MergeIncludes<Pick<CoachFrom, K>, U>>>;
   from<K extends keyof CoachFrom, U extends Includes<TypedDb, CoachFrom>>(query: ComplexSqlQueryObjectIncludeOmit<ToWhere<CoachFrom>, K, CoachFrom, U>): Promise<Array<MergeIncludes<Omit<CoachFrom, K>, U>>>;
   from<K extends keyof CoachFrom>(query: ComplexSqlQueryValue<ToWhere<CoachFrom>, K, CoachFrom>): Promise<Array<CoachFrom[K]>>;
 }
 
-export interface Fighter {
+interface Fighter {
   id: number;
   name: string;
   nickname: string | null;
@@ -921,7 +941,7 @@ interface File {
   tags: string[]
 }
 
-export interface InsertFighter {
+interface InsertFighter {
   id?: number;
   name: string;
   nickname?: string;
@@ -935,19 +955,19 @@ export interface InsertFighter {
   documents?: Json;
 }
 
-export interface ComputedFighter {
+interface ComputedFighter {
   displayName: string;
   instagram: string | null;
   heightInches: number | null;
 }
 
-export interface FighterByHeight {
+interface FighterByHeight {
   name: string;
   heightCm: number | null;
   heightRank: number;
 }
 
-export interface FighterCommon {
+interface FighterCommon {
   red: { id: number, name: string };
   blue: { id: number, name: string };
   winnerId: number | null;
@@ -956,85 +976,85 @@ export interface FighterCommon {
   event: { id: number, name: string, date: Date };
 }
 
-export interface FighterExtract {
+interface FighterExtract {
   instagram: number | string | Buffer | null;
 }
 
-export interface FighterFilter {
+interface FighterFilter {
   name: string;
   reaches: string | null;
 }
 
-export interface FighterInstagram {
+interface FighterInstagram {
   instagram: number | string | Buffer;
 }
 
-export interface FighterLastFights {
+interface FighterLastFights {
   name: string;
   dates: Array<Date>;
 }
 
-export interface FighterLeft {
+interface FighterLeft {
   id: number;
   winnerId: number | null;
   winnerName: string | null;
 }
 
-export interface FighterMethods {
+interface FighterMethods {
   method: string;
   count: number;
 }
 
-export interface FighterOpponents {
+interface FighterOpponents {
   opponentId: number;
   name: string;
 }
 
-export interface FighterOtherNames {
+interface FighterOtherNames {
   name: string;
   otherNames: Array<string>;
 }
 
-export interface FighterRight {
+interface FighterRight {
   id: number;
   winnerId: number;
   winnerName: string;
 }
 
-export interface FighterWeightClasses {
+interface FighterWeightClasses {
   name: string;
   weightClasses: Array<{ id: number, name: string, test: boolean, nest: { id: number, age: boolean } }>;
 }
 
-export interface FighterWithReach {
+interface FighterWithReach {
   name: string;
   heightCm: number | null;
   reachCm: number | null;
   reaches: Array<number>;
 }
 
-export interface FighterCommonParams {
+interface FighterCommonParams {
   fighter1: any;
   fighter2: any;
 }
 
-export interface FighterExtractParams {
+interface FighterExtractParams {
   path: any;
 }
 
-export interface FighterLastFightsParams {
+interface FighterLastFightsParams {
   id: any;
 }
 
-export interface FighterMethodsParams {
+interface FighterMethodsParams {
   id: any;
 }
 
-export interface FighterWeightClassesParams {
+interface FighterWeightClassesParams {
   fighterId: any;
 }
 
-export interface FighterQueries {
+interface FighterQueries {
   byHeight<U extends Includes<TypedDb, FighterByHeight>>(query: ComplexSqlQueryInclude<ToWhere<FighterByHeight>, FighterByHeight, U>): Promise<Array<MergeIncludes<FighterByHeight, U>>>;
   byHeight<K extends keyof FighterByHeight, U extends Includes<TypedDb, FighterByHeight>>(query: ComplexSqlQueryObjectInclude<ToWhere<FighterByHeight>, K, FighterByHeight, U>): Promise<Array<MergeIncludes<Pick<FighterByHeight, K>, U>>>;
   byHeight<K extends keyof FighterByHeight, U extends Includes<TypedDb, FighterByHeight>>(query: ComplexSqlQueryObjectIncludeOmit<ToWhere<FighterByHeight>, K, FighterByHeight, U>): Promise<Array<MergeIncludes<Omit<FighterByHeight, K>, U>>>;
@@ -1089,19 +1109,19 @@ export interface FighterQueries {
   withReach<K extends keyof FighterWithReach>(query: ComplexSqlQueryValue<ToWhere<FighterWithReach>, K, FighterWithReach>): Promise<Array<FighterWithReach[K]>>;
 }
 
-export interface OtherName {
+interface OtherName {
   id: number;
   fighterId: number;
   name: string;
 }
 
-export interface InsertOtherName {
+interface InsertOtherName {
   id?: number;
   fighterId: number;
   name: string;
 }
 
-export interface FighterCoach {
+interface FighterCoach {
   id: number;
   coachId: number;
   fighterId: number;
@@ -1109,7 +1129,7 @@ export interface FighterCoach {
   endDate: string | null;
 }
 
-export interface InsertFighterCoach {
+interface InsertFighterCoach {
   id?: number;
   coachId: number;
   fighterId: number;
@@ -1117,7 +1137,7 @@ export interface InsertFighterCoach {
   endDate?: string;
 }
 
-export interface Ranking {
+interface Ranking {
   id: number;
   fighterId: number;
   weightClassId: number;
@@ -1125,7 +1145,7 @@ export interface Ranking {
   isInterim: boolean;
 }
 
-export interface InsertRanking {
+interface InsertRanking {
   id?: number;
   fighterId: number;
   weightClassId: number;
@@ -1133,39 +1153,39 @@ export interface InsertRanking {
   isInterim: boolean;
 }
 
-export interface Method {
+interface Method {
   id: number;
   name: string;
   abbreviation: string;
 }
 
-export interface InsertMethod {
+interface InsertMethod {
   id?: number;
   name: string;
   abbreviation: string;
 }
 
-export interface MethodByFighter {
+interface MethodByFighter {
   method: string;
   count: number;
 }
 
-export interface MethodCoach {
+interface MethodCoach {
   fit: number | string | Buffer;
   test: Json;
   tests: Json;
   profile: Json;
 }
 
-export interface MethodTopSubmission {
+interface MethodTopSubmission {
   methodDescription: string | null;
 }
 
-export interface MethodByFighterParams {
+interface MethodByFighterParams {
   fighterId: any;
 }
 
-export interface MethodQueries {
+interface MethodQueries {
   byFighter<U extends Includes<TypedDb, MethodByFighter>>(query: ComplexSqlQueryIncludeParams<MethodByFighterParams, ToWhere<MethodByFighter>, MethodByFighter, U>): Promise<Array<MergeIncludes<MethodByFighter, U>>>;
   byFighter<K extends keyof MethodByFighter, U extends Includes<TypedDb, MethodByFighter>>(query: ComplexSqlQueryObjectIncludeParams<MethodByFighterParams, ToWhere<MethodByFighter>, K, MethodByFighter, U>): Promise<Array<MergeIncludes<Pick<MethodByFighter, K>, U>>>;
   byFighter<K extends keyof MethodByFighter, U extends Includes<TypedDb, MethodByFighter>>(query: ComplexSqlQueryObjectIncludeOmitParams<MethodByFighterParams, ToWhere<MethodByFighter>, K, MethodByFighter, U>): Promise<Array<MergeIncludes<Omit<MethodByFighter, K>, U>>>;
@@ -1180,7 +1200,7 @@ export interface MethodQueries {
   topSubmission<K extends keyof MethodTopSubmission>(query: ComplexSqlQueryValue<ToWhere<MethodTopSubmission>, K, MethodTopSubmission>): Promise<Array<MethodTopSubmission[K]>>;
 }
 
-export interface Fight {
+interface Fight {
   id: number;
   cardId: number;
   fightOrder: number;
@@ -1199,7 +1219,7 @@ export interface Fight {
   catchweightLbs: number | null;
 }
 
-export interface InsertFight {
+interface InsertFight {
   id?: number;
   cardId: number;
   fightOrder: number;
@@ -1218,7 +1238,7 @@ export interface InsertFight {
   catchweightLbs?: number;
 }
 
-export interface FightByFighter {
+interface FightByFighter {
   opponent: string;
   win: boolean | null;
   winnerId: number | null;
@@ -1232,18 +1252,18 @@ export interface FightByFighter {
   name: string;
 }
 
-export interface FightByFighterParams {
+interface FightByFighterParams {
   id: any;
 }
 
-export interface FightQueries {
+interface FightQueries {
   byFighter<U extends Includes<TypedDb, FightByFighter>>(query: ComplexSqlQueryIncludeParams<FightByFighterParams, ToWhere<FightByFighter>, FightByFighter, U>): Promise<Array<MergeIncludes<FightByFighter, U>>>;
   byFighter<K extends keyof FightByFighter, U extends Includes<TypedDb, FightByFighter>>(query: ComplexSqlQueryObjectIncludeParams<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter, U>): Promise<Array<MergeIncludes<Pick<FightByFighter, K>, U>>>;
   byFighter<K extends keyof FightByFighter, U extends Includes<TypedDb, FightByFighter>>(query: ComplexSqlQueryObjectIncludeOmitParams<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter, U>): Promise<Array<MergeIncludes<Omit<FightByFighter, K>, U>>>;
   byFighter<K extends keyof FightByFighter>(query: ComplexSqlQueryValueParams<FightByFighterParams, ToWhere<FightByFighter>, K, FightByFighter>): Promise<Array<FightByFighter[K]>>;
 }
 
-export interface CancelledFight {
+interface CancelledFight {
   id: number;
   cardId: number;
   cardOrder: number;
@@ -1253,7 +1273,7 @@ export interface CancelledFight {
   cancellationReason: string | null;
 }
 
-export interface InsertCancelledFight {
+interface InsertCancelledFight {
   id?: number;
   cardId: number;
   cardOrder: number;
@@ -1263,7 +1283,7 @@ export interface InsertCancelledFight {
   cancellationReason?: string;
 }
 
-export interface TitleRemoval {
+interface TitleRemoval {
   id: number;
   fighterId: number;
   weightClassId: number;
@@ -1272,7 +1292,7 @@ export interface TitleRemoval {
   reason: string;
 }
 
-export interface InsertTitleRemoval {
+interface InsertTitleRemoval {
   id?: number;
   fighterId: number;
   weightClassId: number;
@@ -1281,19 +1301,19 @@ export interface InsertTitleRemoval {
   reason: string;
 }
 
-export interface FighterProfile {
+interface FighterProfile {
   rowid: number;
   name: string;
   hometown: string;
 }
 
-export interface InsertFighterProfile {
+interface InsertFighterProfile {
   rowid?: number;
   name: string;
   hometown: string;
 }
 
-export interface Opponent {
+interface Opponent {
   fightId: number;
   startTime: Date;
   fighterId: number;
@@ -1301,12 +1321,20 @@ export interface Opponent {
   methodId: number | null;
 }
 
-export interface InsertOpponent {
-  fightId: number;
-  startTime: Date;
-  fighterId: number;
-  opponentId: number;
-  methodId?: number;
+interface DetailedFighter {
+  id: number | null;
+  name: string;
+  nickname: string | null;
+  born: string | null;
+  heightCm: number | null;
+  reachCm: number | null;
+  hometown: string;
+  social: Json | null;
+  isActive: boolean;
+  phone: Json | null;
+  documents: Json | null;
+  weightClass: string;
+  coach: string;
 }
 
 type Unwrap<T extends any[]> = {
@@ -1330,6 +1358,7 @@ interface TypedDb {
   titleRemovals: Queries<TitleRemoval, InsertTitleRemoval, ToWhere<TitleRemoval & unknown>, unknown, number, TypedDb>;
   fighterProfiles: VirtualQueries<FighterProfile, ToWhere<FighterProfile & unknown>>;
   opponents: Omit<Queries<Opponent, InsertOpponent, ToWhere<Opponent & unknown>, unknown, undefined, TypedDb>, 'remove' | 'insert' | 'insertMany' | 'update' | 'upsert'>;
+  detailedFighters: Omit<Queries<DetailedFighter, InsertDetailedFighter, ToWhere<DetailedFighter & unknown>, unknown, undefined, TypedDb>, 'remove' | 'insert' | 'insertMany' | 'update' | 'upsert'>;
   begin(): Promise<void>;
   commit(): Promise<void>;
   rollback(): Promise<void>;
