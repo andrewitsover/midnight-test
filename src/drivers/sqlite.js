@@ -31,22 +31,20 @@ const makeContext = async () => {
       coaches: c
     } = tables;
 
-    const select = {
-      ...f,
-      coach: c.name
-    };
-    
     const join = [
       [f.id, fc.fighterId],
       [c.id, fc.coachId]
     ];
-    const where = {
-      [f.isActive]: true
-    };
+    
     return {
-      select,
+      select: {
+        ...f,
+        coach: c.name
+      },
       join,
-      where,
+      where: {
+        [f.isActive]: true
+      },
       as: 'detailedFighters'
     }
   });
