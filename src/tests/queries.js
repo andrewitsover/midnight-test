@@ -314,6 +314,8 @@ test('queries', async (context) => {
   const coach = await db.coaches.get({ id: coachId });
   assert.equal(coach.city, 'Brisbane, Australia');
   await db.coaches.remove();
+  const t = await db.detailedFighters.get();
+  console.log(t);
 });
 
 cleanUp('queries', async (context) => {

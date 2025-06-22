@@ -1357,8 +1357,8 @@ interface TypedDb {
   cancelledFights: Queries<CancelledFight, InsertCancelledFight, ToWhere<CancelledFight & unknown>, unknown, number, TypedDb>;
   titleRemovals: Queries<TitleRemoval, InsertTitleRemoval, ToWhere<TitleRemoval & unknown>, unknown, number, TypedDb>;
   fighterProfiles: VirtualQueries<FighterProfile, ToWhere<FighterProfile & unknown>>;
-  opponents: Omit<Queries<Opponent, undefined, ToWhere<Opponent & unknown>, unknown, undefined, TypedDb>, 'remove' | 'insert' | 'insertMany' | 'update' | 'upsert'>;
-  detailedFighters: Omit<Queries<DetailedFighter, undefined, ToWhere<DetailedFighter & unknown>, unknown, undefined, TypedDb>, 'remove' | 'insert' | 'insertMany' | 'update' | 'upsert'>;
+  opponents: Pick<Queries<Opponent, undefined, ToWhere<Opponent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
+  detailedFighters: Pick<Queries<DetailedFighter, undefined, ToWhere<DetailedFighter & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   exec(sql: string): Promise<void>;
   begin(): Promise<void>;
   commit(): Promise<void>;

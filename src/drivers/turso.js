@@ -26,25 +26,26 @@ const makeContext = async () => {
   await db.view(tables => {
     const {
       fighters: f,
-      weightClasses: w,
       fighterCoaches: fc,
       coaches: c
     } = tables;
 
     const select = {
       ...f,
-      weightClass: w.name,
       coach: c.name
     };
     
     const join = [
-      [f.weightClassId, w.id],
-      [f.id, fc.figherId],
+      [f.id, fc.fighterId],
       [c.id, fc.coachId]
     ];
+    const where = {
+      [f.isActive]: true
+    };
     return {
       select,
       join,
+      where,
       as: 'detailedFighters'
     }
   });
