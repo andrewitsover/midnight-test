@@ -521,22 +521,22 @@ interface Compute<T> {
 }
 
 interface Tables {
-  weightClasses: WeightClass;
-  locations: Location;
-  events: Event;
-  cards: Card;
-  coaches: Coach;
-  fighters: Fighter;
-  otherNames: OtherName;
-  fighterCoaches: FighterCoach;
-  rankings: Ranking;
-  methods: Method;
-  fights: Fight;
-  cancelledFights: CancelledFight;
-  titleRemovals: TitleRemoval;
-  fighterProfiles: FighterProfile;
-  opponents: Opponent;
-  detailedFighters: DetailedFighter;
+  weightClasses: Record<keyof WeightClass, Symbol>;
+  locations: Record<keyof Location, Symbol>;
+  events: Record<keyof Event, Symbol>;
+  cards: Record<keyof Card, Symbol>;
+  coaches: Record<keyof Coach, Symbol>;
+  fighters: Record<keyof Fighter, Symbol>;
+  otherNames: Record<keyof OtherName, Symbol>;
+  fighterCoaches: Record<keyof FighterCoach, Symbol>;
+  rankings: Record<keyof Ranking, Symbol>;
+  methods: Record<keyof Method, Symbol>;
+  fights: Record<keyof Fight, Symbol>;
+  cancelledFights: Record<keyof CancelledFight, Symbol>;
+  titleRemovals: Record<keyof TitleRemoval, Symbol>;
+  fighterProfiles: Record<keyof FighterProfile, Symbol>;
+  opponents: Record<keyof Opponent, Symbol>;
+  detailedFighters: Record<keyof DetailedFighter, Symbol>;
 }
 
 interface VirtualQueries<T, W> {
@@ -600,7 +600,6 @@ interface Queries<T, I, W, C, R, Y> {
   exists(params: W | null): Promise<boolean>;
   groupBy<K extends keyof (T & C)>(columns: K | Array<K>): AggregateMethods<T, W, C, K, Y>;
   compute(properties: Compute<T>): void;
-  view(expression: (tables: Tables) => any): Promise<void>;
   remove(params?: W): Promise<number>;
 }
 
@@ -1322,7 +1321,7 @@ interface Opponent {
 }
 
 interface DetailedFighter {
-  id: number | null;
+  id: number;
   name: string;
   nickname: string | null;
   born: string | null;
@@ -1333,7 +1332,6 @@ interface DetailedFighter {
   isActive: boolean;
   phone: Json | null;
   documents: Json | null;
-  weightClass: string;
   coach: string;
 }
 
@@ -1367,6 +1365,7 @@ interface TypedDb {
   deferForeignKeys(): Promise<void>;
   getTransaction(): Promise<TypedDb>;
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
+  view(expression: (tables: Tables) => any): Promise<void>;
 }
 
 export const database: SQLiteDatabase;
