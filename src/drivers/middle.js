@@ -10,27 +10,19 @@ const middle = async (db) => {
   });
   await db.view(tables => {
     const {
-      fighters: f,
-      fighterCoaches: fc,
-      coaches: c
+      locations: l,
+      events: e
     } = tables;
-
-    const join = [
-      [f.id, fc.fighterId],
-      [c.id, fc.coachId]
-    ];
-    
+    const join = {
+      [e.locationId]: l.id
+    };
     return {
       select: {
-        ...f,
-        coach: c.name
+        ...e,
+        location: l.name
       },
       join,
-      where: {
-        [f.isActive]: true,
-        [c.id]: 1
-      },
-      as: 'detailedFighters'
+      as: 'detailedEvents'
     }
   });
 }
