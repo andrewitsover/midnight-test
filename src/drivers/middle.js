@@ -8,7 +8,7 @@ const middle = async (db) => {
     instagram: c => c.social.instagram,
     heightInches: (c, f) => f.round(f.divide(c.heightCm, 2.54))
   });
-  await db.view(tables => {
+  await db.subquery(tables => {
     const {
       locations: l,
       events: e
