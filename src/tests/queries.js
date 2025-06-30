@@ -316,6 +316,13 @@ test('queries', async (context) => {
   await db.coaches.remove();
   const detailed = await db.detailedEvents.query({ limit: 3 });
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
+  const max = await db.events.max({
+    column: 'startTime',
+    where: {
+      id: c => c.lt(10)
+    }
+  });
+  assert.equal(max instanceof Date, true);
 });
 
 cleanUp('queries', async (context) => {
