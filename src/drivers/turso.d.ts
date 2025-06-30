@@ -516,6 +516,23 @@ interface ComputeMethods {
   multiply: (...args: (number | symbol)[]) => symbol;
 }
 
+interface SymbolComputeMethods {
+  count(options: { column: symbol }): symbol;
+  count(options: { distinct: symbol }): symbol;
+  min(options: { column: symbol }): symbol;
+  min(options: { distinct: symbol }): symbol;
+  max(options: { column: symbol }): symbol;
+  max(options: { distinct: symbol }): symbol;
+  avg(options: { column: symbol }): symbol;
+  avg(options: { distinct: symbol }): symbol;
+  sum(options: { column: symbol }): symbol;
+  sum(options: { distinct: symbol }): symbol;
+  jsonObject(select: { [key: string]: symbol }): symbol;
+  jsonGroupArray(select: symbol): symbol;
+  jsonGroupArray(select: { [key: string]: symbol }): symbol;
+  jsonGroupObject(key: symbol, value: symbol): symbol;
+}
+
 interface Compute<T> {
   [key: string]: (column: T, method: ComputeMethods) => void;
 }
@@ -728,7 +745,7 @@ interface LocationByMethod {
 
 interface LocationDetailedEvents {
   name: string;
-  events: Array<{ id: number, name: string }>;
+  events: Json;
 }
 
 interface LocationDistanceFrom {
@@ -742,7 +759,7 @@ interface LocationDistanceFrom {
 
 interface LocationEvents {
   name: string;
-  events: Array<string>;
+  events: Json;
 }
 
 interface LocationWinners {
@@ -818,9 +835,9 @@ interface EventFrom {
 }
 
 interface EventLag {
-  test1: number | null;
-  test2: number | null;
-  test3: number | null;
+  test1: number | string | Buffer | null;
+  test2: number | string | Buffer | null;
+  test3: number | string | Buffer | null;
 }
 
 interface EventOperator {
@@ -830,12 +847,12 @@ interface EventOperator {
 interface EventSpaces {
   id: number;
   name: string;
-  test: Array<{ id: number, name: string }>;
+  test: Json;
 }
 
 interface EventTest {
   id: number;
-  nest: { name: string, startTime: Date };
+  nest: Json;
 }
 
 interface EventAwayFromParams {
@@ -967,12 +984,12 @@ interface FighterByHeight {
 }
 
 interface FighterCommon {
-  red: { id: number, name: string };
-  blue: { id: number, name: string };
+  red: Json;
+  blue: Json;
   winnerId: number | null;
   method: string;
   description: string | null;
-  event: { id: number, name: string, date: Date };
+  event: Json;
 }
 
 interface FighterExtract {
@@ -990,7 +1007,7 @@ interface FighterInstagram {
 
 interface FighterLastFights {
   name: string;
-  dates: Array<Date>;
+  dates: Json;
 }
 
 interface FighterLeft {
@@ -1011,7 +1028,7 @@ interface FighterOpponents {
 
 interface FighterOtherNames {
   name: string;
-  otherNames: Array<string>;
+  otherNames: Json;
 }
 
 interface FighterRight {
@@ -1022,14 +1039,14 @@ interface FighterRight {
 
 interface FighterWeightClasses {
   name: string;
-  weightClasses: Array<{ id: number, name: string, test: boolean, nest: { id: number, age: boolean } }>;
+  weightClasses: Json;
 }
 
 interface FighterWithReach {
   name: string;
   heightCm: number | null;
   reachCm: number | null;
-  reaches: Array<number>;
+  reaches: Json;
 }
 
 interface FighterCommonParams {
@@ -1356,7 +1373,7 @@ interface TypedDb {
   getTransaction(type: ('read' | 'write' | 'deferred')): Promise<TypedDb>;
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
   sync(): Promise<void>;
-  subquery(expression: (tables: Tables, compare: CompareMethods<Date | number | boolean | null>, compute: ComputeMethods) => any): Promise<void>;
+  subquery(expression: (tables: Tables, compare: CompareMethods<Date | number | boolean | null>, compute: ComputeMethods & SymbolComputeMethods) => any): Promise<void>;
 }
 
 export const database: TursoDatabase;
