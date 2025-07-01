@@ -32,7 +32,6 @@ interface Paths {
   sql: string | URL;
   types: string | URL;
   migrations: string | URL;
-  computed: string | URL;
 }
 
 interface SQLitePaths extends Paths {
@@ -906,7 +905,7 @@ interface Coach {
   id: number;
   name: string;
   city: string;
-  profile: [] | null;
+  profile: null;
 }
 
 interface InsertCoach {
@@ -973,7 +972,7 @@ interface InsertFighter {
 
 interface ComputedFighter {
   displayName: string;
-  instagram: string | null;
+  instagram: number | string | null;
   heightInches: number | null;
 }
 
@@ -1348,13 +1347,18 @@ interface DetailedEvent {
 interface FighterName {
   id: number;
   name: string;
-  otherNames: [string, string][];
+  otherNames: string[];
 }
 
 interface LocationEvent {
   id: number;
   name: string;
-  events: Json[][];
+  events: (Event1 & JsonObject)[];
+}
+
+interface Event1 {
+  id: number,
+  name: string
 }
 
 type Unwrap<T extends any[]> = {

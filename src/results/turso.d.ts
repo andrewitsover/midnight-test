@@ -32,7 +32,6 @@ interface Paths {
   sql: string | URL;
   types: string | URL;
   migrations: string | URL;
-  computed: string | URL;
 }
 
 interface SQLitePaths extends Paths {
@@ -531,6 +530,7 @@ interface SymbolComputeMethods {
   jsonGroupArray(select: symbol): symbol;
   jsonGroupArray(select: { [key: string]: symbol }): symbol;
   jsonGroupObject(key: symbol, value: symbol): symbol;
+  jsonArrayLength(param: symbol): symbol;
 }
 
 interface Compute<T> {
@@ -554,6 +554,8 @@ interface Tables {
   fighterProfiles: Record<keyof FighterProfile, Symbol>;
   opponents: Record<keyof Opponent, Symbol>;
   detailedEvents: Record<keyof DetailedEvent, Symbol>;
+  fighterNames: Record<keyof FighterName, Symbol>;
+  locationEvents: Record<keyof LocationEvent, Symbol>;
 }
 
 interface VirtualQueries<T, W> {
@@ -588,6 +590,7 @@ interface Queries<T, I, W, C, R, Y> {
   many(params?: W): Promise<Array<T>>;
   many<K extends keyof (T & C)>(params: W | null, columns: (keyof (T & C))[] | K[]): Promise<Array<Pick<(T & C), K>>>;
   many<K extends keyof (T & C)>(params: W | null, column: K): Promise<Array<(T & C)[K]>>;
+  query(): Promise<Array<T>>;
   query<K extends keyof (T & C)>(query: ComplexQueryValue<W, K, T, C>): Promise<Array<(T & C)[K]>>;
   query<K extends keyof (T & C)>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<Array<(T & C)[K]>>>;
   query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectInclude<W, K, T, U, C>): Promise<Array<MergeIncludes<Pick<(T & C), K>, U>>>;
@@ -596,6 +599,7 @@ interface Queries<T, I, W, C, R, Y> {
   query<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectIncludeOmitDebug<W, K, T, U, C>): Promise<DebugResult<Array<MergeIncludes<Omit<T, K>, U>>>>;
   query<U extends Includes<Y, T>>(query: ComplexQueryInclude<W, T, U, C>): Promise<Array<MergeIncludes<T, U>>>;
   query<U extends Includes<Y, T>>(query: ComplexQueryIncludeDebug<W, T, U, C>): Promise<DebugResult<Array<MergeIncludes<T, U>>>>;
+  first(): Promise<T | undefined>;
   first<K extends keyof (T & C)>(query: ComplexQueryValue<W, K, T, C>): Promise<(T & C)[K] | undefined>;
   first<K extends keyof (T & C)>(query: ComplexQueryValueDebug<W, K, T, C>): Promise<DebugResult<(T & C)[K] | undefined>>;
   first<K extends keyof (T & C), U extends Includes<Y, T>>(query: ComplexQueryObjectInclude<W, K, T, U, C>): Promise<MergeIncludes<Pick<(T & C), K>, U> | undefined>;
@@ -605,15 +609,10 @@ interface Queries<T, I, W, C, R, Y> {
   first<U extends Includes<Y, T>>(query: ComplexQueryInclude<W, T, U, C>): Promise<MergeIncludes<(T & C), U> | undefined>;
   first<U extends Includes<Y, T>>(query: ComplexQueryIncludeDebug<W, T, U, C>): Promise<DebugResult<MergeIncludes<(T & C), U> | undefined>>;
   count<K extends keyof (T & C)>(query?: AggregateQuery<W, K>): Promise<number>;
-  count<K extends keyof (T & C)>(query?: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
   avg<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<number>;
-  avg<K extends keyof (T & C)>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
-  max<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<number>;
-  max<K extends keyof (T & C)>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
-  min<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<number>;
-  min<K extends keyof (T & C)>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
+  max<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<(T & C)[K]>;
+  min<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<(T & C)[K]>;
   sum<K extends keyof (T & C)>(query: AggregateQuery<W, K>): Promise<number>;
-  sum<K extends keyof (T & C)>(query: AggregateQueryDebug<W, K>): Promise<DebugResult<number>>;
   exists(params: W | null): Promise<boolean>;
   groupBy<K extends keyof (T & C)>(columns: K | Array<K>): AggregateMethods<T, W, C, K, Y>;
   compute(properties: Compute<T>): void;
@@ -906,7 +905,7 @@ interface Coach {
   id: number;
   name: string;
   city: string;
-  profile: [] | null;
+  profile: null;
 }
 
 interface InsertCoach {
@@ -973,7 +972,7 @@ interface InsertFighter {
 
 interface ComputedFighter {
   displayName: string;
-  instagram: string | null;
+  instagram: number | string | null;
   heightInches: number | null;
 }
 
@@ -1345,6 +1344,23 @@ interface DetailedEvent {
   location: string;
 }
 
+interface FighterName {
+  id: number;
+  name: string;
+  otherNames: string[];
+}
+
+interface LocationEvent {
+  id: number;
+  name: string;
+  events: (Event1 & JsonObject)[];
+}
+
+interface Event1 {
+  id: number,
+  name: string
+}
+
 type Unwrap<T extends any[]> = {
   [K in keyof T]: T[K] extends Promise<infer U> ? U : T[K];
 }
@@ -1367,6 +1383,8 @@ interface TypedDb {
   fighterProfiles: VirtualQueries<FighterProfile, ToWhere<FighterProfile & unknown>>;
   opponents: Pick<Queries<Opponent, undefined, ToWhere<Opponent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   detailedEvents: Pick<Queries<DetailedEvent, undefined, ToWhere<DetailedEvent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
+  fighterNames: Pick<Queries<FighterName, undefined, ToWhere<FighterName & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
+  locationEvents: Pick<Queries<LocationEvent, undefined, ToWhere<LocationEvent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   begin(): Promise<void>;
   commit(): Promise<void>;
   rollback(): Promise<void>;

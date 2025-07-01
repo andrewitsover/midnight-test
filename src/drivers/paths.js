@@ -9,8 +9,7 @@ const getPaths = (types) => {
     views: path('views'),
     types: path(types),
     json: path('drivers/types.json'),
-    migrations: path('migrations'),
-    computed: path('drivers/computed.json')
+    migrations: path('migrations')
   }
 }
 
