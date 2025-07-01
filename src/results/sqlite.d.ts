@@ -86,7 +86,7 @@ type ObjectFunction = {
 }
 
 type MergeIncludes<T, U extends ObjectFunction> = 
-  T & { [K in keyof U]: ReturnType<U[K]> extends Promise<infer R> ? R : never;
+  T & { [K in keyof U]: ReturnType<U[K]> extends Promise<infer R> ? (R extends string | number | boolean | Date ? R | null : R) : never;
 };
 
 type ReturnTypes<T extends ObjectFunction> = {
@@ -556,6 +556,7 @@ interface Tables {
   detailedEvents: Record<keyof DetailedEvent, Symbol>;
   fighterNames: Record<keyof FighterName, Symbol>;
   locationEvents: Record<keyof LocationEvent, Symbol>;
+  eventTimes: Record<keyof EventTime, Symbol>;
 }
 
 interface VirtualQueries<T, W> {
@@ -1361,6 +1362,11 @@ interface Event1 {
   name: string
 }
 
+interface EventTime {
+  locationId: number | null;
+  startTime: Date;
+}
+
 type Unwrap<T extends any[]> = {
   [K in keyof T]: T[K] extends Promise<infer U> ? U : T[K];
 };
@@ -1385,6 +1391,7 @@ interface TypedDb {
   detailedEvents: Pick<Queries<DetailedEvent, undefined, ToWhere<DetailedEvent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   fighterNames: Pick<Queries<FighterName, undefined, ToWhere<FighterName & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   locationEvents: Pick<Queries<LocationEvent, undefined, ToWhere<LocationEvent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
+  eventTimes: Pick<Queries<EventTime, undefined, ToWhere<EventTime & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   exec(sql: string): Promise<void>;
   begin(): Promise<void>;
   commit(): Promise<void>;

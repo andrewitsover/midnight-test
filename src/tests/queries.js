@@ -323,6 +323,20 @@ test('queries', async (context) => {
     }
   });
   assert.equal(max instanceof Date, true);
+  const maxLocations = await db.locations.query({
+    include: {
+      max: (t, c) => t.events.max({
+        column: 'startTime',
+        where: {
+          locationId: c.id
+        }
+      })
+    },
+    limit: 3
+  });
+  assert.equal(maxLocations.at(0).max instanceof Date, true);
+  const eventTime = await db.eventTimes.get();
+  assert.equal(eventTime.startTime instanceof Date, true);
 });
 
 cleanUp('queries', async (context) => {
