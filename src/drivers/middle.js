@@ -71,13 +71,16 @@ const middle = async (db) => {
     }
   });
   await db.subquery((tables, is, compute) => {
-    const { events: e } = tables;
+    const { 
+      locationId, 
+      startTime 
+    } = tables.events;
     return {
       select: {
-        locationId: e.locationId,
-        startTime: compute.max(e.startTime)
+        locationId,
+        startTime: compute.max(startTime)
       },
-      groupBy: e.locationId,
+      groupBy: locationId,
       as: 'eventTimes'
     }
   });
