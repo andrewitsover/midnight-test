@@ -1,6 +1,9 @@
 select
     l.name,
-    groupArray(e.id, e.name order by e.id) as events
+    json_group_array(
+        json_object(
+            'id', e.id, 
+            'name', e.name) order by e.id) as events
 from 
     locations l join
     events e on e.locationId = l.id
