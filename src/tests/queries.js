@@ -337,6 +337,10 @@ test('queries', async (context) => {
   assert.equal(maxLocations.at(0).max instanceof Date, true);
   const eventTime = await db.eventTimes.get();
   assert.equal(eventTime.startTime instanceof Date, true);
+  const ranks = await db.heightRanks.query({
+    limit: 10
+  });
+  assert.equal(ranks.at(0).heightCm, 213);
 });
 
 cleanUp('queries', async (context) => {

@@ -7,11 +7,11 @@ const middle = async (db) => {
     instagram: c => c.social.instagram,
     heightInches: (c, f) => f.round(f.divide(c.heightCm, 2.54))
   });
-  await db.subquery(tables => {
+  await db.subquery(context => {
     const {
       locations: l,
       events: e
-    } = tables;
+    } = context.tables;
     const join = {
       [e.locationId]: l.id
     };
@@ -24,7 +24,8 @@ const middle = async (db) => {
       as: 'detailedEvents'
     }
   });
-  await db.subquery((tables, is, compute) => {
+  await db.subquery(context => {
+    const { tables, compare: is, compute } = context;
     const {
       fighters: f,
       otherNames: n
@@ -47,7 +48,8 @@ const middle = async (db) => {
       as: 'fighterNames'
     };
   });
-  await db.subquery((tables, is, compute) => {
+  await db.subquery(context => {
+    const { tables, compute } = context;
     const {
       locations: l,
       events: e
@@ -70,7 +72,8 @@ const middle = async (db) => {
       as: 'locationEvents'
     }
   });
-  await db.subquery((tables, is, compute) => {
+  await db.subquery(context => {
+    const { tables, aggregate: agg } = context;
     const { 
       locationId, 
       startTime 
@@ -78,10 +81,26 @@ const middle = async (db) => {
     return {
       select: {
         locationId,
-        startTime: compute.max(startTime)
+        startTime: agg.max(startTime)
       },
       groupBy: locationId,
       as: 'eventTimes'
+    }
+  });
+  await db.subquery(context => {
+    const { id, name, heightCm } = context.tables.fighters;
+    const { rowNumber } = context.window;
+    return {
+      select: {
+        id,
+        name,
+        heightCm,
+        heightRank: rowNumber({
+          orderBy: heightCm,
+          desc: true
+        })
+      },
+      as: 'heightRanks'
     }
   });
 }

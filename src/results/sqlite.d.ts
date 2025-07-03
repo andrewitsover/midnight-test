@@ -513,24 +513,59 @@ interface ComputeMethods {
   minus: (...args: (number | symbol)[]) => symbol;
   divide: (...args: (number | symbol)[]) => symbol;
   multiply: (...args: (number | symbol)[]) => symbol;
+  jsonObject(select: { [key: string]: symbol }): symbol;
+  jsonArrayLength(param: symbol): symbol;
 }
 
-interface SymbolComputeMethods {
+interface SymbolAggregateMethods {
+  count(): symbol;
   count(options: { column: symbol }): symbol;
   count(options: { distinct: symbol }): symbol;
-  min(options: { column: symbol }): symbol;
-  min(options: { distinct: symbol }): symbol;
-  max(options: { column: symbol }): symbol;
-  max(options: { distinct: symbol }): symbol;
+  min(column: symbol): symbol;
+  max(column: symbol): symbol;
   avg(options: { column: symbol }): symbol;
   avg(options: { distinct: symbol }): symbol;
   sum(options: { column: symbol }): symbol;
   sum(options: { distinct: symbol }): symbol;
-  jsonObject(select: { [key: string]: symbol }): symbol;
   jsonGroupArray(select: symbol): symbol;
   jsonGroupArray(select: { [key: string]: symbol }): symbol;
   jsonGroupObject(key: symbol, value: symbol): symbol;
-  jsonArrayLength(param: symbol): symbol;
+}
+
+interface FrameOptions {
+  type: 'rows' | 'groups' | 'range';
+  currentRow?: true;
+  preceding?: 'unbounded' | number;
+  following?: 'unbounded' | number;
+}
+
+interface WindowOptions {
+  partitionBy?: symbol | symbol[];
+  where?: { [key: symbol]: symbol };
+  orderBy?: symbol | symbol[];
+  desc?: true;
+  frame?: FrameOptions;
+}
+
+interface AggregateWindowOptions extends WindowOptions {
+  column?: symbol;
+  distinct?: symbol;
+}
+
+interface SymbolWindowMethods {
+  count(options: AggregateWindowOptions): symbol;
+  min(options: AggregateWindowOptions): symbol;
+  max(options: AggregateWindowOptions): symbol;
+  avg(options: AggregateWindowOptions): symbol;
+  sum(options: AggregateWindowOptions): symbol;
+  rowNumber(options: WindowOptions): symbol;
+  rank(options: WindowOptions): symbol;
+  denseRank(options: WindowOptions): symbol;
+  percentRank(options: WindowOptions): symbol;
+  cumeDist(options: WindowOptions): symbol;
+  ntile(options: WindowOptions & { groups: number }): symbol;
+  jsonGroupArray(options: WindowOptions & { select: { [key: string]: symbol } }): symbol;
+  jsonGroupObject(options: WindowOptions & { key: symbol, value: symbol }): symbol;
 }
 
 interface Compute<T> {
@@ -557,6 +592,7 @@ interface Tables {
   fighterNames: Record<keyof FighterName, Symbol>;
   locationEvents: Record<keyof LocationEvent, Symbol>;
   eventTimes: Record<keyof EventTime, Symbol>;
+  heightRanks: Record<keyof HeightRank, Symbol>;
 }
 
 interface VirtualQueries<T, W> {
@@ -1367,9 +1403,39 @@ interface EventTime {
   startTime: Date;
 }
 
+interface HeightRank {
+  id: number;
+  name: string;
+  heightCm: number | null;
+  heightRank: number;
+}
+
 type Unwrap<T extends any[]> = {
   [K in keyof T]: T[K] extends Promise<infer U> ? U : T[K];
 };
+
+type SymbolObject = { [key: symbol]: symbol };
+
+interface SubqueryReturn {
+  select: { [key: string | symbol]: symbol };
+  join?: SymbolObject;
+  leftJoin?: SymbolObject;
+  where?: { [key: symbol]: symbol | null | number | boolean | Date };
+  groupBy?: symbol | symbol[];
+  having?: SymbolObject;
+  orderBy?: symbol | symbol[];
+  offset?: number;
+  limit?: number;
+  as: string;
+}
+
+interface SubqueryContext {
+  tables: Tables;
+  compare: CompareMethods<Date | number | boolean | null>;
+  compute: ComputeMethods;
+  aggregate: SymbolAggregateMethods;
+  window: SymbolWindowMethods;
+}
 
 interface TypedDb {
   [key: string]: any;
@@ -1392,6 +1458,7 @@ interface TypedDb {
   fighterNames: Pick<Queries<FighterName, undefined, ToWhere<FighterName & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   locationEvents: Pick<Queries<LocationEvent, undefined, ToWhere<LocationEvent & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   eventTimes: Pick<Queries<EventTime, undefined, ToWhere<EventTime & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
+  heightRanks: Pick<Queries<HeightRank, undefined, ToWhere<HeightRank & unknown>, unknown, undefined, TypedDb>, 'get' | 'many' | 'query' | 'first' | 'groupBy' | 'count' | 'avg' | 'min' | 'max' | 'sum'>;
   exec(sql: string): Promise<void>;
   begin(): Promise<void>;
   commit(): Promise<void>;
@@ -1400,7 +1467,7 @@ interface TypedDb {
   deferForeignKeys(): Promise<void>;
   getTransaction(): Promise<TypedDb>;
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
-  subquery(expression: (tables: Tables, compare: CompareMethods<Date | number | boolean | null>, compute: ComputeMethods & SymbolComputeMethods) => any): Promise<void>;
+  subquery(expression: (context: SubqueryContext) => SubqueryReturn): Promise<void>;
 }
 
 export const database: SQLiteDatabase;
