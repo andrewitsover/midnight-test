@@ -7,11 +7,11 @@ const middle = async (db) => {
     instagram: c => c.social.instagram,
     heightInches: (c, f) => f.round(f.divide(c.heightCm, 2.54))
   });
-  await db.subquery(context => {
+  await db.subquery(c => {
     const {
       locations: l,
       events: e
-    } = context.tables;
+    } = c.tables;
     const join = {
       [e.locationId]: l.id
     };
@@ -24,13 +24,12 @@ const middle = async (db) => {
       as: 'detailedEvents'
     }
   });
-  await db.subquery(context => {
-    const { tables, compare: is, compute } = context;
+  await db.subquery(c => {
     const {
       fighters: f,
       otherNames: n
-    } = tables;
-    const otherNames = compute.jsonGroupArray(n.name);
+    } = c.tables;
+    const otherNames = c.aggregate.jsonGroupArray(n.name);
     const select = {
       id: f.id,
       name: f.name,
@@ -43,21 +42,20 @@ const middle = async (db) => {
       },
       groupBy: f.id,
       having: {
-        [compute.jsonArrayLength(otherNames)]: is.gt(1)
+        [c.compute.jsonArrayLength(otherNames)]: c.compare.gt(1)
       },
       as: 'fighterNames'
     };
   });
-  await db.subquery(context => {
-    const { tables, compute } = context;
+  await db.subquery(c => {
     const {
       locations: l,
       events: e
-    } = tables;
+    } = c.tables;
     const select = {
       id: l.id,
       name: l.name,
-      events: compute.jsonGroupArray({
+      events: c.compute.jsonGroupArray({
         id: e.id,
         name: e.name
       })
@@ -72,30 +70,32 @@ const middle = async (db) => {
       as: 'locationEvents'
     }
   });
-  await db.subquery(context => {
-    const { tables, aggregate: agg } = context;
+  await db.subquery(c => {
     const { 
       locationId, 
       startTime 
-    } = tables.events;
+    } = c.tables.events;
     return {
       select: {
         locationId,
-        startTime: agg.max(startTime)
+        startTime: c.aggregate.max(startTime)
       },
       groupBy: locationId,
       as: 'eventTimes'
     }
   });
-  await db.subquery(context => {
-    const { id, name, heightCm } = context.tables.fighters;
-    const { rowNumber } = context.window;
+  await db.subquery(c => {
+    const { 
+      id, 
+      name, 
+      heightCm 
+    } = c.tables.fighters;
     return {
       select: {
         id,
         name,
         heightCm,
-        heightRank: rowNumber({
+        heightRank: c.window.rowNumber({
           orderBy: heightCm,
           desc: true
         })
