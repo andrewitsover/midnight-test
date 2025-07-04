@@ -11,7 +11,7 @@ const middle = async (db) => {
     const {
       locations: l,
       events: e
-    } = c.tables;
+    } = c;
     const join = {
       [e.locationId]: l.id
     };
@@ -27,9 +27,12 @@ const middle = async (db) => {
   await db.subquery(c => {
     const {
       fighters: f,
-      otherNames: n
-    } = c.tables;
-    const otherNames = c.aggregate.jsonGroupArray(n.name);
+      otherNames: n,
+      jsonGroupArray,
+      jsonArrayLength,
+      gt
+    } = c;
+    const otherNames = jsonGroupArray(n.name);
     const select = {
       id: f.id,
       name: f.name,
@@ -42,7 +45,7 @@ const middle = async (db) => {
       },
       groupBy: f.id,
       having: {
-        [c.compute.jsonArrayLength(otherNames)]: c.compare.gt(1)
+        [jsonArrayLength(otherNames)]: gt(1)
       },
       as: 'fighterNames'
     };
@@ -50,14 +53,17 @@ const middle = async (db) => {
   await db.subquery(c => {
     const {
       locations: l,
-      events: e
-    } = c.tables;
+      events: e,
+      jsonGroupArray
+    } = c;
     const select = {
       id: l.id,
       name: l.name,
-      events: c.compute.jsonGroupArray({
-        id: e.id,
-        name: e.name
+      events: jsonGroupArray({
+        select: {
+          id: e.id,
+          name: e.name
+        }
       })
     };
     const join = {
@@ -73,12 +79,12 @@ const middle = async (db) => {
   await db.subquery(c => {
     const { 
       locationId, 
-      startTime 
-    } = c.tables.events;
+      startTime
+    } = c.events;
     return {
       select: {
         locationId,
-        startTime: c.aggregate.max(startTime)
+        startTime: c.max(startTime)
       },
       groupBy: locationId,
       as: 'eventTimes'
@@ -89,13 +95,13 @@ const middle = async (db) => {
       id, 
       name, 
       heightCm 
-    } = c.tables.fighters;
+    } = c.fighters;
     return {
       select: {
         id,
         name,
         heightCm,
-        heightRank: c.window.rowNumber({
+        heightRank: c.rowNumber({
           orderBy: heightCm,
           desc: true
         })
