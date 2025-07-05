@@ -32,7 +32,12 @@ const middle = async (db) => {
       jsonArrayLength,
       gt
     } = c;
-    const otherNames = jsonGroupArray(n.name);
+    const otherNames = jsonGroupArray({
+      select: n.name,
+      where: {
+        [n.name]: c.not(null)
+      }
+    });
     const select = {
       id: f.id,
       name: f.name,
