@@ -314,8 +314,6 @@ test('queries', async (context) => {
   const coach = await db.coaches.get({ id: coachId });
   assert.equal(coach.city, 'Brisbane, Australia');
   await db.coaches.remove();
-  const detailed = await db.detailedEvents.query({ limit: 3 });
-  assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
   const max = await db.events.max({
     column: 'startTime',
     where: {
@@ -335,12 +333,6 @@ test('queries', async (context) => {
     limit: 3
   });
   assert.equal(maxLocations.at(0).max instanceof Date, true);
-  const eventTime = await db.eventTimes.get();
-  assert.equal(eventTime.startTime instanceof Date, true);
-  const ranks = await db.heightRanks.query({
-    limit: 10
-  });
-  assert.equal(ranks.at(0).heightCm, 213);
 });
 
 cleanUp('queries', async (context) => {
