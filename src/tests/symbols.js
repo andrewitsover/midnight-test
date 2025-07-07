@@ -109,4 +109,53 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(ranks.at(0).heightCm, 213);
+  const max = await db.query(c => {
+    const { id, name, startTime } = c.events;
+    const now = new Date();
+    const max = c.max(c.timeDiff(startTime, now));
+    return {
+      select: {
+        id,
+        name,
+        max
+      }
+    }
+  });
+  assert.equal(max.at(0).id, 1);
+  const fighters = await db.query(c => {
+    const {
+      id,
+      name,
+      heightCm,
+      reachCm,
+    } = c.fighters;
+    return {
+      select: {
+        id,
+        name,
+        stats: c.jsonObject({
+          heightCm,
+          reachCm
+        })
+      },
+      limit: 1
+    }
+  });
+  assert.equal(fighters.at(0).stats.heightCm, 170);
+  const coalesce = await db.query(c => {
+    const {
+      id,
+      name,
+      heightCm,
+      reachCm
+    } = c.fighters;
+    const stats = c.coalesce(name, '');
+    return {
+      select: {
+        id,
+        stats
+      },
+      limit: 1
+    }
+  });
 });
