@@ -570,14 +570,6 @@ type ToJsType<T> =
     T extends DbJson ? Json :
     never;
 
-type Normalize<T> = keyof T extends infer K
-  ? K extends string
-    ? [K] extends [keyof T]
-      ? T[K][]
-      : T[]
-    : never
-  : never;
-
 interface SymbolMethods {
   count(): DbNumber;
   count(column: AnyResult): DbNumber;
@@ -1443,7 +1435,7 @@ interface TypedDb {
   deferForeignKeys(): Promise<void>;
   getTransaction(): Promise<TypedDb>;
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
-  query<S extends SelectType, K extends { select: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): Promise<Normalize<ToJsType<ReturnType<T>['select']>>[]>;
+  query<S extends SelectType, K extends { select: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): Promise<ToJsType<ReturnType<T>['select']>[]>;
 }
 
 export const database: SQLiteDatabase;
