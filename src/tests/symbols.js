@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 
-test('queries', async (context) => {
+test('symbols', async (context) => {
   const db = context.common.db;
   const detailed = await db.query(c => {
     const {
@@ -35,13 +35,12 @@ test('queries', async (context) => {
         [n.name]: c.not(null)
       }
     });
-    const select = {
-      id: f.id,
-      name: f.name,
-      otherNames
-    };
     return {
-      select,
+      select: {
+        id: f.id,
+        name: f.name,
+        otherNames
+      },
       leftJoin: {
         [f.id]: n.fighterId
       },
@@ -57,21 +56,20 @@ test('queries', async (context) => {
       events: e,
       jsonGroupArray
     } = c;
-    const select = {
-      id: l.id,
-      name: l.name,
-      events: jsonGroupArray({
-        select: {
-          id: e.id,
-          name: e.name
-        }
-      })
-    };
     const join = {
       [l.id]: e.locationId
     };
     return {
-      select,
+      select: {
+        id: l.id,
+        name: l.name,
+        events: jsonGroupArray({
+          select: {
+            id: e.id,
+            name: e.name
+          }
+        })
+      },
       join,
       groupBy: l.id
     }

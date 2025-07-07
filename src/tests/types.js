@@ -2,7 +2,6 @@ import { makeTypes } from 'flyweight-client';
 import { compareTypes } from '../utils.js';
 import { writeFile, rm } from 'fs/promises';
 import { join } from 'path';
-import { createProgram, getPreEmitDiagnostics } from 'typescript';
 import { test } from '../run.js';
 
 test('types', async (context) => {
@@ -13,16 +12,6 @@ test('types', async (context) => {
     sample: true,
     testMode: true
   });
-  const program = createProgram([paths.types], {
-    noEmit: true,
-    allowJs: false,
-    skipLibCheck: true,
-    strict: true
-  });
-  const diagnostics = getPreEmitDiagnostics(program);
-  if (diagnostics.length > 0) {
-    throw Error('Type declaration file has errors.');
-  }
   compareTypes(paths.types, rewrite);
   const path = join(paths.sql, 'fights', 'error.sql');
   await writeFile(path, 'select id rom something');

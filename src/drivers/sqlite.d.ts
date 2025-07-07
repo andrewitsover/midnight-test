@@ -408,6 +408,7 @@ type DbAny = DbNumber | DbString | DbBuffer | DbJson | DbDate | DbBoolean;
 type AnyParam = DbAny | DbNull;
 
 type AllowedJson = DbNumber | DbString | DbJson | DbDate | DbBoolean | DbNull;
+type SelectType = AllowedJson | AllowedJson[] | SelectType[] | { [key: string | symbol]: AllowedJson };
 
 type NumberParam = number | null | DbNumber | DbNull;
 type NumberResult = DbNumber | DbNull;
@@ -475,7 +476,7 @@ interface ComputeMethods {
   degrees(value: NumberParam): NumberResult;
   exp(value: NumberParam): NumberResult;
   floor(value: NumberParam): NumberResult;
-  ln(value: NumberParaml): NumberResult;
+  ln(value: NumberParam): NumberResult;
   log(base: NumberParam, value: NumberParam): NumberResult;
   mod(value: NumberParam, divider: NumberParam): NumberResult;
   pi(): NumberResult;
@@ -536,6 +537,20 @@ type ToDbType<T> =
 type ToDbInterface<T> = {
   [K in keyof T]: ToDbType<T[K]>;
 };
+
+type ToJsType<T> =
+  T extends DbNull ? null :
+  T extends (infer U)[] ? ToJsType<U>[] :
+  T extends object
+    ? {
+        [K in keyof T]: ToJsType<T[K]>
+      }
+  : T extends DbNumber ? number :
+    T extends DbString ? string :
+    T extends DbDate ? Date :
+    T extends DbBoolean ? boolean :
+    T extends DbJson ? Json :
+    never;
 
 interface SymbolMethods {
   count(): DbNumber;
@@ -1363,7 +1378,7 @@ type Unwrap<T extends any[]> = {
 type SymbolObject = { [key: symbol]: symbol };
 
 interface SubqueryReturn {
-  select: { [key: string | symbol]: symbol };
+  select: { [key: string | symbol]: SelectType };
   join?: SymbolObject;
   leftJoin?: SymbolObject;
   where?: { [key: symbol]: symbol | null | number | boolean | Date };
@@ -1402,7 +1417,7 @@ interface TypedDb {
   deferForeignKeys(): Promise<void>;
   getTransaction(): Promise<TypedDb>;
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
-  query<T extends (context: SubqueryContext) => any>(expression: T): Promise<ReturnType<T>['select'][]>;
+  query<S extends SelectType, K extends { select: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): Promise<ToJsType<ReturnType<T>['select']>[]>;
 }
 
 export const database: SQLiteDatabase;
