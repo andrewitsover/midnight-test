@@ -41,8 +41,8 @@ test('symbols', async (context) => {
         name: f.name,
         otherNames
       },
-      leftJoin: {
-        [f.id]: n.fighterId
+      join: {
+        [f.id]: { left: n.fighterId }
       },
       groupBy: f.id,
       having: {
@@ -71,9 +71,13 @@ test('symbols', async (context) => {
         })
       },
       join,
-      groupBy: l.id
+      where: {
+        [l.id]: 10
+      },
+      groupBy: l.id,
     }
   });
+  assert.equal(locations.at(0).id, 10);
   const eventTimes = await db.query(c => {
     const { 
       locationId, 
@@ -142,20 +146,4 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(fighters.at(0).stats.heightCm, 170);
-  const coalesce = await db.query(c => {
-    const {
-      id,
-      name,
-      heightCm,
-      reachCm
-    } = c.fighters;
-    const stats = c.coalesce(name, '');
-    return {
-      select: {
-        id,
-        stats
-      },
-      limit: 1
-    }
-  });
 });
