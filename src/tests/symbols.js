@@ -146,4 +146,26 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(fighters.at(0).stats.heightCm, 170);
+  const fights = await db.query(c => {
+    const { 
+      fights: f,
+      fighters: r,
+      fighters: b
+    } = c;
+    return {
+      select: {
+        id: f.id,
+        blue: b.name,
+        red: r.name
+      },
+      join: {
+        [f.blueId]: b.id,
+        [f.redId]: r.id
+      },
+      limit: 1
+    }
+  });
+  const fight = fights.at(0);
+  assert.equal(fight.blue, 'Royce Gracie');
+  assert.equal(fight.red, 'Gerard Gordeau');
 });
