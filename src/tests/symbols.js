@@ -74,7 +74,7 @@ test('symbols', async (context) => {
       where: {
         [l.id]: 10
       },
-      groupBy: l.id,
+      groupBy: l.id
     }
   });
   assert.equal(locations.at(0).id, 10);
