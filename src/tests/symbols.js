@@ -168,18 +168,18 @@ test('symbols', async (context) => {
   const fight = fights.at(0);
   assert.equal(fight.blue, 'Royce Gracie');
   assert.equal(fight.red, 'Gerard Gordeau');
-  const coaches = await db.query(context => {
+  const optional = await db.query(context => {
     const {
       fighters: f,
       fighterCoaches: fc,
       coaches: c
     } = context;
     const join = {
-      [f.id]: { 
-        left: fc.fighterId 
+      [f.id]: {
+        left: fc.fighterId
       },
-      [c.id]: { 
-        left: fc.coachId 
+      [c.id]: {
+        left: fc.coachId
       }
     };
     return {
@@ -194,5 +194,5 @@ test('symbols', async (context) => {
       limit: 5
     }
   });
-  console.log(coaches);
+  assert.equal(optional.at(0).coach, null);
 });
