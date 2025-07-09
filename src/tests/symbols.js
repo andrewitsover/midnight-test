@@ -64,10 +64,8 @@ test('symbols', async (context) => {
         id: l.id,
         name: l.name,
         events: jsonGroupArray({
-          select: {
-            id: e.id,
-            name: e.name
-          }
+          id: e.id,
+          name: e.name
         })
       },
       join,
@@ -174,14 +172,6 @@ test('symbols', async (context) => {
       fighterCoaches: fc,
       coaches: c
     } = context;
-    const join = {
-      [f.id]: {
-        left: fc.fighterId
-      },
-      [c.id]: {
-        left: fc.coachId
-      }
-    };
     return {
       select: {
         id: f.id,
@@ -190,7 +180,10 @@ test('symbols', async (context) => {
       optional: {
         coach: c.name
       },
-      join,
+      join: {
+        [f.id]: { left: fc.fighterId },
+        [c.id]: { left: fc.coachId }
+      },
       limit: 5
     }
   });
