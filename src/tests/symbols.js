@@ -166,23 +166,35 @@ test('symbols', async (context) => {
   const fight = fights.at(0);
   assert.equal(fight.blue, 'Royce Gracie');
   assert.equal(fight.red, 'Gerard Gordeau');
+  const born = await db.subquery(c => {
+    const { id, born } = c.fighters;
+    return {
+      select: {
+        id,
+        birthday: born
+      }
+    }
+  });
   const optional = await db.query(context => {
     const {
       fighters: f,
       fighterCoaches: fc,
       coaches: c
     } = context;
+    const b = context.use(born);
     return {
       select: {
         id: f.id,
-        name: f.name
+        name: f.name,
+        birthday: b.birthday
       },
       optional: {
         coach: c.name
       },
       join: {
         [f.id]: { left: fc.fighterId },
-        [c.id]: { left: fc.coachId }
+        [c.id]: { left: fc.coachId },
+        [b.id]: { left: f.id }
       },
       limit: 5
     }
