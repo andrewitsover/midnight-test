@@ -41,6 +41,9 @@ test('symbols', async (context) => {
         name: f.name,
         otherNames
       },
+      where: {
+        [f.id]: 104
+      },
       join: {
         [f.id]: { left: n.fighterId }
       },
@@ -50,6 +53,7 @@ test('symbols', async (context) => {
       }
     };
   });
+  assert.equal(names.at(0).otherNames.length, 2);
   const locations = await db.query(c => {
     const {
       locations: l,
@@ -192,12 +196,27 @@ test('symbols', async (context) => {
         coach: c.name
       },
       join: {
+        [f.id]: b.id,
         [f.id]: { left: fc.fighterId },
-        [c.id]: { left: fc.coachId },
-        [b.id]: { left: f.id }
+        [c.id]: { left: fc.coachId }
       },
       limit: 5
     }
   });
   assert.equal(optional.at(0).coach, null);
+  const conditional = await db.query(c => {
+    const {
+      events: e
+    } = c;
+    const start = new Date();
+    const end = new Date();
+    const notNull = c.not(e.startTime, null);
+    return {
+      select: {
+        startDate: c.if(notNull, start, end)
+      },
+      limit: 10
+    }
+  });
+  assert.equal(conditional.at(0).startDate instanceof Date, true);
 });
