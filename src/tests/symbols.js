@@ -204,7 +204,7 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(optional.at(0).coach, null);
-  const conditional = await db.query(c => {
+  const types = await db.query(c => {
     const {
       events: e
     } = c;
@@ -213,10 +213,10 @@ test('symbols', async (context) => {
     const notNull = c.not(e.startTime, null);
     return {
       select: {
-        startDate: c.if(notNull, start, end)
+        date: c.if(notNull, start, end)
       },
       limit: 10
     }
   });
-  assert.equal(conditional.at(0).startDate instanceof Date, true);
+  assert.equal(types.at(0).date instanceof Date, true);
 });
