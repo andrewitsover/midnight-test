@@ -20,10 +20,8 @@ test('symbols', async (context) => {
   });
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
   const names = await db.query(c => {
-    const {
-      otherNames: n
-    } = c;
     const { id, name } = c.fighters;
+    const n = c.otherNames;
     const otherNames = c.group({
       select: n.name,
       where: {
@@ -49,10 +47,8 @@ test('symbols', async (context) => {
   });
   assert.equal(names.at(0).otherNames.length, 2);
   const locations = await db.query(c => {
-    const {
-      events: e
-    } = c;
     const { id, name } = c.locations;
+    const e = c.events;
     const join = [id, e.locationId];
     return {
       select: {
