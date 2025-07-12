@@ -50,7 +50,6 @@ test('symbols', async (context) => {
   assert.equal(names.at(0).otherNames.length, 2);
   const locations = await db.query(c => {
     const {
-      locations: l,
       events: e
     } = c;
     const { id, name } = c.locations;
