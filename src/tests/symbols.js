@@ -8,9 +8,7 @@ test('symbols', async (context) => {
       locations: l,
       events: e
     } = c;
-    const join = {
-      [e.locationId]: l.id
-    };
+    const join = [e.locationId, l.id];
     return {
       select: {
         ...e,
@@ -23,33 +21,29 @@ test('symbols', async (context) => {
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
   const names = await db.query(c => {
     const {
-      fighters: f,
-      otherNames: n,
-      jsonGroupArray,
-      jsonArrayLength,
-      gt
+      otherNames: n
     } = c;
-    const otherNames = jsonGroupArray({
+    const { id, name } = c.fighters;
+    const otherNames = c.group({
       select: n.name,
       where: {
         [n.name]: c.not(null)
       }
     });
+    const join = [id, n.fighterId];
     return {
       select: {
-        id: f.id,
-        name: f.name,
+        id,
+        name,
         otherNames
       },
       where: {
-        [f.id]: 104
+        [id]: 104
       },
-      join: {
-        [f.id]: { left: n.fighterId }
-      },
-      groupBy: f.id,
+      join,
+      groupBy: id,
       having: {
-        [jsonArrayLength(otherNames)]: gt(1)
+        [c.arrayLength(otherNames)]: c.gt(1)
       }
     };
   });
@@ -57,17 +51,14 @@ test('symbols', async (context) => {
   const locations = await db.query(c => {
     const {
       locations: l,
-      events: e,
-      jsonGroupArray
+      events: e
     } = c;
-    const join = {
-      [l.id]: e.locationId
-    };
+    const join = [l.id, e.locationId];
     return {
       select: {
         id: l.id,
         name: l.name,
-        events: jsonGroupArray({
+        events: c.group({
           id: e.id,
           name: e.name
         })
@@ -139,7 +130,7 @@ test('symbols', async (context) => {
       select: {
         id,
         name,
-        stats: c.jsonObject({
+        stats: c.object({
           heightCm,
           reachCm
         })
@@ -154,16 +145,17 @@ test('symbols', async (context) => {
       fighters: r,
       fighters: b
     } = c;
+    const join = [
+      [f.blueId, b.id],
+      [f.redId, r.id]
+    ];
     return {
       select: {
         id: f.id,
         blue: b.name,
         red: r.name
       },
-      join: {
-        [f.blueId]: b.id,
-        [f.redId]: r.id
-      },
+      join,
       limit: 1
     }
   });
@@ -181,25 +173,26 @@ test('symbols', async (context) => {
   });
   const optional = await db.query(context => {
     const {
-      fighters: f,
       fighterCoaches: fc,
       coaches: c
     } = context;
     const b = context.use(born);
+    const { id, name } = context.fighters;
+    const join = [
+      [id, b.id],
+      [id, fc.fighterId, 'left'],
+      [c.id, fc.coachId, 'left']
+    ];
     return {
       select: {
-        id: f.id,
-        name: f.name,
+        id,
+        name,
         birthday: b.birthday
       },
       optional: {
         coach: c.name
       },
-      join: {
-        [f.id]: b.id,
-        [f.id]: { left: fc.fighterId },
-        [c.id]: { left: fc.coachId }
-      },
+      join,
       limit: 5
     }
   });
@@ -231,44 +224,40 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(compare.at(0).notEqual, true);
-  const eventCards = db.subquery(context => {
+  const eventCards = db.subquery(c => {
     const {
       events: e,
-      cards: c,
-      jsonGroupArray
-    } = context;
-    const { eventId, ...card } = c;
+      cards
+    } = c;
+    const join = [e.id, cards.eventId];
     return {
       select: {
         eventId: e.id,
-        cards: jsonGroupArray({ ...card })
+        cards: c.group({ ...cards })
       },
-      join: {
-        [e.id]: c.eventId
-      },
+      join,
       groupBy: e.id
     }
   });
-  const locationEvents = await db.query(context => {
+  const locationEvents = await db.query(c => {
     const { 
       locations: l,
-      events: e,
-      jsonGroupArray
-    } = context;
-    const { locationId, ...event } = e;
-    const c = context.use(eventCards);
+      events: e
+    } = c;
+    const { cards, eventId } = c.use(eventCards);
+    const join = [
+      [l.id, e.locationId],
+      [e.id, eventId]
+    ];
     return {
       select: {
         ...l,
-        events: jsonGroupArray({
-          ...event,
-          cards: c.cards
+        events: c.group({
+          ...e,
+          cards
         })
       },
-      join: {
-        [l.id]: e.locationId,
-        [e.id]: c.eventId
-      },
+      join,
       groupBy: l.id,
       limit: 1
     }
