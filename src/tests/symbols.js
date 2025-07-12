@@ -53,11 +53,12 @@ test('symbols', async (context) => {
       locations: l,
       events: e
     } = c;
-    const join = [l.id, e.locationId];
+    const { id, name } = c.locations;
+    const join = [id, e.locationId];
     return {
       select: {
-        id: l.id,
-        name: l.name,
+        id,
+        name,
         events: c.group({
           id: e.id,
           name: e.name
@@ -65,9 +66,9 @@ test('symbols', async (context) => {
       },
       join,
       where: {
-        [l.id]: 10
+        [id]: 10
       },
-      groupBy: l.id
+      groupBy: id
     }
   });
   assert.equal(locations.at(0).id, 10);
