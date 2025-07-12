@@ -976,7 +976,7 @@ type DbNull = typeof dbNull1 | typeof dbNull2;
 type DbAny = DbNumber | DbString | DbBuffer | DbJson | DbDate | DbBoolean;
 type AnyParam = DbAny | DbNull;
 
-type AllowedJson = DbNumber | DbString | DbJson | DbDate | DbBoolean | DbNull;
+type AllowedJson = DbNumber | DbString | DbJson | DbDate | DbBoolean | DbNull | { [key: string]: AllowedJson } | AllowedJson[];
 type SelectType = AllowedJson | AllowedJson[] | SelectType[] | { [key: string | symbol]: AllowedJson };
 
 type NumberParam = number | null | DbNumber | DbNull;
@@ -1105,6 +1105,8 @@ interface WindowOptions {
 type ToJson<T> =
   T extends DbDate ? DbString :
   T extends DbBoolean ? DbNumber :
+  T extends (infer U)[] ? ToJson<U>[] :
+  T extends object ? InterfaceToJson<T> :
   T;
 
 type InterfaceToJson<T> = {
@@ -1141,6 +1143,12 @@ type ToJsType<T> =
     T extends DbJson ? Json :
     never;
 
+interface LagOptions<T> {
+  expression: T;
+  offset?: number | DbNumber;
+  otherwise?: T;
+}
+
 interface SymbolMethods {
   count(): DbNumber;
   count(column: AnyResult): DbNumber;
@@ -1163,7 +1171,12 @@ interface SymbolMethods {
   denseRank(options?: WindowOptions): DbNumber;
   percentRank(options?: WindowOptions): DbNumber;
   cumeDist(options?: WindowOptions): DbNumber;
-  ntile(options: WindowOptions & { groups: number }): DbNumber;
+  ntile(options: WindowOptions & { groups: number | DbNumber }): DbNumber;
+  lag<T extends DbAny>(options: WindowsOptions & LagOptions<T>): T;
+  lead<T extends DbAny>(options: WindowsOptions & LagOptions<T>): T;
+  firstValue<T extends DbAny>(options: WindowOptions & { expression: T }): T;
+  lastValue<T extends DbAny>(options: WindowOptions & { expression: T }): T;
+  nthValue<T extends DbAny>(options: WindowOptions & { expression: T, row: number | DbNumber }): T;
   jsonGroupArray<T extends AllowedJson>(select: T): ToJson<T>[];
   jsonGroupArray<T extends AllowedJson>(options: WindowOptions & { select: T }): ToJson<T>[];
   jsonGroupArray<T extends { [key: string]: AllowedJson }>(options: WindowOptions & { select: T }): InterfaceToJson<T>[];
@@ -1376,6 +1389,7 @@ interface SQLitePaths extends Paths {
 
 declare class Database {
   constructor(options: DatabaseConfig);
+  initialize(): Promise<void>;
   runMigration(sql: string): Promise<void>;
   makeTypes(fileSystem: FileSystem, paths: Paths, sampleData?: boolean): Promise<void>;
   getClient(): TypedDb;
@@ -1461,7 +1475,7 @@ interface TypedDb {
   batch:<T extends any[]> (batcher: (bx: TypedDb) => T) => Promise<Unwrap<T>>;
   sync(): Promise<void>;
   query<S extends SelectType, K extends { select: { [key: string | symbol]: S }, optional?: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): Promise<ToJsType<ReturnType<T>['select'] & MakeOptional<NonNullable<ReturnType<T>['optional']>>>[]>;
-  subquery<S extends SelectType, K extends { select: { [key: string | symbol]: S }, optional?: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): Promise<ReturnType<T>['select'] & MakeOptional<NonNullable<ReturnType<T>['optional']>>>;
+  subquery<S extends SelectType, K extends { select: { [key: string | symbol]: S }, optional?: { [key: string | symbol]: S }}, T extends (context: SubqueryContext) => K>(expression: T): ReturnType<T>['select'] & MakeOptional<NonNullable<ReturnType<T>['optional']>>;
 }
 
 export const database: SQLiteDatabase;

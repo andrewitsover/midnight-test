@@ -170,7 +170,7 @@ test('symbols', async (context) => {
   const fight = fights.at(0);
   assert.equal(fight.blue, 'Royce Gracie');
   assert.equal(fight.red, 'Gerard Gordeau');
-  const born = await db.subquery(c => {
+  const born = db.subquery(c => {
     const { id, born } = c.fighters;
     return {
       select: {
@@ -219,4 +219,61 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(types.at(0).date instanceof Date, true);
+  const compare = await db.query(c => {
+    const { id } = c.fighters;
+    return {
+      select: {
+        notEqual: c.not(id, 3)
+      },
+      where: {
+        [id]: 10
+      }
+    }
+  });
+  assert.equal(compare.at(0).notEqual, true);
+  const eventCards = db.subquery(context => {
+    const {
+      events: e,
+      cards: c,
+      jsonGroupArray
+    } = context;
+    const { eventId, ...card } = c;
+    return {
+      select: {
+        eventId: e.id,
+        cards: jsonGroupArray({ ...card })
+      },
+      join: {
+        [e.id]: c.eventId
+      },
+      groupBy: e.id
+    }
+  });
+  const locationEvents = await db.query(context => {
+    const { 
+      locations: l,
+      events: e,
+      jsonGroupArray
+    } = context;
+    const { locationId, ...event } = e;
+    const c = context.use(eventCards);
+    return {
+      select: {
+        ...l,
+        events: jsonGroupArray({
+          ...event,
+          cards: c.cards
+        })
+      },
+      join: {
+        [l.id]: e.locationId,
+        [e.id]: c.eventId
+      },
+      groupBy: l.id,
+      limit: 1
+    }
+  });
+  const event = locationEvents.at(0).events.at(0);
+  const cardId = event.cards.at(0).id;
+  assert.equal(cardId, 1);
 });

@@ -18,6 +18,7 @@ const makeContext = async () => {
     adaptor,
     paths
   });
+  await database.initialize();
   const db = database.getClient();
   await middle(db);
   return {
