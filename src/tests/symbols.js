@@ -273,4 +273,36 @@ test('symbols', async (context) => {
     }
   });
   assert.equal(where.length, 3);
+  const tx = await db.getTransaction();
+  try {
+    await tx.begin();
+    await tx.query(c => {
+      const { events: e } = c;
+      return {
+        select: {
+          ...e
+        },
+        where: {
+          [e.id]: 1
+        }
+      }
+    });
+    await tx.commit();
+  }
+  catch (e) {
+    await tx.rollback();
+    throw e;
+  }
+  const promise = db.query(c => {
+    const { events: e } = c;
+    return {
+      select: {
+        ...e
+      },
+      where: {
+        id: 3
+      }
+    }
+  });
+  assert.rejects(promise);
 });
