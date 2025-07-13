@@ -261,4 +261,16 @@ test('symbols', async (context) => {
   const event = locationEvents.at(0).events.at(0);
   const cardId = event.cards.at(0).id;
   assert.equal(cardId, 1);
+  const where = await db.query(c => {
+    const { events: e } = c;
+    return {
+      select: {
+        ...e
+      },
+      where: {
+        [e.id]: [1, 2, 3]
+      }
+    }
+  });
+  assert.equal(where.length, 3);
 });
