@@ -305,4 +305,14 @@ test('symbols', async (context) => {
     }
   });
   assert.rejects(promise);
+  const distinct = await db.query(c => {
+    const f = c.fighters;
+    return {
+      distinct: {
+        height: f.heightCm
+      }
+    }
+  });
+  const unique = new Set(distinct.map(d => d.height));
+  assert.equal(unique.size, distinct.length);
 });
