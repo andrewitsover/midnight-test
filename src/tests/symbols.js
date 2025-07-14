@@ -315,4 +315,15 @@ test('symbols', async (context) => {
   });
   const unique = new Set(distinct.map(d => d.height));
   assert.equal(unique.size, distinct.length);
+  const values = await db.query(c => {
+    const { id } = c.events;
+    return {
+      select: id,
+      limit: 5
+    }
+  });
+  const numbers = values
+    .map(v => typeof v)
+    .every(v => v === 'number');
+  assert.equal(numbers, true);
 });
