@@ -1,4 +1,3 @@
-import { strict as assert } from 'assert';
 import { compare } from '../utils.js';
 import { test } from '../run.js';
 
