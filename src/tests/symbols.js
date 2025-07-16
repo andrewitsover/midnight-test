@@ -229,7 +229,7 @@ test('symbols', async (context) => {
     return {
       select: {
         eventId: e.id,
-        cards: c.group({ ...cards })
+        cards: c.group(cards)
       },
       join,
       groupBy: e.id
@@ -326,4 +326,20 @@ test('symbols', async (context) => {
     .map(v => typeof v)
     .every(v => v === 'number');
   assert.equal(numbers, true);
+  const parsed = await db.query(c => {
+    const { fighters: f } = c;
+    return {
+      select: {
+        height: f.heightCm,
+        fighters: c.group({
+          id: f.id,
+          isActive: f.isActive
+        })
+      },
+      groupBy: f.heightCm,
+      limit: 3
+    }
+  });
+  const isActive = parsed.at(0).fighters.at(0).isActive;
+  assert.equal(typeof isActive, 'boolean');
 });
