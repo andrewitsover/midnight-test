@@ -4,6 +4,7 @@ import sqlite3 from 'better-sqlite3';
 import getPaths from './paths.js';
 import fileSystem from './adaptor.js';
 import middle from './middle.js';
+import * as tables from './tables.js';
 
 const path = (subPath) => join(import.meta.dirname, `../${subPath}`);
 
@@ -14,19 +15,14 @@ const paths = {
   db: path('../databases/test.db')
 };
 
-const makeContext = async () => {
-  const database = new SQLiteDatabase({
-    adaptor,
-    paths
-  });
-  await database.initialize();
-  const db = database.getClient();
-  await middle(db);
-  return {
-    db,
-    database,
-    paths
-  }
-}
+const database = new SQLiteDatabase({
+  adaptor,
+  paths
+});
+const db = database.getClient(tables);
+await middle(db);
 
-export default makeContext;
+export {
+  db,
+  database
+}

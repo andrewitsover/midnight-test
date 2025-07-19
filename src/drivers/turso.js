@@ -9,23 +9,18 @@ const path = (subPath) => join(import.meta.dirname, `../${subPath}`);
 
 const paths = getPaths('drivers/turso.d.ts');
 
-const makeContext = async () => {
-  const client = createClient({
-    url: `file:${path('../databases/test.db')}`
-  });
-  const database = new TursoDatabase({
-    db: client,
-    adaptor,
-    paths
-  });
-  await database.initialize();
-  const db = database.getClient();
-  await middle(db);
-  return {
-    db,
-    database,
-    paths
-  }
-}
+const client = createClient({
+  url: `file:${path('../databases/test.db')}`
+});
+const database = new TursoDatabase({
+  db: client,
+  adaptor,
+  paths
+});
+const db = database.getClient();
+await middle(db);
 
-export default makeContext;
+export {
+  db,
+  database
+}

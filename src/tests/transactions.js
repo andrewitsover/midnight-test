@@ -1,11 +1,8 @@
 import { strict as assert } from 'assert';
 import { test, cleanUp } from '../run.js';
+import { db } from '../drivers/sqlite.js';
 
-test('transactions', async (context) => {
-  if (!context.sqlite) {
-    return;
-  }
-  const { db } = context.sqlite;
+test('transactions', async () => {
   let javierId;
   let tx = await db.getTransaction();
   try {
@@ -107,10 +104,6 @@ test('transactions', async (context) => {
   await db.fighters.remove({ name: 'Test', hometown: 'Test', isActive: false });
 });
 
-cleanUp('transactions', async (context) => {
-  if (!context.sqlite) {
-    return;
-  }
-  const { db } = context.sqlite;
+cleanUp('transactions', async () => {
   await db.coaches.remove();
 });

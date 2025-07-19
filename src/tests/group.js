@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
+import { db } from '../drivers/sqlite.js';
 
-test('groupBy', async (context) => {
-  const db = context.common.db;
+test('groupBy', async () => {
   const towns = await db.fighters
     .groupBy('hometown')
     .avg({

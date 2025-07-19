@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
+import { db } from '../drivers/sqlite.js';
 
-test('computed', async (context) => {
-  const db = context.common.db;
+test('computed', async () => {
   const displayName = await db.fighters.get(null, 'displayName');
   assert.equal(displayName, 'Angga (The Hitman)');
   const fighter = await db.fighters.first({

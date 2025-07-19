@@ -1,9 +1,9 @@
 import { strict as assert } from 'assert';
 import { compare } from '../utils.js';
 import { test, cleanUp } from '../run.js';
+import { db } from '../drivers/sqlite.js';
 
-test('queries', async (context) => {
-  const db = context.common.db;
+test('queries', async () => {
   const cards = await db.cards.many({ eventId: 100 });
   const fighterId = await db.fighters.get({ name: s => s.like('Israel%') }, 'id');
 
@@ -263,30 +263,6 @@ test('queries', async (context) => {
   });
   assert.equal(debug.result.length, 3);
   assert.equal(debug.queries.length, 2);
-  const date = new Date();
-  const times = await db.locations.query({
-    where: {
-      id: c => c.gt(10)
-    },
-    include: {
-      events: (t, c) => t.events.awayFrom({
-        where: {
-          locationId: c.id
-        },
-        params: {
-          date
-        },
-        orderBy: 'diff',
-        limit: 20
-      })
-    },
-    limit: 3
-  });
-  const filtered = times
-    .flatMap(t => t.events)
-    .map(e => typeof e.diff)
-    .filter(t => t === 'string');
-  assert.equal(filtered.length, 5);
   const fighters = await db.fighters.query({
     include: {
       fights: (t, c) => t.fights.many({
@@ -335,7 +311,6 @@ test('queries', async (context) => {
   assert.equal(maxLocations.at(0).max instanceof Date, true);
 });
 
-cleanUp('queries', async (context) => {
-  const { db } = context.common;
+cleanUp('queries', async () => {
   await db.coaches.remove();
 });

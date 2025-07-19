@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
+import { db } from '../drivers/sqlite.js';
 
-test('symbols', async (context) => {
-  const db = context.common.db;
+test('symbols', async () => {
   const detailed = await db.query(c => {
     const {
       locations: l,
