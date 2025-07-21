@@ -175,10 +175,10 @@ export class TitleRemovals extends Table {
 }
 
 export class FighterProfiles extends Fighters {
-  Virtual = {
-    rowId: this.id,
-    name: this.name,
-    hometown: this.hometown
-  };
+  rowId = this.id;
+  name = this.Text;
+  hometown = this.Text;
+  
+  Virtual = true;
 }
 
