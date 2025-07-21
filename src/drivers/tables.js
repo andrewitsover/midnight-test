@@ -63,6 +63,9 @@ export class Fighters extends Table {
   isActive = this.Bool;
   phone = this.Jsonx;
   documents = this.Jsonx;
+  
+  displayName = this.Concat(this.name, ' (', this.nickname, ')');
+  heightInches = this.Round(this.Divide(this.heightCm, 2.54));
 
   Attributes = {
     [this.Index]: this.isActive

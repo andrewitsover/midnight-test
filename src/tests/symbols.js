@@ -8,13 +8,12 @@ test('symbols', async () => {
       locations: l,
       events: e
     } = c;
-    const join = [e.locationId, l.id];
     return {
       select: {
         ...e,
         location: l.name
       },
-      join,
+      join: [e.locationId, l.id],
       limit: 3
     }
   });
@@ -28,7 +27,6 @@ test('symbols', async () => {
         [n.name]: c.not(null)
       }
     });
-    const join = [id, n.fighterId];
     return {
       select: {
         id,
@@ -38,7 +36,7 @@ test('symbols', async () => {
       where: {
         [id]: 104
       },
-      join,
+      join: [id, n.fighterId],
       groupBy: id,
       having: {
         [c.arrayLength(otherNames)]: c.gt(1)
@@ -49,7 +47,6 @@ test('symbols', async () => {
   const locations = await db.query(c => {
     const { id, name } = c.locations;
     const e = c.events;
-    const join = [id, e.locationId];
     return {
       select: {
         id,
@@ -59,7 +56,7 @@ test('symbols', async () => {
           name: e.name
         })
       },
-      join,
+      join: [id, e.locationId],
       where: {
         [id]: 10
       },
@@ -141,17 +138,16 @@ test('symbols', async () => {
       fighters: r,
       fighters: b
     } = c;
-    const join = [
-      [f.blueId, b.id],
-      [f.redId, r.id]
-    ];
     return {
       select: {
         id: f.id,
         blue: b.name,
         red: r.name
       },
-      join,
+      join: [
+        [f.blueId, b.id],
+        [f.redId, r.id]
+      ],
       limit: 1
     }
   });
@@ -174,11 +170,6 @@ test('symbols', async () => {
     } = context;
     const b = context.use(born);
     const { id, name } = context.fighters;
-    const join = [
-      [id, b.id],
-      [id, fc.fighterId, 'left'],
-      [c.id, fc.coachId, 'left']
-    ];
     return {
       select: {
         id,
@@ -188,7 +179,11 @@ test('symbols', async () => {
       optional: {
         coach: c.name
       },
-      join,
+      join: [
+        [id, b.id],
+        [id, fc.fighterId, 'left'],
+        [c.id, fc.coachId, 'left']
+      ],
       limit: 5
     }
   });
@@ -225,13 +220,12 @@ test('symbols', async () => {
       events: e,
       cards
     } = c;
-    const join = [e.id, cards.eventId];
     return {
       select: {
         eventId: e.id,
         cards: c.group(cards)
       },
-      join,
+      join: [e.id, cards.eventId],
       groupBy: e.id
     }
   });
@@ -241,10 +235,6 @@ test('symbols', async () => {
       events: e
     } = c;
     const { cards, eventId } = c.use(eventCards);
-    const join = [
-      [l.id, e.locationId],
-      [e.id, eventId]
-    ];
     return {
       select: {
         ...l,
@@ -253,7 +243,10 @@ test('symbols', async () => {
           cards
         })
       },
-      join,
+      join: [
+        [l.id, e.locationId],
+        [e.id, eventId]
+      ],
       groupBy: l.id,
       limit: 1
     }
@@ -264,9 +257,7 @@ test('symbols', async () => {
   const where = await db.query(c => {
     const { events: e } = c;
     return {
-      select: {
-        ...e
-      },
+      select: e,
       where: {
         [e.id]: [1, 2, 3]
       }
@@ -279,9 +270,7 @@ test('symbols', async () => {
     await tx.query(c => {
       const { events: e } = c;
       return {
-        select: {
-          ...e
-        },
+        select: e,
         where: {
           [e.id]: 1
         }
@@ -296,9 +285,7 @@ test('symbols', async () => {
   const promise = db.query(c => {
     const { events: e } = c;
     return {
-      select: {
-        ...e
-      },
+      select: e,
       where: {
         id: 3
       }
