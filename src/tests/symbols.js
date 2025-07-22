@@ -302,7 +302,7 @@ test('symbols', async () => {
   });
   const unique = new Set(distinct.map(d => d.height));
   assert.equal(unique.size, distinct.length);
-  const values = await db.query(c => {
+  const values = await db.queryValues(c => {
     const { id } = c.events;
     return {
       select: id,
@@ -329,4 +329,16 @@ test('symbols', async () => {
   });
   const isActive = parsed.at(0).fighters.at(0).isActive;
   assert.equal(typeof isActive, 'boolean');
+  const first = await db.first(c => {
+    const { events: e } = c;
+    return {
+      select: {
+        name: e.name
+      },
+      optional: {
+        startTime: e.startTime
+      }
+    }
+  });
+  assert.equal(typeof first.name, 'string');
 });
