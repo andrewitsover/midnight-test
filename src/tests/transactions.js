@@ -86,7 +86,7 @@ test('transactions', async () => {
   const promises = [t1(), t2()];
   await Promise.all(promises);
   await db.coaches.remove();
-  await db.batch((tx) => {
+  await db.batch(tx => {
     const coach = tx.coaches.insert({
       name: 'Test',
       city: 'Test'
