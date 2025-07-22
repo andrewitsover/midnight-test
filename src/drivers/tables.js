@@ -66,6 +66,7 @@ export class Fighters extends Table {
   
   displayName = this.Concat(this.name, ' (', this.nickname, ')');
   heightInches = this.Round(this.Divide(this.heightCm, 2.54));
+  instagram = this.Extract(this.social, '$.instagram');
 
   Attributes = {
     [this.Index]: this.isActive
@@ -174,11 +175,9 @@ export class TitleRemovals extends Table {
   }
 }
 
-export class FighterProfiles extends Fighters {
-  rowId = this.id;
+export class FighterProfiles extends Table {
   name = this.Text;
   hometown = this.Text;
   
-  Virtual = true;
+  Virtual = Fighters;
 }
-
