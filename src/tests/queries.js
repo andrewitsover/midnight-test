@@ -33,13 +33,13 @@ test('queries', async () => {
     where: { 
       fighterProfiles: 'Sao'
     },
-    highlight: { 
-      column: 'hometown', 
-      tags: ['<b>', '</b>'] 
-    }, 
-    bm25: { 
-      name: 1, 
-      hometown: 10 
+    highlight: {
+      column: 'hometown',
+      tags: ['<b>', '</b>']
+    },
+    bm25: {
+      name: 1,
+      hometown: 10
     },
     limit: 5
   });
