@@ -6,8 +6,10 @@ export class WeightClasses extends Table {
   weightLbs = this.Int;
   gender = this.Text;
 
-  Attributes = {
-    [this.gender]: ['m', 'f']
+  Attributes = () => {
+    return {
+      [this.gender]: ['m', 'f']
+    }
   }
 }
 
@@ -25,9 +27,11 @@ export class Events extends Table {
   startTime = this.Date;
   locationId = this.Intx;
 
-  Attributes = {
-    [this.locationId]: Locations.OnDeleteCascade,
-    [this.Index]: this.startTime
+  Attributes = () => {
+    return {
+      [this.locationId]: Locations.OnDeleteCascade,
+      [this.Index]: this.startTime
+    }
   }
 }
 
@@ -38,9 +42,11 @@ export class Cards extends Table {
   cardOrder = this.Int;
   startTime = this.Datex;
 
-  Attributes = {
-    [this.eventId]: Events.OnDeleteCascade,
-    [this.Index]: this.eventId
+  Attributes = () => {
+    return {
+      [this.eventId]: Events.OnDeleteCascade,
+      [this.Index]: this.eventId
+    }
   }
 }
 
@@ -68,8 +74,10 @@ export class Fighters extends Table {
   heightInches = this.Round(this.Divide(this.heightCm, 2.54));
   instagram = this.Extract(this.social, '$.instagram');
 
-  Attributes = {
-    [this.Index]: this.isActive
+  Attributes = () => {
+    return {
+      [this.Index]: this.isActive
+    }
   }
 }
 
@@ -78,8 +86,10 @@ export class OtherNames extends Table {
   fighterId = this.Int;
   name = this.Text;
 
-  Attributes = {
-    [this.fighterId]: Fighters.OnDeleteCascade
+  Attributes = () => {
+    return {
+      [this.fighterId]: Fighters.OnDeleteCascade
+    }
   }
 }
 
@@ -90,10 +100,12 @@ export class FighterCoaches extends Table {
   startDate = this.Text;
   endDate = this.Textx;
 
-  Attributes = {
-    [this.Unique]: [this.fighterId, this.coachId],
-    [this.coachId]: Coaches.OnDeleteCascade,
-    [this.fighterId]: Fighters.OnDeleteCascade
+  Attributes = () => {
+    return {
+      [this.Unique]: [this.fighterId, this.coachId],
+      [this.coachId]: Coaches.OnDeleteCascade,
+      [this.fighterId]: Fighters.OnDeleteCascade
+    }
   }
 }
 
@@ -104,8 +116,15 @@ export class Rankings extends Table {
   rank = this.Int;
   isInterim = this.Bool;
 
-  Attributes = {
-    [this.Index]: { [this.rank]: 0 }
+  Attributes = () => {
+    return {
+      [this.Index]: {
+        on: this.rank,
+        where: {
+          [this.rank]: 0
+        }
+      }
+    }
   }
 }
 
@@ -133,16 +152,18 @@ export class Fights extends Table {
   oddsRed = this.Intx;
   catchweightLbs = this.Intx;
 
-  Attributes = {
-    [this.cardId]: Cards.OnDeleteCascade,
-    [this.blueId]: Fighters.OnDeleteCascade,
-    [this.redId]: Fighters.OnDeleteCascade,
-    [this.winnerId]: Fighters.OnDeleteCascade,
-    [this.methodId]: Methods.OnDeleteCascade,
-    [this.weightClassId]: WeightClasses.OnDeleteCascade,
-    [this.Index]: this.cardId,
-    [this.Index]: this.blueId,
-    [this.Index]: this.redId
+  Attributes = () => {
+    return {
+      [this.cardId]: Cards.OnDeleteCascade,
+      [this.blueId]: Fighters.OnDeleteCascade,
+      [this.redId]: Fighters.OnDeleteCascade,
+      [this.winnerId]: Fighters.OnDeleteCascade,
+      [this.methodId]: Methods.OnDeleteCascade,
+      [this.weightClassId]: WeightClasses.OnDeleteCascade,
+      [this.Index]: this.cardId,
+      [this.Index]: this.blueId,
+      [this.Index]: this.redId
+    }
   }
 }
 
@@ -155,8 +176,10 @@ export class CancelledFights extends Table {
   cancelledAt = this.Date;
   cancellationReason = this.Text;
 
-  Attributes = {
-    [this.Index]: this.cardId
+  Attributes = () => {
+    return {
+      [this.Index]: this.cardId
+    }
   }
 }
 
@@ -168,16 +191,20 @@ export class TitleRemovals extends Table {
   removedAt = this.Date;
   reason = this.Text;
 
-  Attributes = {
-    [this.Index]: this.fighterId,
-    [this.fighterId]: FighterCoaches.OnDeleteCascade,
-    [this.weightClassId]: WeightClasses.OnDeleteCascade
+  Attributes = () => {
+    return {
+      [this.Index]: this.fighterId,
+      [this.fighterId]: FighterCoaches.OnDeleteCascade,
+      [this.weightClassId]: WeightClasses.OnDeleteCascade
+    }
   }
 }
 
+const fighter = new Fighters();
+
 export class FighterProfiles extends Table {
-  name = this.Text;
-  hometown = this.Text;
+  name = fighter.name;
+  hometown = fighter.hometown;
   
-  Virtual = Fighters;
+  Virtual = fighter;
 }

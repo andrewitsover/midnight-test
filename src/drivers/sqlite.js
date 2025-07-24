@@ -10,8 +10,17 @@ const database = new SQLiteDatabase({
   db: path('../databases/test.db')
 });
 const db = database.getClient(tables);
+const from = (schema) => {
+  const database = new SQLiteDatabase();
+  database.getClient(schema);
+  return {
+    database,
+    schema: database.schema
+  }
+}
 
 export {
   db,
-  database
+  database,
+  from
 }
