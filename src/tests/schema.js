@@ -167,3 +167,54 @@ test('drop tables', async () => {
   const sql = diff(current, updated);
   compare(sql, 'drop table events;');
 });
+
+test('default literals', async () => {
+  class Locations extends Table {
+    id = this.Intp;
+    name = 'Brisbane';
+  }
+  const result = from({ Locations });
+  const table = result.schema.at(0);
+  const column = table.columns.find(c => c.name === 'name');
+  assert.equal(column.default, 'Brisbane');
+});
+
+test('foreign keys in attributes', async () => {
+  class Locations extends Table {
+    id = this.Intp;
+    name = this.Text;
+  }
+  class Events extends Table {
+    id = this.Intp;
+    name = this.Text;
+    locationId = this.Int;
+
+    Attributes = () => {
+      return {
+        [this.locationId]: Locations
+      }
+    }
+  }
+  const result = from({ Locations, Events });
+  const events = result.schema.find(t => t.name === 'events');
+  const foreignKey = events.foreignKeys.at(0);
+  assert.equal(foreignKey.columns.at(0), 'locationId');
+  assert.equal(foreignKey.references.table, 'locations');
+});
+
+test('foreign keys in fields', async () => {
+  class Locations extends Table {
+    id = this.Intp;
+    name = this.Text;
+  }
+  class Events extends Table {
+    id = this.Intp;
+    name = this.Text;
+    locationId = Locations;
+  }
+  const result = from({ Locations, Events });
+  const events = result.schema.find(t => t.name === 'events');
+  const foreignKey = events.foreignKeys.at(0);
+  assert.equal(foreignKey.columns.at(0), 'locationId');
+  assert.equal(foreignKey.references.table, 'locations');
+});
