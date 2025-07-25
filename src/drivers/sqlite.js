@@ -18,9 +18,18 @@ const from = (schema) => {
     schema: database.schema
   }
 }
+const diff = (previous, current) => {
+  const previousDb = new SQLiteDatabase();
+  previousDb.getClient(previous);
+  const saved = previousDb.getSchema();
+  const db = new SQLiteDatabase();
+  db.getClient(current);
+  return db.diff(saved);
+}
 
 export {
   db,
   database,
-  from
+  from,
+  diff
 }
