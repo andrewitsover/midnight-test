@@ -4,13 +4,7 @@ export class WeightClasses extends Table {
   id = this.Intp;
   name = this.Text;
   weightLbs = this.Int;
-  gender = this.Text;
-
-  Attributes = () => {
-    return {
-      [this.gender]: ['m', 'f']
-    }
-  }
+  gender = this.Check(this.Text, ['m', 'f']);
 }
 
 export class Locations extends Table {
@@ -24,30 +18,19 @@ export class Locations extends Table {
 export class Events extends Table {
   id = this.Intp;
   name = this.Text;
-  startTime = this.Date;
-  locationId = this.Intx;
-
-  Attributes = () => {
-    return {
-      [this.locationId]: Locations.OnDeleteCascade,
-      [this.Index]: this.startTime
-    }
-  }
+  startTime = this.Index(this.Date);
+  locationId = this.Cascade(Locations, {
+    index: false,
+    null: true
+  });
 }
 
 export class Cards extends Table {
   id = this.Intp;
-  eventId = this.Int;
+  eventId = this.Cascade(Events);
   cardName = this.Text;
   cardOrder = this.Int;
   startTime = this.Datex;
-
-  Attributes = () => {
-    return {
-      [this.eventId]: Events.OnDeleteCascade,
-      [this.Index]: this.eventId
-    }
-  }
 }
 
 export class Coaches extends Table {
@@ -66,46 +49,30 @@ export class Fighters extends Table {
   reachCm = this.Intx;
   hometown = this.Text;
   social = this.Jsonx;
-  isActive = this.Bool;
+  isActive = this.Index(this.Bool);
   phone = this.Jsonx;
   documents = this.Jsonx;
   
   displayName = this.Concat(this.name, ' (', this.nickname, ')');
   heightInches = this.Round(this.Divide(this.heightCm, 2.54));
   instagram = this.Extract(this.social, '$.instagram');
-
-  Attributes = () => {
-    return {
-      [this.Index]: this.isActive
-    }
-  }
 }
 
 export class OtherNames extends Table {
   id = this.Intp;
-  fighterId = this.Int;
+  fighterId = this.Cascade(Fighters);
   name = this.Text;
-
-  Attributes = () => {
-    return {
-      [this.fighterId]: Fighters.OnDeleteCascade
-    }
-  }
 }
 
 export class FighterCoaches extends Table {
   id = this.Intp;
-  coachId =  this.Int;
-  fighterId = this.Int;
+  coachId = this.Cascade(Coaches, { index: false });
+  fighterId = this.Cascade(Fighters, { index: false });
   startDate = this.Text;
   endDate = this.Textx;
 
   Attributes = () => {
-    return {
-      [this.Unique]: [this.fighterId, this.coachId],
-      [this.coachId]: Coaches.OnDeleteCascade,
-      [this.fighterId]: Fighters.OnDeleteCascade
-    }
+    this.Unique(this.fighterId, this.coachId);
   }
 }
 
@@ -113,19 +80,12 @@ export class Rankings extends Table {
   id = this.Intp;
   fighterId = this.Int;
   weightClassId = this.Int;
-  rank = this.Int;
-  isInterim = this.Bool;
-
-  Attributes = () => {
+  rank = this.Index(this.Int, rank => {
     return {
-      [this.Index]: {
-        on: this.rank,
-        where: {
-          [this.rank]: 0
-        }
-      }
+      [rank]: 0
     }
-  }
+  });
+  isInterim = this.Bool;
 }
 
 export class Methods extends Table {
@@ -136,68 +96,43 @@ export class Methods extends Table {
 
 export class Fights extends Table {
   id = this.Intp;
-  cardId = this.Int;
+  cardId = this.Cascade(Cards);
   fightOrder = this.Int;
-  blueId = this.Int;
-  redId = this.Int;
-  winnerId = this.Intx;
-  methodId = this.Intx;
+  blueId = this.Cascade(Fighters);
+  redId = this.Cascade(Fighters);
+  winnerId = this.Cascade(Fighters, {
+    index: false,
+    null: true
+  });
+  methodId = this.Cascade(Methods, { index: false });
   methodDescription = this.Textx;
   endRound = this.Intx;
   endSeconds = this.Intx;
   titleFight = this.Bool;
   isInterim = this.Bool;
-  weightClassId = this.Intx;
+  weightClassId = this.Cascade(WeightClasses, { index: false });
   oddsBlue = this.Intx;
   oddsRed = this.Intx;
   catchweightLbs = this.Intx;
-
-  Attributes = () => {
-    return {
-      [this.cardId]: Cards.OnDeleteCascade,
-      [this.blueId]: Fighters.OnDeleteCascade,
-      [this.redId]: Fighters.OnDeleteCascade,
-      [this.winnerId]: Fighters.OnDeleteCascade,
-      [this.methodId]: Methods.OnDeleteCascade,
-      [this.weightClassId]: WeightClasses.OnDeleteCascade,
-      [this.Index]: this.cardId,
-      [this.Index]: this.blueId,
-      [this.Index]: this.redId
-    }
-  }
 }
 
 export class CancelledFights extends Table {
   id = this.Intp;
-  cardId = this.Int;
+  cardId = this.Index(this.Int);
   cardOrder = this.Int;
   blueId = this.Int;
   redId = this.Int;
   cancelledAt = this.Date;
   cancellationReason = this.Text;
-
-  Attributes = () => {
-    return {
-      [this.Index]: this.cardId
-    }
-  }
 }
 
 export class TitleRemovals extends Table {
   id = this.Intp;
-  fighterId = this.Int;
-  weightClassId = this.Int;
+  fighterId = this.Cascade(FighterCoaches, { column: 'fighterId' });
+  weightClassId = this.Cascade(WeightClasses, { index: false });
   isInterim = this.Bool;
   removedAt = this.Date;
   reason = this.Text;
-
-  Attributes = () => {
-    return {
-      [this.Index]: this.fighterId,
-      [this.fighterId]: FighterCoaches.OnDeleteCascade,
-      [this.weightClassId]: WeightClasses.OnDeleteCascade
-    }
-  }
 }
 
 const fighter = new Fighters();

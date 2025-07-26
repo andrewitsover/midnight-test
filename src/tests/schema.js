@@ -218,3 +218,48 @@ test('foreign keys in fields', async () => {
   assert.equal(foreignKey.columns.at(0), 'locationId');
   assert.equal(foreignKey.references.table, 'locations');
 });
+
+test('multiple actions', async () => {
+  class Locations extends Table {
+    id = this.Intp;
+    name = this.Text;
+  }
+  class Events extends Table {
+    id = this.Intp;
+    name = this.Text;
+    locationId = this.Int;
+
+    Attributes = () => {
+      return {
+        [this.locationId]: Locations.OnDeleteCascade,
+        [this.locationId]: Locations.OnUpdateSetDefault
+      }
+    }
+  }
+  const result = from({ Locations, Events });
+  const events = result.schema.find(t => t.name === 'events');
+  const actions = events.foreignKeys.at(0).actions;
+  assert.equal(actions.includes('on delete cascade'), true);
+  assert.equal(actions.includes('on update set default'), true);
+});
+
+test('foreign key options', async () => {
+  class Locations extends Table {
+    id = this.Intp;
+    name = this.Text;
+  }
+  class Events extends Table {
+    id = this.Intp;
+    name = this.Text;
+    locationId = this.ForeignKey({
+      references: Locations,
+      onDelete: 'cascade'
+    });
+  }
+  const result = from({ Locations, Events });
+  const events = result.schema.find(t => t.name === 'events');
+  const index = events.indexes.find(index => index.on === 'locationId');
+  assert.equal(index !== undefined, true);
+  const foreignKey = events.foreignKeys.at(0);
+  assert.equal(foreignKey.actions.at(0), 'on delete cascade');
+});
