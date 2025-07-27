@@ -8,41 +8,26 @@ const compare = (a, b) => assert.equal(squash(a), squash(b));
 
 test('schema', async () => {
   class Rankings extends Table {
-    id = this.Intp;
-    rank = this.Int;
-
-    Attributes = () => {
+    id = this.Check(this.Intp, 1);
+    rank = this.Index(this.Check(2, [1, 2, 3]), rank => {
       return {
-        [this.Index]: {
-          on: this.rank,
-          where: {
-            [this.rank]: this.Gt(1)
-          }
-        },
-        [this.rank]: 2,
-        [this.rank]: [1, 2, 3],
-        [this.Check]: {
-          [this.id]: 1
-        }
-      };
-    }
+        [rank]: this.Gt(1)
+      }
+    });
   }
   const rankResult = from({ Rankings });
   const rank = rankResult.schema.at(0);
   assert.equal(rank.columns.find(c => c.name === 'rank').default, 2);
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
+  const date = new Date(Date.UTC(1997, 1, 2));
   class Users extends Table {
     id = this.Intp;
-    name = this.Text;
-    createdAt = this.Now;
+    name = this.Unique(this.Text);
+    createdAt = this.Check(this.Now, this.Gt(date));
 
     Attributes = () => {
-      const date = new Date(Date.UTC(1997, 1, 2));
-      return {
-        [this.createdAt]: this.Gt(date),
-        [this.Unique]: this.name,
-        [this.Index]: this.Cast(this.StrfTime('%Y', this.createdAt), 'integer')
-      }
+      const computed = this.Cast(this.StrfTime('%Y', this.createdAt), 'integer');
+      this.Index(computed);
     }
   };
   const userResult = from({ Users });
@@ -103,26 +88,13 @@ test('add and remove indexes', async () => {
 test('alter columns', async () => {
   const previous = class Users extends Table {
     id = this.Intp;
-    name = this.Text;
+    name = this.Index(this.Text);
     hometown = this.Text;
-
-    Attributes = () => {
-      return {
-        [this.Index]: this.name
-      }
-    }
   }
   const current = class Users extends Table {
     id = this.Intp;
-    name = this.Textx;
-    hometown = this.Text;
-
-    Attributes = () => {
-      return {
-        [this.hometown]: 'Brisbane',
-        [this.Index]: this.name
-      }
-    }
+    name = this.Index(this.Textx);
+    hometown = 'Brisbane';
   }
   const sql = diff({ Users: previous }, { Users: current });
   const expected = `create table temp_users (
@@ -149,13 +121,7 @@ test('drop tables', async () => {
   class Events extends Table {
     id = this.Intp;
     name = this.Text;
-    locationId = this.Int;
-
-    Attributes = () => {
-      return {
-        [this.locationId]: Locations
-      }
-    }
+    locationId = this.References(Locations);
   }
   const current = {
     Locations,
@@ -187,13 +153,7 @@ test('foreign keys in attributes', async () => {
   class Events extends Table {
     id = this.Intp;
     name = this.Text;
-    locationId = this.Int;
-
-    Attributes = () => {
-      return {
-        [this.locationId]: Locations
-      }
-    }
+    locationId = this.References(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -227,14 +187,10 @@ test('multiple actions', async () => {
   class Events extends Table {
     id = this.Intp;
     name = this.Text;
-    locationId = this.Int;
-
-    Attributes = () => {
-      return {
-        [this.locationId]: Locations.OnDeleteCascade,
-        [this.locationId]: Locations.OnUpdateSetDefault
-      }
-    }
+    locationId = this.References(Locations, {
+      onDelete: 'cascade',
+      onUpdate: 'set default'
+    });
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -251,10 +207,7 @@ test('foreign key options', async () => {
   class Events extends Table {
     id = this.Intp;
     name = this.Text;
-    locationId = this.ForeignKey({
-      references: Locations,
-      onDelete: 'cascade'
-    });
+    locationId = this.Cascade(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
