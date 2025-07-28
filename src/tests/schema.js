@@ -71,13 +71,7 @@ test('add and remove indexes', async () => {
   }
   const current = class Users extends Table {
     id = this.Intp;
-    name = this.Text;
-
-    Attributes = () => {
-      return {
-        [this.Unique]: this.name
-      }
-    }
+    name = this.Unique(this.Text);
   }
   const add = diff({ Users: previous }, { Users: current });
   compare(add, 'create unique index users_unique_name on users(name);');
@@ -170,7 +164,7 @@ test('foreign keys in fields', async () => {
   class Events extends Table {
     id = this.Intp;
     name = this.Text;
-    locationId = Locations;
+    locationId = this.References(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
