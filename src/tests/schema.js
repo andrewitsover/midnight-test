@@ -8,7 +8,7 @@ const compare = (a, b) => assert.equal(squash(a), squash(b));
 
 test('schema', async () => {
   class Rankings extends Table {
-    id = this.Check(this.Intp, 1);
+    id = this.Check(this.IntPrimary, 1);
     rank = this.Index(this.Check(2, [1, 2, 3]), rank => {
       return {
         [rank]: this.Gt(1)
@@ -21,7 +21,7 @@ test('schema', async () => {
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
   const date = new Date(Date.UTC(1997, 1, 2));
   class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Unique(this.Text);
     createdAt = this.Check(this.Now, this.Gt(date));
 
@@ -52,10 +52,10 @@ test('schema', async () => {
 
 test('add and remove column', async () => {
   const previous = class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
   }
   const current = class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   const add = diff({ Users: previous }, { Users: current });
@@ -66,11 +66,11 @@ test('add and remove column', async () => {
 
 test('add and remove indexes', async () => {
   const previous = class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   const current = class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Unique(this.Text);
   }
   const add = diff({ Users: previous }, { Users: current });
@@ -81,13 +81,13 @@ test('add and remove indexes', async () => {
 
 test('alter columns', async () => {
   const previous = class Users extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Index(this.Text);
     hometown = this.Text;
   }
   const current = class Users extends Table {
-    id = this.Intp;
-    name = this.Index(this.Textx);
+    id = this.IntPrimary;
+    name = this.Index(this.Null(this.Text));
     hometown = 'Brisbane';
   }
   const sql = diff({ Users: previous }, { Users: current });
@@ -109,11 +109,11 @@ test('alter columns', async () => {
 
 test('drop tables', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -130,7 +130,7 @@ test('drop tables', async () => {
 
 test('default literals', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = 'Brisbane';
   }
   const result = from({ Locations });
@@ -141,11 +141,11 @@ test('default literals', async () => {
 
 test('foreign keys in attributes', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -158,11 +158,11 @@ test('foreign keys in attributes', async () => {
 
 test('foreign keys in fields', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -175,11 +175,11 @@ test('foreign keys in fields', async () => {
 
 test('multiple actions', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations, {
       onDelete: 'cascade',
@@ -195,11 +195,11 @@ test('multiple actions', async () => {
 
 test('foreign key options', async () => {
   class Locations extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.Intp;
+    id = this.IntPrimary;
     name = this.Text;
     locationId = this.Cascade(Locations);
   }

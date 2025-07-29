@@ -1,14 +1,14 @@
 import { Table } from 'flyweightjs';
 
 export class WeightClasses extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   weightLbs = this.Int;
   gender = this.Check(this.Text, ['m', 'f']);
 }
 
 export class Locations extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   address = this.Text;
   lat = this.Real;
@@ -16,7 +16,7 @@ export class Locations extends Table {
 }
 
 export class Events extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   startTime = this.Index(this.Date);
   locationId = this.Cascade(Locations, {
@@ -26,32 +26,32 @@ export class Events extends Table {
 }
 
 export class Cards extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   eventId = this.Cascade(Events);
   cardName = this.Text;
   cardOrder = this.Int;
-  startTime = this.Datex;
+  startTime = this.Null(this.Date);
 }
 
 export class Coaches extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   city = this.Text;
-  profile = this.Jsonx;
+  profile = this.Null(this.Json);
 }
 
 export class Fighters extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   nickname = this.Text;
-  born = this.Textx;
-  heightCm = this.Intx;
-  reachCm = this.Intx;
+  born = this.Null(this.Text);
+  heightCm = this.Null(this.Int);
+  reachCm = this.Null(this.Int);
   hometown = this.Text;
-  social = this.Jsonx;
+  social = this.Null(this.Json);
   isActive = this.Index(this.Bool);
-  phone = this.Jsonx;
-  documents = this.Jsonx;
+  phone = this.Null(this.Json);
+  documents = this.Null(this.Json);
   
   displayName = this.Concat(this.name, ' (', this.nickname, ')');
   heightInches = this.Round(this.Divide(this.heightCm, 2.54));
@@ -59,17 +59,17 @@ export class Fighters extends Table {
 }
 
 export class OtherNames extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   fighterId = this.Cascade(Fighters);
   name = this.Text;
 }
 
 export class FighterCoaches extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   coachId = this.Cascade(Coaches, { index: false });
   fighterId = this.Cascade(Fighters, { index: false });
   startDate = this.Text;
-  endDate = this.Textx;
+  endDate = this.Null(this.Text);
 
   Attributes = () => {
     this.Unique(this.fighterId, this.coachId);
@@ -77,7 +77,7 @@ export class FighterCoaches extends Table {
 }
 
 export class Rankings extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   fighterId = this.Int;
   weightClassId = this.Int;
   rank = this.Index(this.Int, rank => {
@@ -89,13 +89,13 @@ export class Rankings extends Table {
 }
 
 export class Methods extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   name = this.Text;
   abbreviation = this.Text;
 }
 
 export class Fights extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   cardId = this.Cascade(Cards);
   fightOrder = this.Int;
   blueId = this.Cascade(Fighters);
@@ -105,19 +105,19 @@ export class Fights extends Table {
     null: true
   });
   methodId = this.Cascade(Methods, { index: false });
-  methodDescription = this.Textx;
-  endRound = this.Intx;
-  endSeconds = this.Intx;
+  methodDescription = this.Null(this.Text);
+  endRound = this.Null(this.Int);
+  endSeconds = this.Null(this.Int);
   titleFight = this.Bool;
   isInterim = this.Bool;
   weightClassId = this.Cascade(WeightClasses, { index: false });
-  oddsBlue = this.Intx;
-  oddsRed = this.Intx;
-  catchweightLbs = this.Intx;
+  oddsBlue = this.Null(this.Int);
+  oddsRed = this.Null(this.Int);
+  catchweightLbs = this.Null(this.Int);
 }
 
 export class CancelledFights extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   cardId = this.Index(this.Int);
   cardOrder = this.Int;
   blueId = this.Int;
@@ -127,7 +127,7 @@ export class CancelledFights extends Table {
 }
 
 export class TitleRemovals extends Table {
-  id = this.Intp;
+  id = this.IntPrimary;
   fighterId = this.Cascade(FighterCoaches, { column: 'fighterId' });
   weightClassId = this.Cascade(WeightClasses, { index: false });
   isInterim = this.Bool;
