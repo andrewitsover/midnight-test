@@ -341,4 +341,14 @@ test('symbols', async () => {
     }
   });
   assert.equal(typeof first.name, 'string');
+  const displayNames = await db.query(c => {
+    const { fighters: f } = c;
+    return {
+      select: {
+        name: f.displayName
+      },
+      limit: 3
+    }
+  });
+  console.log(displayNames);
 });

@@ -1,14 +1,9 @@
 import { SQLiteDatabase } from 'flyweightjs';
 import { join } from 'path';
-import sqlite3 from 'better-sqlite3';
 import * as tables from './tables.js';
 
-const path = (subPath) => join(import.meta.dirname, `../${subPath}`);
-
-const database = new SQLiteDatabase({
-  driver: sqlite3,
-  db: path('../databases/test.db')
-});
+const path = join(import.meta.dirname, `../../databases/test.db`);
+const database = new SQLiteDatabase(path);
 const db = database.getClient(tables);
 const from = (schema) => {
   const database = new SQLiteDatabase();
