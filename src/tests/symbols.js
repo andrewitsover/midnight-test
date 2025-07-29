@@ -350,5 +350,5 @@ test('symbols', async () => {
       limit: 3
     }
   });
-  console.log(displayNames);
+  assert.equal(displayNames.at(2).name, 'Tank Abbott (Tank)');
 });
