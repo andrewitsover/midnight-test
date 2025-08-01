@@ -42,7 +42,7 @@ test('schema', async () => {
       name text not null,
       createdAt text not null default (date() || 'T' || time() || '.000Z'),
       primary key (id),
-      check (createdAt > '1997-02-02T00:00:00.000Z'),
+      check (createdAt > '1997-02-02T00:00:00.000Z')
     ) strict;
 
     create unique index users_unique_name on users(name);
@@ -95,7 +95,7 @@ test('alter columns', async () => {
       id integer not null,
       name text,
       hometown text not null default 'Brisbane',
-      primary key (id),
+      primary key (id)
     ) strict;
 
 
