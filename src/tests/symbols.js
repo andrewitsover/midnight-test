@@ -229,6 +229,18 @@ test('symbols', async () => {
       groupBy: e.id
     }
   });
+  const cards = db.subquery(c => {
+    return {
+      select: c.cards
+    }
+  });
+  const events = await db.events.query({
+    include: {
+      cards: (t, c) => t.use(cards).many({ eventId: c.id })
+    },
+    limit: 1
+  });
+  assert.equal(events.at(0).cards.length, 4);
   const locationEvents = await db.query(c => {
     const { 
       locations: l,
