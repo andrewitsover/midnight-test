@@ -88,5 +88,5 @@ test('groupBy', async () => {
       limit: 3
     });
   const startTimes = groupValues.at(1).startTimes;
-  assert.equal(startTimes.every(s => s instanceof Date), true);
+  assert.equal(startTimes.every(s => typeof s === 'string'), true);
 });

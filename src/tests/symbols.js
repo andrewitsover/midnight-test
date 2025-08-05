@@ -66,7 +66,7 @@ test('symbols', async () => {
   assert.equal(locations.at(0).id, 10);
   const eventTimes = await db.query(c => {
     const { 
-      locationId, 
+      locationId,
       startTime
     } = c.events;
     return {
