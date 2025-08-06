@@ -241,6 +241,17 @@ test('symbols', async () => {
     limit: 1
   });
   assert.equal(events.at(0).cards.length, 4);
+  const exists = await db.use(cards).exists({
+    eventId: 3
+  });
+  assert.equal(exists, true);
+  const date = new Date(Date.UTC(1997, 1, 2));
+  const aggregate = await db.use(cards).count({
+    where: {
+      startTime: c => c.lt(date)
+    }
+  });
+  assert.equal(aggregate, 54);
   const locationEvents = await db.query(c => {
     const { 
       locations: l,
