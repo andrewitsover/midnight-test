@@ -210,3 +210,21 @@ test('foreign key options', async () => {
   const foreignKey = events.foreignKeys.at(0);
   assert.equal(foreignKey.actions.at(0), 'on delete cascade');
 });
+
+test('null foreign key', async () => {
+  class Locations extends Table {
+    id = this.IntPrimary;
+    name = this.Text;
+  }
+  class Events extends Table {
+    id = this.IntPrimary;
+    name = this.Text;
+    locationId = this.References(Locations, {
+      notNull: false
+    });
+  }
+  const result = from({ Locations, Events });
+  const events = result.schema.find(t => t.name === 'events');
+  const column = events.columns.find(c => c.name === 'locationId');
+  assert.equal(column.notNull, false);
+});

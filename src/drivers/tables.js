@@ -21,7 +21,7 @@ export class Events extends Table {
   startTime = this.Index(this.Date);
   locationId = this.Cascade(Locations, {
     index: false,
-    null: true
+    notNull: false
   });
 }
 
@@ -102,7 +102,7 @@ export class Fights extends Table {
   redId = this.Cascade(Fighters);
   winnerId = this.Cascade(Fighters, {
     index: false,
-    null: true
+    notNull: false
   });
   methodId = this.Cascade(Methods, { index: false });
   methodDescription = this.Null(this.Text);
