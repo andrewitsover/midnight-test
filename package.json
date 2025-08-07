@@ -13,9 +13,7 @@
   "devDependencies": {
     "@libsql/client": "^0.15.3",
     "better-sqlite3": "^11.9.1",
-    "flyweight-client": "file:../flyweight-client",
-    "flyweightjs": "file:../flyweight",
-    "typescript": "^5.8.3"
+    "flyweightjs": "file:../flyweight"
   },
   "engines": {
     "node": ">=22.13.1"
