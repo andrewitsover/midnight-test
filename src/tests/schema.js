@@ -1,13 +1,13 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { from, diff } from '../drivers/sqlite.js';
-import { Table } from 'flyweightjs';
+import { Table, BaseTable } from 'flyweightjs';
 
 const squash = (s) => s.replaceAll(/\s+/gm, ' ').trim();
 const compare = (a, b) => assert.equal(squash(a), squash(b));
 
 test('schema', async () => {
-  class Rankings extends Table {
+  class Rankings extends BaseTable {
     id = this.Check(this.IntPrimary, 1);
     rank = this.Index(this.Check(2, [1, 2, 3]), rank => {
       return {
@@ -21,7 +21,6 @@ test('schema', async () => {
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
   const date = new Date(Date.UTC(1997, 1, 2));
   class Users extends Table {
-    id = this.IntPrimary;
     name = this.Unique(this.Text);
     createdAt = this.Check(this.Now, this.Gt(date));
 
@@ -51,10 +50,10 @@ test('schema', async () => {
 });
 
 test('add and remove column', async () => {
-  const previous = class Users extends Table {
+  const previous = class Users extends BaseTable {
     id = this.IntPrimary;
   }
-  const current = class Users extends Table {
+  const current = class Users extends BaseTable {
     id = this.IntPrimary;
     name = this.Text;
   }
@@ -66,11 +65,9 @@ test('add and remove column', async () => {
 
 test('add and remove indexes', async () => {
   const previous = class Users extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   const current = class Users extends Table {
-    id = this.IntPrimary;
     name = this.Unique(this.Text);
   }
   const add = diff({ Users: previous }, { Users: current });
@@ -81,12 +78,10 @@ test('add and remove indexes', async () => {
 
 test('alter columns', async () => {
   const previous = class Users extends Table {
-    id = this.IntPrimary;
     name = this.Index(this.Text);
     hometown = this.Text;
   }
   const current = class Users extends Table {
-    id = this.IntPrimary;
     name = this.Index(this.Null(this.Text));
     hometown = 'Brisbane';
   }
@@ -109,11 +104,9 @@ test('alter columns', async () => {
 
 test('drop tables', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -130,7 +123,6 @@ test('drop tables', async () => {
 
 test('default literals', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = 'Brisbane';
   }
   const result = from({ Locations });
@@ -141,11 +133,9 @@ test('default literals', async () => {
 
 test('foreign keys in attributes', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -158,11 +148,9 @@ test('foreign keys in attributes', async () => {
 
 test('foreign keys in fields', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations);
   }
@@ -175,11 +163,9 @@ test('foreign keys in fields', async () => {
 
 test('multiple actions', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations, {
       onDelete: 'cascade',
@@ -195,11 +181,9 @@ test('multiple actions', async () => {
 
 test('foreign key options', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.Cascade(Locations);
   }
@@ -213,18 +197,19 @@ test('foreign key options', async () => {
 
 test('null foreign key', async () => {
   class Locations extends Table {
-    id = this.IntPrimary;
     name = this.Text;
   }
   class Events extends Table {
-    id = this.IntPrimary;
     name = this.Text;
     locationId = this.References(Locations, {
       notNull: false
     });
+    code = this.Default('x');
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
-  const column = events.columns.find(c => c.name === 'locationId');
-  assert.equal(column.notNull, false);
+  const locationId = events.columns.find(c => c.name === 'locationId');
+  const code = events.columns.find(c => c.name === 'code');
+  assert.equal(locationId.notNull, false);
+  assert.equal(code.default, 'x');
 });

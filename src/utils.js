@@ -2,7 +2,9 @@ import { strict as assert } from 'assert';
 import { readFileSync, writeFileSync } from 'fs';
 import { join, basename } from 'path';
 
-const compare = (actual, result, rewrite) => {
+const rewrite = process.argv[3] === 'true';
+
+const compare = (actual, result) => {
   const path = join('results', `${result}.json`);
   const url = new URL(path, import.meta.url);
   const actualString = JSON.stringify(actual);

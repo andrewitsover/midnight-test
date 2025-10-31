@@ -4,7 +4,6 @@ const tests = [];
 const clean = new Map();
 let last;
 
-const rewrite = process.argv[3] === 'true';
 const testName = process.argv[4];
 
 const addTests = (name, testGroup) => {
@@ -25,7 +24,7 @@ const makeRun = (group) => {
   const cleanUp = clean.get(name);
   return async () => {
     try {
-      await tests({ rewrite });
+      await tests();
     }
     catch (e) {
       if (cleanUp) {

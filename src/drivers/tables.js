@@ -1,14 +1,12 @@
-import { Table } from 'flyweightjs';
+import { Table, VirtualTable } from 'flyweightjs';
 
 export class WeightClasses extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   weightLbs = this.Int;
   gender = this.Check(this.Text, ['m', 'f']);
 }
 
 export class Locations extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   address = this.Text;
   lat = this.Real;
@@ -16,7 +14,6 @@ export class Locations extends Table {
 }
 
 export class Events extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   startTime = this.Index(this.Date);
   locationId = this.Cascade(Locations, {
@@ -26,7 +23,6 @@ export class Events extends Table {
 }
 
 export class Cards extends Table {
-  id = this.IntPrimary;
   eventId = this.Cascade(Events);
   cardName = this.Text;
   cardOrder = this.Int;
@@ -34,14 +30,12 @@ export class Cards extends Table {
 }
 
 export class Coaches extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   city = this.Text;
   profile = this.Null(this.Json);
 }
 
 export class Fighters extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   nickname = this.Text;
   born = this.Null(this.Text);
@@ -59,13 +53,11 @@ export class Fighters extends Table {
 }
 
 export class OtherNames extends Table {
-  id = this.IntPrimary;
   fighterId = this.Cascade(Fighters);
   name = this.Text;
 }
 
 export class FighterCoaches extends Table {
-  id = this.IntPrimary;
   coachId = this.Cascade(Coaches, { index: false });
   fighterId = this.Cascade(Fighters, { index: false });
   startDate = this.Text;
@@ -77,7 +69,6 @@ export class FighterCoaches extends Table {
 }
 
 export class Rankings extends Table {
-  id = this.IntPrimary;
   fighterId = this.Int;
   weightClassId = this.Int;
   rank = this.Index(this.Int, rank => {
@@ -89,13 +80,11 @@ export class Rankings extends Table {
 }
 
 export class Methods extends Table {
-  id = this.IntPrimary;
   name = this.Text;
   abbreviation = this.Text;
 }
 
 export class Fights extends Table {
-  id = this.IntPrimary;
   cardId = this.Cascade(Cards);
   fightOrder = this.Int;
   blueId = this.Cascade(Fighters);
@@ -117,7 +106,6 @@ export class Fights extends Table {
 }
 
 export class CancelledFights extends Table {
-  id = this.IntPrimary;
   cardId = this.Index(this.Int);
   cardOrder = this.Int;
   blueId = this.Int;
@@ -127,7 +115,6 @@ export class CancelledFights extends Table {
 }
 
 export class TitleRemovals extends Table {
-  id = this.IntPrimary;
   fighterId = this.Cascade(FighterCoaches, { column: 'fighterId' });
   weightClassId = this.Cascade(WeightClasses, { index: false });
   isInterim = this.Bool;
@@ -137,7 +124,7 @@ export class TitleRemovals extends Table {
 
 const fighter = new Fighters();
 
-export class FighterProfiles extends Table {
+export class FighterProfiles extends VirtualTable {
   name = fighter.name;
   hometown = fighter.hometown;
   

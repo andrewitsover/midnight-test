@@ -373,5 +373,43 @@ test('symbols', async () => {
       limit: 3
     }
   });
+  const virtual = await db.query(c => {
+    const { 
+      fighters: f,
+      fighterProfiles: p
+    } = c;
+    return {
+      select: {
+        name: f.name
+      },
+      where: {
+        [p.fighterProfiles]: 'Sao'
+      },
+      bm25: {
+        [p.name]: 1,
+        [p.hometown]: 10
+      },
+      join: [f.id, p.rowid],
+      limit: 5
+    }
+  });
+  assert.equal(virtual.at(0).name, 'Thomas Almeida');
   assert.equal(displayNames.at(2).name, 'Tank Abbott (Tank)');
+  const having = await db.query(c => {
+    const { id, name, locationId } = c.events;
+    return {
+      select: {
+        locationId,
+        events: c.group({
+          id,
+          name
+        })
+      },
+      groupBy: locationId,
+      having: {
+        [c.count()]: c.gt(10)
+      },
+      limit: 3
+    }
+  });
 });
