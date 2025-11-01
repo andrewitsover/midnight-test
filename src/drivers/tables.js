@@ -1,4 +1,4 @@
-import { Table, VirtualTable } from 'flyweightjs';
+import { Table, FTSTable } from 'flyweightjs';
 
 export class WeightClasses extends Table {
   name = this.Text;
@@ -124,9 +124,7 @@ export class TitleRemovals extends Table {
 
 const fighter = new Fighters();
 
-export class FighterProfiles extends VirtualTable {
+export class FighterProfiles extends FTSTable {
   name = fighter.name;
   hometown = fighter.hometown;
-  
-  Virtual = fighter;
 }
