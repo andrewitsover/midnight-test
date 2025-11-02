@@ -63,6 +63,19 @@ test('add and remove column', async () => {
   compare(remove, 'alter table users drop column name;');
 });
 
+test('rename column', async () => {
+  const previous = class Users extends BaseTable {
+    id = this.IntPrimary;
+    name = this.Text;
+  }
+  const current = class Users extends BaseTable {
+    id = this.IntPrimary;
+    displayName = this.Text;
+  }
+  const rename = diff({ Users: previous }, { Users: current });
+  compare(rename, 'alter table users rename column name to displayName;');
+});
+
 test('add and remove indexes', async () => {
   const previous = class Users extends Table {
     name = this.Text;
