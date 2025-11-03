@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { from, diff } from '../drivers/sqlite.js';
-import { Table, BaseTable } from 'flyweightjs';
+import { Table, BaseTable, FTSTable, ExternalFTSTable } from 'flyweightjs';
 
 const squash = (s) => s.replaceAll(/\s+/gm, ' ').trim();
 const compare = (a, b) => assert.equal(squash(a), squash(b));
@@ -225,4 +225,31 @@ test('null foreign key', async () => {
   const code = events.columns.find(c => c.name === 'code');
   assert.equal(locationId.notNull, false);
   assert.equal(code.default, 'x');
+});
+
+test('content fts5 table', async () => {
+  class Emails extends Table {
+    to = this.Text;
+    body = this.Text;
+  }
+  const email = new Emails();
+  class Searches extends ExternalFTSTable {
+    to = email.to;
+    body = email.body;
+  }
+  const result = from({ Emails, Searches });
+  console.log(result.database.diff());
+  const table = result.schema.find(t => t.name === 'searches');
+});
+
+test('contentless fts5 table', async () => {
+  class Emails extends FTSTable {
+    uuid = this.Unindex(this.Text);
+    to = this.Text;
+    body = this.Text;
+
+    Prefix = 3;
+  }
+  const result = from({ Emails });
+  const table = from({ Emails }).schema.find(t => t.name === 'emails');
 });
