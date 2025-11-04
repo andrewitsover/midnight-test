@@ -238,7 +238,6 @@ test('content fts5 table', async () => {
     body = email.body;
   }
   const result = from({ Emails, Searches });
-  console.log(result.database.diff());
   const table = result.schema.find(t => t.name === 'searches');
 });
 

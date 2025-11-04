@@ -1,4 +1,4 @@
-import { Table, FTSTable } from 'flyweightjs';
+import { Table, FTSTable, ExternalFTSTable, Unicode61 } from 'flyweightjs';
 
 export class WeightClasses extends Table {
   name = this.Text;
@@ -124,7 +124,20 @@ export class TitleRemovals extends Table {
 
 const fighter = new Fighters();
 
-export class FighterProfiles extends FTSTable {
+export class FighterProfiles extends ExternalFTSTable {
   name = fighter.name;
   hometown = fighter.hometown;
+}
+
+const tokenizer = new Unicode61({
+  removeDiacritics: true,
+  porter: true
+});
+
+export class Emails extends FTSTable {
+  from = this.Text;
+  to = this.Text;
+  body = this.Text;
+
+  Tokenizer = tokenizer;
 }
