@@ -8,9 +8,9 @@ const tokenizer = new Unicode61({
 });
 
 class Emails extends FTSTable {
-  from = this.Text;
-  to = this.Text;
-  body = this.Text;
+  from;
+  to;
+  body;
 
   Tokenizer = tokenizer;
 }
@@ -26,11 +26,36 @@ if (database.created) {
 }
 
 test('Insert into fts5 table', async () => {
-  await db.emails.insert({
-    from: 'andrew@gmail.com',
-    to: 'elon@gmail.com',
-    body: 'When is my CyberTruck arriving?'
+  const count = await db.emails.count();
+  if (count === 0) {
+    await db.emails.insert({
+      from: 'andrew@gmail.com',
+      to: 'elon@gmail.com',
+      body: 'When is my CyberTruck arriving?'
+    });
+    await db.emails.insert({
+      from: 'elon@gmail.com',
+      to: 'andrew@gmail.com',
+      body: 'Very soon. We are adding the afterburners.'
+    });
+    await db.emails.insert({
+      from: 'dhh@hey.com',
+      to: 'andrew@gmail.com',
+      body: 'When are you going to install Omarchy?'
+    });
+    await db.emails.insert({
+      from: 'andrew@gmail.com',
+      to: 'dhh@hey.com',
+      body: 'When I finish my current project.'
+    });
+  }
+  const email = await db.emails.match({
+    column: {
+      from: {
+        startsWith: 'andrew'
+      }
+    },
+    limit: 3
   });
-  const email = await db.emails.get({ emails: 'gmail' });
   console.log(email);
 });
