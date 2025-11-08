@@ -51,8 +51,8 @@ test('Insert into fts5 table', async () => {
   }
   const email = await db.emails.match({
     column: {
-      from: {
-        startsWith: 'andrew'
+      body: {
+        and: [{ startsWith: 'When' }, 'project']
       }
     },
     limit: 3
