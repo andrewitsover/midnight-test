@@ -1,6 +1,7 @@
-import { SQLiteDatabase, Unicode61, FTSTable } from 'flyweightjs';
+import { SQLiteDatabase, Unicode61, FTSTable, Table } from 'flyweightjs';
 import { join } from 'path';
 import { test } from '../run.js';
+import { strict as assert } from 'assert';
 
 const tokenizer = new Unicode61({
   removeDiacritics: true,
@@ -15,10 +16,15 @@ class Emails extends FTSTable {
   Tokenizer = tokenizer;
 }
 
+class Tests extends Table {
+  name;
+  emailId = this.Cascade(Emails)
+}
+
 const path = join(import.meta.dirname, `../../databases/virtual.db`);
 const database = new SQLiteDatabase(path);
 await database.initialize();
-const db = database.getClient({ Emails });
+const db = database.getClient({ Emails, Tests });
 if (database.created) {
   const sql = db.diff();
   await db.migrate(sql);
@@ -49,13 +55,16 @@ test('Insert into fts5 table', async () => {
       body: 'When I finish my current project.'
     });
   }
-  const email = await db.emails.match({
+});
+
+test('and startsWith', async () => {
+  const emails = await db.emails.match({
+    return: 'rowid',
     column: {
       body: {
         and: [{ startsWith: 'When' }, 'project']
       }
-    },
-    limit: 3
+    }
   });
-  console.log(email);
+  console.log(emails);
 });

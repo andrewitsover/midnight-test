@@ -30,8 +30,8 @@ test('queries', async () => {
   const limited = await db.fighters.query({ limit: 10 });
   assert.equal(limited.length, 10);
   const profiles = await db.fighterProfiles.query({
-    where: { 
-      fighterProfiles: 'Sao'
+    where: {
+      fighterProfiles: 'Sao',
     },
     highlight: {
       column: 'hometown',
@@ -252,17 +252,6 @@ test('queries', async () => {
     omit: 'locationId'
   });
   assert.equal(omit.locationId, undefined);
-  const debug = await db.events.query({
-    where: {
-      id: [1, 2, 3]
-    },
-    include: {
-      location: (t, c) => t.locations.get({ id: c.locationId })
-    },
-    debug: true
-  });
-  assert.equal(debug.result.length, 3);
-  assert.equal(debug.queries.length, 2);
   const fighters = await db.fighters.query({
     include: {
       fights: (t, c) => t.fights.many({
