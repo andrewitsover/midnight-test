@@ -60,11 +60,31 @@ test('Insert into fts5 table', async () => {
 test('and startsWith', async () => {
   const emails = await db.emails.match({
     return: 'rowid',
-    column: {
+    where: {
       body: {
         and: [{ startsWith: 'When' }, 'project']
       }
     }
   });
-  console.log(emails);
+  assert.equal(emails.at(0), 4);
+});
+
+test('or', async () => {
+  const emails = await db.emails.match({
+    or: ['CyberTruck', 'Omarchy']
+  });
+  assert.equal(emails.length, 2);
+});
+
+test('near', async () => {
+  const distance = async (n) => {
+    const result = await db.emails.match({
+      near: ['finish', 'project', n]
+    });
+    return result.length > 0;
+  }
+  const fail = await distance(1);
+  const pass = await distance(2);
+  assert.equal(fail, false);
+  assert.equal(pass, true);
 });

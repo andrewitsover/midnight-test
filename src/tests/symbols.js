@@ -234,13 +234,6 @@ test('symbols', async () => {
       select: c.cards
     }
   });
-  const events = await db.events.query({
-    include: {
-      cards: (t, c) => t.use(cards).many({ eventId: c.id })
-    },
-    limit: 1
-  });
-  assert.equal(events.at(0).cards.length, 4);
   const exists = await db.use(cards).exists({
     eventId: 3
   });

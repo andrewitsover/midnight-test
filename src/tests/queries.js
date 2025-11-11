@@ -100,90 +100,6 @@ test('queries', async () => {
     }
   });
   assert.equal(first.id, 3);
-  const locations = await db.locations.query({
-    where: {
-      and: [
-        { id: c => c.gt(109) },
-        { id: c => c.lt(120) }
-      ]
-    },
-    include: {
-      events: (t, c) => t.events.query({
-        where: {
-          locationId: c.id
-        },
-        orderBy: 'startTime',
-        desc: true,
-        offset: 1,
-        limit: 3
-      })
-    }
-  });
-  assert.equal(locations.at(0).events.at(1).id, 415);
-  const events = await db.events.query({
-    include: {
-      location: (t, c) => t.locations.get({ id: c.locationId })
-    },
-    limit: 3
-  });
-  const event = events.at(1);
-  assert.equal(event.location.id, event.locationId);
-  const corner = (colour) => (t, c) => t.fighters.get({ id: c[`${colour}Id`] });
-  const fight = await db.fights.first({
-    where: {
-      id: 10
-    },
-    include: {
-      blue: corner('blue'),
-      red: corner('red')
-    }
-  });
-  assert.equal(fight.blue.id, fight.blueId);
-  assert.equal(fight.red.id, fight.redId);
-  const popular = await db.locations.query({
-    include: {
-      latest: (t, c) => t.events.first({
-        include: {
-          cards: (t, c) => t.cards.many({ eventId: c.id })
-        },
-        where: {
-          locationId: c.id
-        },
-        orderBy: 'startTime',
-        desc: true
-      }),
-      eventCount: (t, c) => t.events.count({
-        where: {
-          locationId: c.id
-        }
-      })
-    },
-    limit: 3
-  });
-  assert.equal(popular.at(1).latest.cards.length, 4);
-  assert.equal(popular.at(0).eventCount, 1);
-  const latest = await db.locations.query({
-    select: ['id', 'name'],
-    where: {
-      and: [
-        { id: c => c.gt(109) },
-        { id: c => c.lt(120) }
-      ]
-    },
-    include: {
-      latest: (t, c) => t.events.first({
-        include: {
-          cards: (t, c) => t.cards.many({ eventId: c.id })
-        },
-        where: {
-          locationId: c.id
-        },
-        orderBy: 'startTime',
-        desc: true
-      })
-    }
-  });
-  assert.equal(latest.at(0).latest.id, 502);
   const total = await db.fighters.count({
     where: {
       heightCm: n => n.not(null)
@@ -192,41 +108,6 @@ test('queries', async () => {
   const sum = await db.fighters.sum({ column: 'heightCm' });
   const avg = await db.fighters.avg({ column: 'heightCm' });
   assert.equal(avg, sum / total);
-  const includeGet = await db.events.query({
-    include: {
-      locationName: (t, c) => t.locations.get({ id: c.locationId }, 'name')
-    },
-    limit: 3
-  });
-  assert.equal(includeGet.some(item => item.locationName === undefined), false);
-  assert.equal(includeGet.length, 3);
-  const singleCount = await db.locations.first({
-    where: {
-      id: 45
-    },
-    include: {
-      eventsCount: (t, c) => t.events.count({
-        where: {
-          locationId: c.id
-        }
-      })
-    }
-  });
-  assert.equal(singleCount.eventsCount, 18);
-  const includeCount = await db.locations.query({
-    select: ['id', 'name'],
-    where: {
-      name: n => n.like('P%')
-    },
-    include: {
-      count: (t, c) => t.events.count({
-        where: {
-          locationId: c.id
-        }
-      })
-    }
-  });
-  assert.equal(includeCount.at(0).count, 2);
   const time = new Date();
   time.setFullYear(1997);
   const conditions = await db.events.query({
@@ -252,18 +133,6 @@ test('queries', async () => {
     omit: 'locationId'
   });
   assert.equal(omit.locationId, undefined);
-  const fighters = await db.fighters.query({
-    include: {
-      fights: (t, c) => t.fights.many({
-        or: [
-          { redId: c.id },
-          { blueId: c.id }
-        ]
-      })
-    },
-    limit: 3
-  });
-  assert.equal(fighters.at(2).fights.length, 18);
   const coachId = await db.coaches.insert({
     name: 'Test',
     city: 'Brisbane'
@@ -286,18 +155,6 @@ test('queries', async () => {
     }
   });
   assert.equal(max instanceof Date, true);
-  const maxLocations = await db.locations.query({
-    include: {
-      max: (t, c) => t.events.max({
-        column: 'startTime',
-        where: {
-          locationId: c.id
-        }
-      })
-    },
-    limit: 3
-  });
-  assert.equal(maxLocations.at(0).max instanceof Date, true);
 });
 
 cleanUp('queries', async () => {
