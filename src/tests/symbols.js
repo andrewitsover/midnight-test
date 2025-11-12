@@ -280,9 +280,9 @@ test('symbols', async () => {
     }
   });
   assert.equal(where.length, 3);
-  const tx = await db.getTransaction();
+  let tx;
   try {
-    await tx.begin();
+    tx = await db.begin();
     await tx.query(c => {
       const { events: e } = c;
       return {

@@ -4,9 +4,9 @@ import { db } from '../drivers/sqlite.js';
 
 test('transactions', async () => {
   let javierId;
-  let tx = await db.getTransaction();
+  let tx;
   try {
-    await tx.begin();
+    tx = await db.begin();
     javierId = await tx.coaches.insert({
       name: 'Javier Mendez',
       city: 'San Jose'
@@ -19,9 +19,8 @@ test('transactions', async () => {
   let javier = await db.coaches.get({ id: javierId });
   assert.equal(javier, undefined);
 
-  tx = await db.getTransaction();
   try {
-    await tx.begin();
+    tx = await db.begin();
     javierId = await tx.coaches.insert({
       name: 'Javier Mendez',
       city: 'San Jose'
@@ -65,8 +64,7 @@ test('transactions', async () => {
     });
   }
   const t1 = async () => {
-    const tx = await db.getTransaction();
-    await tx.begin();
+    const tx = await db.begin();
     await tx.coaches.insert({
       name: 'Test User',
       city: 'Whatever'
@@ -75,8 +73,7 @@ test('transactions', async () => {
     await tx.commit();
   }
   const t2 = async () => {
-    const tx = await db.getTransaction();
-    await tx.begin();
+    const tx = await db.begin();
     await tx.coaches.insert({
       name: 'Test User 2',
       city: 'Whatever 2'
