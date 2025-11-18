@@ -24,9 +24,9 @@ test('queries', async () => {
   });
   const updated = await db.coaches.get({ id: 1 });
   assert.equal(updated.city, 'Brisbane');
-  await db.coaches.remove({ id: 1 });
-  const removed = await db.coaches.get({ id: 1 });
-  assert.equal(removed, undefined);
+  await db.coaches.delete({ id: 1 });
+  const deleted = await db.coaches.get({ id: 1 });
+  assert.equal(deleted, undefined);
   const limited = await db.fighters.query({ limit: 10 });
   assert.equal(limited.length, 10);
   const profiles = await db.fighterProfiles.query({
@@ -44,7 +44,7 @@ test('queries', async () => {
     limit: 5
   });
   compare(profiles, 'fighterProfiles');
-  await db.coaches.remove();
+  await db.coaches.delete();
   await db.coaches.insert({ name: 'Andrew', city: 'Brisbane' });
   await db.coaches.insert({ name: 'Andrew', city: 'Brisbane' });
   await db.coaches.update({
@@ -53,7 +53,7 @@ test('queries', async () => {
   });
   const count = await db.coaches.count({ name: 'Eugene' });
   assert.equal(count, 2);
-  await db.coaches.remove();
+  await db.coaches.delete();
   const fighterCount = await db.fighters.count({
     where: {
       and: [
@@ -75,7 +75,7 @@ test('queries', async () => {
   await db.coaches.insertMany(rows);
   const insertCount = await db.coaches.count();
   assert.equal(insertCount, 5);
-  await db.coaches.remove();
+  await db.coaches.delete();
   const upsertId = await db.coaches.insert({
     name: 'Test User',
     city: 'Test City'
@@ -93,7 +93,7 @@ test('queries', async () => {
   });
   const upsert = await db.coaches.get({ id: upsertId });
   assert.equal(upsert.city, 'Updated City');
-  await db.coaches.remove();
+  await db.coaches.delete();
   const first = await db.fighters.first({
     where: {
       id: 3
@@ -147,7 +147,7 @@ test('queries', async () => {
   });
   const coach = await db.coaches.get({ id: coachId });
   assert.equal(coach.city, 'Brisbane, Australia');
-  await db.coaches.remove();
+  await db.coaches.delete();
   const max = await db.events.max({
     column: 'startTime',
     where: {
@@ -158,5 +158,5 @@ test('queries', async () => {
 });
 
 cleanUp('queries', async () => {
-  await db.coaches.remove();
+  await db.coaches.delete();
 });

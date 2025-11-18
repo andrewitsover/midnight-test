@@ -1,20 +1,20 @@
 import { Table, FTSTable, ExternalFTSTable, Unicode61 } from 'flyweightjs';
 
 export class WeightClasses extends Table {
-  name = this.Text;
+  name;
   weightLbs = this.Int;
   gender = this.Check(this.Text, ['m', 'f']);
 }
 
 export class Locations extends Table {
-  name = this.Text;
-  address = this.Text;
+  name;
+  address;
   lat = this.Real;
   long = this.Real;
 }
 
 export class Events extends Table {
-  name = this.Text;
+  name;
   startTime = this.Index(this.Date);
   locationId = this.Cascade(Locations, {
     index: false,
@@ -24,14 +24,14 @@ export class Events extends Table {
 
 export class Cards extends Table {
   eventId = this.Cascade(Events);
-  cardName = this.Text;
+  cardName;
   cardOrder = this.Int;
   startTime = this.Null(this.Date);
 }
 
 export class Coaches extends Table {
-  name = this.Text;
-  city = this.Text;
+  name;
+  city;
   profile = this.Null(this.Json);
 }
 
@@ -41,7 +41,7 @@ export class Fighters extends Table {
   born = this.Null(this.Text);
   heightCm = this.Null(this.Int);
   reachCm = this.Null(this.Int);
-  hometown = this.Text;
+  hometown;
   social = this.Null(this.Json);
   isActive = this.Index(this.Bool);
   phone = this.Null(this.Json);
@@ -54,13 +54,13 @@ export class Fighters extends Table {
 
 export class OtherNames extends Table {
   fighterId = this.Cascade(Fighters);
-  name = this.Text;
+  name;
 }
 
 export class FighterCoaches extends Table {
   coachId = this.Cascade(Coaches, { index: false });
   fighterId = this.Cascade(Fighters, { index: false });
-  startDate = this.Text;
+  startDate;
   endDate = this.Null(this.Text);
 
   Attributes = () => {
@@ -80,8 +80,8 @@ export class Rankings extends Table {
 }
 
 export class Methods extends Table {
-  name = this.Text;
-  abbreviation = this.Text;
+  name;
+  abbreviation;
 }
 
 export class Fights extends Table {
@@ -111,7 +111,7 @@ export class CancelledFights extends Table {
   blueId = this.Int;
   redId = this.Int;
   cancelledAt = this.Date;
-  cancellationReason = this.Text;
+  cancellationReason;
 }
 
 export class TitleRemovals extends Table {
@@ -119,7 +119,7 @@ export class TitleRemovals extends Table {
   weightClassId = this.Cascade(WeightClasses, { index: false });
   isInterim = this.Bool;
   removedAt = this.Date;
-  reason = this.Text;
+  reason;
 }
 
 const fighter = new Fighters();
@@ -135,9 +135,9 @@ const tokenizer = new Unicode61({
 });
 
 export class Emails extends FTSTable {
-  from = this.Text;
-  to = this.Text;
-  body = this.Text;
+  from;
+  to;
+  body;
 
   Tokenizer = tokenizer;
 }

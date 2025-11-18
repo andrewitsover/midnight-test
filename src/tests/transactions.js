@@ -32,7 +32,7 @@ test('transactions', async () => {
   }
   javier = await db.coaches.get({ id: javierId });
   assert.notEqual(javier, undefined);
-  await db.coaches.remove({ id: javierId });
+  await db.coaches.delete({ id: javierId });
 
   await db.coaches.insertMany([
     {
@@ -46,10 +46,10 @@ test('transactions', async () => {
   ]);
   let coaches = await db.coaches.many();
   assert.equal(coaches.length, 2);
-  await db.coaches.remove({ name: 'Eugene Bareman' });
+  await db.coaches.delete({ name: 'Eugene Bareman' });
   coaches = await db.coaches.many();
   assert.equal(coaches.length, 1);
-  await db.coaches.remove();
+  await db.coaches.delete();
 
   const methodCount = await db.fights.count({
     where: {
@@ -82,7 +82,7 @@ test('transactions', async () => {
   }
   const promises = [t1(), t2()];
   await Promise.all(promises);
-  await db.coaches.remove();
+  await db.coaches.delete();
   await db.batch(tx => {
     const coach = tx.coaches.insert({
       name: 'Test',
@@ -97,10 +97,10 @@ test('transactions', async () => {
   });
   const count = await db.coaches.count();
   assert.equal(count, 1);
-  await db.coaches.remove();
-  await db.fighters.remove({ name: 'Test', hometown: 'Test', isActive: false });
+  await db.coaches.delete();
+  await db.fighters.delete({ name: 'Test', hometown: 'Test', isActive: false });
 });
 
 cleanUp('transactions', async () => {
-  await db.coaches.remove();
+  await db.coaches.delete();
 });
