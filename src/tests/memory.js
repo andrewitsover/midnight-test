@@ -8,7 +8,7 @@ class Users extends Table {
 }
 
 test('memory', async () => {
-  const database = new SQLiteDatabase();
+  const database = new SQLiteDatabase(':memory:');
   const db = database.getClient({ Users });
   const sql = db.diff();
   await db.migrate(sql);
