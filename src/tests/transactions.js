@@ -58,7 +58,7 @@ test('transactions', async () => {
   });
   assert.equal(methodCount, 45);
 
-  const wait = async () => {
+  const wait = async (time = 100) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => resolve(), 100);
     });
@@ -97,6 +97,18 @@ test('transactions', async () => {
   });
   const count = await db.coaches.count();
   assert.equal(count, 1);
+  const t3 = async () => {
+    const tx = await db.begin();
+    await tx.coaches.insert({ name: 'Test', city: 'Test '});
+    await wait();
+    await tx.rollback();
+  }
+  const promise = t3();
+  await wait(30);
+  const during = await db.coaches.count();
+  await promise;
+  const after = await db.coaches.count();
+  assert.equal(during, after);
   await db.coaches.delete();
   await db.fighters.delete({ name: 'Test', hometown: 'Test', isActive: false });
 });
