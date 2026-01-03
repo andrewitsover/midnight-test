@@ -1,4 +1,4 @@
-import { TursoDatabase } from 'flyweightjs';
+import { TursoDatabase } from '@andrewitsover/midnight';
 import { createClient } from '@libsql/client';
 import { join } from 'path';
 import * as tables from './tables.js';

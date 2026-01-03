@@ -1,4 +1,4 @@
-import { SQLiteDatabase } from 'flyweightjs';
+import { SQLiteDatabase } from '@andrewitsover/midnight';
 import { join } from 'path';
 import * as tables from './tables.js';
 

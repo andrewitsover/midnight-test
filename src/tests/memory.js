@@ -1,4 +1,4 @@
-import { SQLiteDatabase, Table } from 'flyweightjs';
+import { SQLiteDatabase, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 

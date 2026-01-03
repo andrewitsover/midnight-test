@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { from, diff } from '../drivers/sqlite.js';
-import { Table, BaseTable, FTSTable, ExternalFTSTable } from 'flyweightjs';
+import { Table, BaseTable, FTSTable, ExternalFTSTable } from '@andrewitsover/midnight';
 
 const squash = (s) => s.replaceAll(/\s+/gm, ' ').trim();
 const compare = (a, b) => assert.equal(squash(a), squash(b));

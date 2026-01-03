@@ -1,7 +1,7 @@
 {
-  "name": "flyweight-test",
+  "name": "midnight-test",
   "version": "3.0.72",
-  "description": "Flyweight tests",
+  "description": "Midnight tests",
   "type": "module",
   "scripts": {
     "sqlite": "node ./src/main.js sqlite false",
@@ -11,9 +11,9 @@
   "author": "Andrew Jones",
   "license": "MIT",
   "devDependencies": {
+    "@andrewitsover/midnight": "file:../midnight",
     "@libsql/client": "^0.15.3",
-    "better-sqlite3": "^11.9.1",
-    "flyweightjs": "file:../flyweight"
+    "better-sqlite3": "^11.9.1"
   },
   "engines": {
     "node": ">=22.13.1"

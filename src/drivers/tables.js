@@ -1,4 +1,4 @@
-import { Table, FTSTable, ExternalFTSTable, Unicode61 } from 'flyweightjs';
+import { Table, FTSTable, ExternalFTSTable, Unicode61 } from '@andrewitsover/midnight';
 
 export class WeightClasses extends Table {
   name;

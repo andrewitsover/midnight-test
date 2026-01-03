@@ -1,4 +1,4 @@
-import { SQLiteDatabase, Unicode61, FTSTable, Table } from 'flyweightjs';
+import { SQLiteDatabase, Unicode61, FTSTable, Table } from '@andrewitsover/midnight';
 import { join } from 'path';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
