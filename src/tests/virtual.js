@@ -1,5 +1,4 @@
 import { SQLiteDatabase, Unicode61, FTSTable, Table } from '@andrewitsover/midnight';
-import { join } from 'path';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -21,15 +20,11 @@ class Tests extends Table {
   emailId = this.Cascade(Emails)
 }
 
-const path = join(import.meta.dirname, `../../databases/virtual.db`);
-const database = new SQLiteDatabase(path);
+const database = new SQLiteDatabase(':memory:');
 await database.initialize();
 const db = database.getClient({ Emails, Tests });
-if (database.created) {
-  const sql = db.diff();
-  await db.migrate(sql);
-  console.log(sql);
-}
+const sql = db.diff();
+await db.migrate(sql);
 
 test('Insert into fts5 table', async () => {
   const count = await db.emails.count();
