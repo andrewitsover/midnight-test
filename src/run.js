@@ -17,7 +17,9 @@ const addTests = (name, testGroup) => {
     tests.push({ name, tests: testGroup });
   }
 };
-const addCleanUp = (name, cleanUp) => clean.set(name, cleanUp);
+const addCleanUp = (name, cleanUp) => {
+  clean.set(name, cleanUp);
+}
 
 const makeRun = (group) => {
   const { name, tests } = group;
@@ -53,7 +55,6 @@ const run = async () => {
       console.log('All tests passed');
     }
     await database.close();
-    process.exit();
   }
   catch (e) {
     await database.close();

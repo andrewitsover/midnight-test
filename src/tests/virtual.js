@@ -26,30 +26,25 @@ const db = database.getClient({ Emails, Tests });
 const sql = db.diff();
 await db.migrate(sql);
 
-test('Insert into fts5 table', async () => {
-  const count = await db.emails.count();
-  if (count === 0) {
-    await db.emails.insert({
-      from: 'andrew@gmail.com',
-      to: 'elon@gmail.com',
-      body: 'When is my CyberTruck arriving?'
-    });
-    await db.emails.insert({
-      from: 'elon@gmail.com',
-      to: 'andrew@gmail.com',
-      body: 'Very soon. We are adding the afterburners.'
-    });
-    await db.emails.insert({
-      from: 'dhh@hey.com',
-      to: 'andrew@gmail.com',
-      body: 'When are you going to install Omarchy?'
-    });
-    await db.emails.insert({
-      from: 'andrew@gmail.com',
-      to: 'dhh@hey.com',
-      body: 'When I finish my current project.'
-    });
-  }
+await db.emails.insert({
+  from: 'andrew@gmail.com',
+  to: 'elon@gmail.com',
+  body: 'When is my CyberTruck arriving?'
+});
+await db.emails.insert({
+  from: 'elon@gmail.com',
+  to: 'andrew@gmail.com',
+  body: 'Very soon. We are adding the afterburners.'
+});
+await db.emails.insert({
+  from: 'dhh@hey.com',
+  to: 'andrew@gmail.com',
+  body: 'When are you going to install Omarchy?'
+});
+await db.emails.insert({
+  from: 'andrew@gmail.com',
+  to: 'dhh@hey.com',
+  body: 'When I finish my current project.'
 });
 
 test('and startsWith', async () => {

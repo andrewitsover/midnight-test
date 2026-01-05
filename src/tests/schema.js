@@ -243,9 +243,9 @@ test('content fts5 table', async () => {
 
 test('contentless fts5 table', async () => {
   class Emails extends FTSTable {
-    uuid = this.Unindex(this.Text);
-    to = this.Text;
-    body = this.Text;
+    uuid = this.Unindexed;
+    to;
+    body;
 
     Prefix = 3;
   }
