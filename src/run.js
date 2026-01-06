@@ -4,7 +4,7 @@ const tests = [];
 const clean = new Map();
 let last;
 
-const testName = process.argv[4];
+const testName = process.argv[3];
 
 const addTests = (name, testGroup) => {
   if (testName && name !== testName) {

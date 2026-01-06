@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import { readFileSync, writeFileSync } from 'fs';
 import { join, basename } from 'path';
 
-const rewrite = process.argv[3] === 'true';
+const rewrite = process.argv[2] === 'true';
 
 const compare = (actual, result) => {
   const path = join('results', `${result}.json`);

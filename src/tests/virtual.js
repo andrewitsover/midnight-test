@@ -23,31 +23,31 @@ class Tests extends Table {
 const database = new SQLiteDatabase(':memory:');
 const db = database.getClient({ Emails, Tests });
 const sql = db.diff();
-await db.migrate(sql);
+db.migrate(sql);
 
-await db.emails.insert({
+db.emails.insert({
   from: 'andrew@gmail.com',
   to: 'elon@gmail.com',
   body: 'When is my CyberTruck arriving?'
 });
-await db.emails.insert({
+db.emails.insert({
   from: 'elon@gmail.com',
   to: 'andrew@gmail.com',
   body: 'Very soon. We are adding the afterburners.'
 });
-await db.emails.insert({
+db.emails.insert({
   from: 'dhh@hey.com',
   to: 'andrew@gmail.com',
   body: 'When are you going to install Omarchy?'
 });
-await db.emails.insert({
+db.emails.insert({
   from: 'andrew@gmail.com',
   to: 'dhh@hey.com',
   body: 'When I finish my current project.'
 });
 
-test('and startsWith', async () => {
-  const emails = await db.emails.match({
+test('and startsWith', () => {
+  const emails = db.emails.match({
     return: 'rowid',
     where: {
       body: {
@@ -58,29 +58,29 @@ test('and startsWith', async () => {
   assert.equal(emails.at(0), 4);
 });
 
-test('or', async () => {
-  const emails = await db.emails.match({
+test('or', () => {
+  const emails = db.emails.match({
     or: ['CyberTruck', 'Omarchy']
   });
   assert.equal(emails.length, 2);
 });
 
-test('near', async () => {
-  const distance = async (n) => {
-    const result = await db.emails.match({
+test('near', () => {
+  const distance = (n) => {
+    const result = db.emails.match({
       near: ['finish', 'project', n]
     });
     return result.length > 0;
   }
-  const fail = await distance(1);
-  const pass = await distance(2);
+  const fail = distance(1);
+  const pass = distance(2);
   assert.equal(fail, false);
   assert.equal(pass, true);
 });
 
-test('log', async () => {
+test('log', () => {
   let data;
-  await db.emails.match({
+  db.emails.match({
     phrase: 'CyberTruck',
     log: (info) => data = info
   });

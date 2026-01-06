@@ -3,7 +3,7 @@ import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
 
 test('symbols', async () => {
-  const detailed = await db.query(c => {
+  const detailed = db.query(c => {
     const {
       locations: l,
       events: e
@@ -18,7 +18,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
-  const names = await db.query(c => {
+  const names = db.query(c => {
     const { id, name } = c.fighters;
     const n = c.otherNames;
     const otherNames = c.group({
@@ -44,7 +44,7 @@ test('symbols', async () => {
     };
   });
   assert.equal(names.at(0).otherNames.length, 2);
-  const locations = await db.query(c => {
+  const locations = db.query(c => {
     const { id, name } = c.locations;
     const e = c.events;
     return {
@@ -64,7 +64,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(locations.at(0).id, 10);
-  const eventTimes = await db.query(c => {
+  const eventTimes = db.query(c => {
     const { 
       locationId,
       startTime
@@ -79,7 +79,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(eventTimes.at(0).startTime instanceof Date, true);
-  const ranks = await db.query(c => {
+  const ranks = db.query(c => {
     const { 
       id, 
       name, 
@@ -99,7 +99,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(ranks.at(0).heightCm, 213);
-  const max = await db.query(c => {
+  const max = db.query(c => {
     const { id, name, startTime } = c.events;
     const now = new Date();
     const max = c.max(c.timeDiff(startTime, now));
@@ -112,7 +112,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(max.at(0).id, 1);
-  const fighters = await db.query(c => {
+  const fighters = db.query(c => {
     const {
       id,
       name,
@@ -132,7 +132,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(fighters.at(0).stats.heightCm, 170);
-  const fights = await db.query(c => {
+  const fights = db.query(c => {
     const { 
       fights: f,
       fighters: r,
@@ -163,7 +163,7 @@ test('symbols', async () => {
       }
     }
   });
-  const optional = await db.query(context => {
+  const optional = db.query(context => {
     const {
       fighterCoaches: fc,
       coaches: c
@@ -188,7 +188,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(optional.at(0).coach, null);
-  const types = await db.query(c => {
+  const types = db.query(c => {
     const {
       events: e
     } = c;
@@ -203,7 +203,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(types.at(0).date instanceof Date, true);
-  const compare = await db.query(c => {
+  const compare = db.query(c => {
     const { id } = c.fighters;
     return {
       select: {
@@ -234,18 +234,18 @@ test('symbols', async () => {
       select: c.cards
     }
   });
-  const exists = await db.use(cards).exists({
+  const exists = db.use(cards).exists({
     eventId: 3
   });
   assert.equal(exists, true);
   const date = new Date(Date.UTC(1997, 1, 2));
-  const aggregate = await db.use(cards).count({
+  const aggregate = db.use(cards).count({
     where: {
       startTime: c => c.lt(date)
     }
   });
   assert.equal(aggregate, 54);
-  const locationEvents = await db.query(c => {
+  const locationEvents = db.query(c => {
     const { 
       locations: l,
       events: e
@@ -270,7 +270,7 @@ test('symbols', async () => {
   const event = locationEvents.at(0).events.at(0);
   const cardId = event.cards.at(0).id;
   assert.equal(cardId, 1);
-  const where = await db.query(c => {
+  const where = db.query(c => {
     const { events: e } = c;
     return {
       select: e,
@@ -280,10 +280,9 @@ test('symbols', async () => {
     }
   });
   assert.equal(where.length, 3);
-  let tx;
   try {
-    tx = await db.begin();
-    await tx.query(c => {
+    db.begin();
+    db.query(c => {
       const { events: e } = c;
       return {
         select: e,
@@ -292,13 +291,13 @@ test('symbols', async () => {
         }
       }
     });
-    await tx.commit();
+    db.commit();
   }
   catch (e) {
-    await tx.rollback();
+    db.rollback();
     throw e;
   }
-  const promise = db.query(c => {
+  const error = () => db.query(c => {
     const { events: e } = c;
     return {
       select: e,
@@ -307,8 +306,8 @@ test('symbols', async () => {
       }
     }
   });
-  assert.rejects(promise);
-  const distinct = await db.query(c => {
+  assert.throws(error);
+  const distinct = db.query(c => {
     const f = c.fighters;
     return {
       distinct: {
@@ -318,7 +317,7 @@ test('symbols', async () => {
   });
   const unique = new Set(distinct.map(d => d.height));
   assert.equal(unique.size, distinct.length);
-  const values = await db.queryValues(c => {
+  const values = db.queryValues(c => {
     const { id } = c.events;
     return {
       select: id,
@@ -329,7 +328,7 @@ test('symbols', async () => {
     .map(v => typeof v)
     .every(v => v === 'number');
   assert.equal(numbers, true);
-  const parsed = await db.query(c => {
+  const parsed = db.query(c => {
     const { fighters: f } = c;
     return {
       select: {
@@ -345,7 +344,7 @@ test('symbols', async () => {
   });
   const isActive = parsed.at(0).fighters.at(0).isActive;
   assert.equal(typeof isActive, 'boolean');
-  const first = await db.first(c => {
+  const first = db.first(c => {
     const { events: e } = c;
     return {
       select: {
@@ -357,7 +356,7 @@ test('symbols', async () => {
     }
   });
   assert.equal(typeof first.name, 'string');
-  const displayNames = await db.query(c => {
+  const displayNames = db.query(c => {
     const { fighters: f } = c;
     return {
       select: {
@@ -366,7 +365,7 @@ test('symbols', async () => {
       limit: 3
     }
   });
-  const virtual = await db.query(c => {
+  const virtual = db.query(c => {
     const { 
       fighters: f,
       fighterProfiles: p
@@ -388,7 +387,7 @@ test('symbols', async () => {
   });
   assert.equal(virtual.at(0).name, 'Ricardo Abreu');
   assert.equal(displayNames.at(2).name, 'Tank Abbott (Tank)');
-  const having = await db.query(c => {
+  const having = db.query(c => {
     const { id, name, locationId } = c.events;
     return {
       select: {

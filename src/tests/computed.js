@@ -3,15 +3,15 @@ import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
 
 test('computed', async () => {
-  const displayName = await db.fighters.get(null, 'displayName');
+  const displayName = db.fighters.get(null, 'displayName');
   assert.equal(displayName, 'Angga (The Hitman)');
-  const fighter = await db.fighters.first({
+  const fighter = db.fighters.first({
     where: {
       instagram: 'iangarry'
     }
   });
   assert.equal(fighter.name, 'Ian Machado Garry');
-  const orderBy = await db.fighters.query({
+  const orderBy = db.fighters.query({
     return: 'instagram',
     where: {
       and: [
@@ -24,12 +24,12 @@ test('computed', async () => {
   });
   assert.equal(orderBy.at(2), 'aoriqileng');
   assert.equal(orderBy.at(-3), 'SertanejoUFC');
-  const subMethod = await db.events.query({
+  const subMethod = db.events.query({
     orderBy: (c, f) => f.lower(f.substring(c.name, 7, 2)),
     limit: 5
   });
   assert.equal(subMethod.at(0).id, 547);
-  const heights = await db.fighters.query({
+  const heights = db.fighters.query({
     select: ['id', 'heightCm', 'heightInches'],
     limit: 5
   });

@@ -3,7 +3,7 @@ import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
 
 test('groupBy', async () => {
-  const towns = await db.fighters
+  const towns = db.fighters
     .groupBy('hometown')
     .avg({
       column: {
@@ -15,7 +15,7 @@ test('groupBy', async () => {
       limit: 3
     });
   assert.equal(towns.at(1).height, 173);
-  const groupArray = await db.events
+  const groupArray = db.events
     .groupBy('locationId')
     .array({
       select: {
@@ -25,7 +25,7 @@ test('groupBy', async () => {
     });
   const group = groupArray.at(1);
   assert.equal(group.events.at(0).id, group.locationId);
-  const groupValues = await db.events
+  const groupValues = db.events
     .groupBy('locationId')
     .array({
       select: {

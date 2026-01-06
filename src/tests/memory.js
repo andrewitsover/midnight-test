@@ -11,10 +11,10 @@ test('memory', async () => {
   const database = new SQLiteDatabase(':memory:');
   const db = database.getClient({ Users });
   const sql = db.diff();
-  await db.migrate(sql);
-  await db.users.insert({ name: 'Andrew' });
-  const users = await db.users.many();
+  db.migrate(sql);
+  db.users.insert({ name: 'Andrew' });
+  const users = db.users.many();
   assert.equal(users.length, 1);
   assert.equal(users.at(0).name, 'Andrew');
-  await database.close();
+  database.close();
 });

@@ -1,6 +1,6 @@
 import { SQLiteDatabase, Table } from '@andrewitsover/midnight';
 
-const createData = async () => {
+const createData = () => {
   class Users extends Table {
     id = this.IntPrimary;
     name;
@@ -16,10 +16,10 @@ const createData = async () => {
   const database = new SQLiteDatabase(':memory:');
   const db = database.getClient({ Users, Drawings });
   const sql = db.diff();
-  await db.migrate(sql);
-  await db.users.insert({ name: 'Andrew' });
-  await db.users.insert({ name: 'James' });
-  await db.users.insert({ name: 'Bradley', isActive: false });
+  db.migrate(sql);
+  db.users.insert({ name: 'Andrew' });
+  db.users.insert({ name: 'James' });
+  db.users.insert({ name: 'Bradley', isActive: false });
 
   return db;
 }
