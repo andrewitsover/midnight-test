@@ -17,7 +17,7 @@ class Emails extends FTSTable {
 
 class Tests extends Table {
   name;
-  emailId = this.Cascade(Emails)
+  emailId = this.Cascade(Emails);
 }
 
 const database = new SQLiteDatabase(':memory:');
@@ -77,4 +77,13 @@ test('near', async () => {
   const pass = await distance(2);
   assert.equal(fail, false);
   assert.equal(pass, true);
+});
+
+test('log', async () => {
+  let data;
+  await db.emails.match({
+    phrase: 'CyberTruck',
+    log: (info) => data = info
+  });
+  assert.equal(typeof data.sql, 'string');
 });

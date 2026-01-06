@@ -1,26 +1,8 @@
-import { SQLiteDatabase, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import createData from './data.js';
 
-class Users extends Table {
-  id = this.IntPrimary;
-  name;
-  isActive = true;
-  createdAt = this.Now;
-}
-
-class Drawings extends Table {
-  userId = this.Cascade(Users);
-  data;
-}
-
-const database = new SQLiteDatabase(':memory:');
-const db = database.getClient({ Users, Drawings });
-const sql = db.diff();
-await db.migrate(sql);
-await db.users.insert({ name: 'Andrew' });
-await db.users.insert({ name: 'James' });
-await db.users.insert({ name: 'Bradley', isActive: false });
+const db = await createData();
 
 test('log', async () => {
   let data;
@@ -133,7 +115,13 @@ test('select', async () => {
       id: 1
     }
   });
+  assert.equal(Object.hasOwn(user, 'name'), true);
+  assert.equal(Object.hasOwn(user, 'isActive'), true);
+  assert.equal(Object.hasOwn(user, 'createdAt'), false);
   const users = await db.users.query({
     select: ['name', 'isActive']
   });
+  assert.equal(users.length > 0, true);
+  assert.equal(users.every(u => Object.hasOwn(u, 'name')), true);
+  assert.equal(users.some(u => Object.hasOwn(u, 'createdAt')), false);
 });

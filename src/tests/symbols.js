@@ -386,7 +386,7 @@ test('symbols', async () => {
       limit: 5
     }
   });
-  assert.equal(virtual.at(0).name, 'Thomas Almeida');
+  assert.equal(virtual.at(0).name, 'Ricardo Abreu');
   assert.equal(displayNames.at(2).name, 'Tank Abbott (Tank)');
   const having = await db.query(c => {
     const { id, name, locationId } = c.events;

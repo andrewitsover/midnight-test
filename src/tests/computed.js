@@ -12,7 +12,7 @@ test('computed', async () => {
   });
   assert.equal(fighter.name, 'Ian Machado Garry');
   const orderBy = await db.fighters.query({
-    select: 'instagram',
+    return: 'instagram',
     where: {
       and: [
         { id: c => c.gt(100) },

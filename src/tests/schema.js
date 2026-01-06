@@ -251,4 +251,6 @@ test('contentless fts5 table', async () => {
   }
   const result = from({ Emails });
   const table = from({ Emails }).schema.find(t => t.name === 'emails');
+  const count = table.columns.filter(c => c.name === 'rowid').length;
+  assert.equal(count, 1);
 });
