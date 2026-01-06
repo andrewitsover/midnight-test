@@ -25,7 +25,7 @@ const compare = (actual, result) => {
       writeFileSync(url, actualString, 'utf8');
     }
     else {
-      throw Error('Results do not match');
+      throw Error('results do not match');
     }
   }
 }
@@ -51,7 +51,7 @@ const compareTypes = (typesPath, rewrite) => {
       writeFileSync(new URL(path, import.meta.url), actual, 'utf8');
     }
     else {
-      throw Error('Type definitions do not match');
+      throw Error('type definitions do not match');
     }
   }
 }
