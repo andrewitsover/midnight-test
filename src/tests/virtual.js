@@ -21,7 +21,6 @@ class Tests extends Table {
 }
 
 const database = new SQLiteDatabase(':memory:');
-await database.initialize();
 const db = database.getClient({ Emails, Tests });
 const sql = db.diff();
 await db.migrate(sql);
