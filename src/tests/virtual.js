@@ -86,3 +86,18 @@ test('log', () => {
   });
   assert.equal(typeof data.sql, 'string');
 });
+
+test('select and return', () => {
+  const near = ['finish', 'project', 2];
+  const select = db.emails.match({
+    select: ['from', 'to'],
+    near
+  });
+  assert.equal(select.length, 1);
+  assert.equal(Object.hasOwn(select.at(0), 'body'), false);
+  const values = db.emails.match({
+    return: 'body',
+    near
+  });
+  assert.equal(typeof values.at(0), 'string');
+});
