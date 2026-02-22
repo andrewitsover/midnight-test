@@ -3,7 +3,7 @@ import { Table, FTSTable, ExternalFTSTable, Unicode61 } from '@andrewitsover/mid
 export class WeightClasses extends Table {
   name;
   weightLbs = this.Int;
-  gender = this.Check(this.Text, ['m', 'f']);
+  gender = this.Check(this.Text, { in: ['m', 'f'] });
 }
 
 export class Locations extends Table {
@@ -71,11 +71,11 @@ export class FighterCoaches extends Table {
 export class Rankings extends Table {
   fighterId = this.Int;
   weightClassId = this.Int;
-  rank = this.Index(this.Int, rank => {
-    return {
+  rank = this.Index(this.Int, rank => ({
+    where: {
       [rank]: 0
     }
-  });
+  }));
   isInterim = this.Bool;
 }
 

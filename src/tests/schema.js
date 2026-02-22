@@ -8,12 +8,12 @@ const compare = (a, b) => assert.equal(squash(a), squash(b));
 
 test('schema', async () => {
   class Rankings extends BaseTable {
-    id = this.Check(this.IntPrimary, 1);
-    rank = this.Index(this.Check(2, [1, 2, 3]), rank => {
-      return {
+    id = this.Check(this.IntPrimary, { is: 1 });
+    rank = this.Index(this.Check(2, { in: [1, 2, 3] }), rank => ({
+      where: {
         [rank]: this.Gt(1)
       }
-    });
+    }));
   }
   const rankResult = from({ Rankings });
   const rank = rankResult.schema.at(0);
@@ -22,7 +22,7 @@ test('schema', async () => {
   const date = new Date(Date.UTC(1997, 1, 2));
   class Users extends Table {
     name = this.Unique(this.Text);
-    createdAt = this.Check(this.Now, this.Gt(date));
+    createdAt = this.Check(this.Now, { is: this.Gt(date) });
 
     Attributes = () => {
       const computed = this.Cast(this.StrfTime('%Y', this.createdAt), 'integer');
@@ -225,6 +225,25 @@ test('null foreign key', async () => {
   const code = events.columns.find(c => c.name === 'code');
   assert.equal(locationId.notNull, false);
   assert.equal(code.default, 'x');
+});
+
+test('complex checks', async () => {
+  class Users extends Table {
+    name = this.Text;
+    age = this.Int;
+
+    Attributes = () => {
+      this.Check({
+        or: [
+          { [this.name]: 'Andrew' },
+          { [this.age]: 3 }
+        ]
+      });
+    }
+  }
+  const result = from({ Users });
+  const users = result.schema.find(t => t.name === 'users');
+  assert.equal(users.checks.at(0), `name = 'Andrew' or age = 3`);
 });
 
 test('content fts5 table', async () => {
