@@ -422,8 +422,7 @@ test('complex joins', async () => {
           or: [
             { [p.id]: f.blueId },
             { [p.id]: f.redId }
-          ],
-          type: 'left'
+          ]
         },
         [f.cardId, c.id],
         [c.eventId, e.id]
