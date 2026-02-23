@@ -405,3 +405,30 @@ test('symbols', async () => {
     }
   });
 });
+
+test('complex joins', async () => {
+  const fights = db.query(context => {
+    const { fighters: p, fights: f, cards: c, events: e, eq } = context;
+    return {
+      select: {
+        event: e.name,
+        won: eq(f.winnerId, p.id)
+      },
+      where: {
+        [p.name]: 'Israel Adesanya'
+      },
+      join: [
+        {
+          or: [
+            { [p.id]: f.blueId },
+            { [p.id]: f.redId }
+          ],
+          type: 'left'
+        },
+        [f.cardId, c.id],
+        [c.eventId, e.id]
+      ]
+    }
+  });
+  assert.equal(fights.filter(f => !f.won).length, 1);
+});
