@@ -25,9 +25,9 @@ test('empty', async () => {
 
 test('undefined', async () => {
   const id = db.users.insert({ 
-    name, 
-    createdAt: undefined, 
-    active: undefined 
+    name,
+    createdAt: undefined,
+    active: undefined
   });
   const user = db.users.get({ id });
   assert.equal(user.createdAt, null);
@@ -36,9 +36,9 @@ test('undefined', async () => {
 
 test('null', async () => {
   const id = db.users.insert({ 
-    name, 
-    createdAt: null, 
-    active: null 
+    name,
+    createdAt: null,
+    active: null
   });
   const user = db.users.get({ id });
   assert.equal(user.createdAt, null);
