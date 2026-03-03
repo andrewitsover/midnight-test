@@ -16,11 +16,15 @@ db.migrate(sql);
 
 const name = 'Andrew';
 
+const validate = (user) => {
+  assert.equal(user.createdAt, null);
+  assert.equal(user.active, null);
+}
+
 test('empty', async () => {
   const id = db.users.insert({ name });
   const user = db.users.get({ id });
-  assert.equal(user.createdAt, null);
-  assert.equal(user.active, null);
+  validate(user);
 });
 
 test('undefined', async () => {
@@ -30,8 +34,7 @@ test('undefined', async () => {
     active: undefined
   });
   const user = db.users.get({ id });
-  assert.equal(user.createdAt, null);
-  assert.equal(user.active, null);
+  validate(user);
 });
 
 test('null', async () => {
@@ -41,8 +44,7 @@ test('null', async () => {
     active: null
   });
   const user = db.users.get({ id });
-  assert.equal(user.createdAt, null);
-  assert.equal(user.active, null);
+  validate(user);
 });
 
 test('supplied', async () => {
