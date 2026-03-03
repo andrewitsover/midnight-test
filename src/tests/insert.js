@@ -8,6 +8,7 @@ class Users extends Table {
   createdAt = this.Null(this.Date);
   active = this.Null(this.Bool);
 }
+
 const database = new SQLiteDatabase(':memory:');
 const db = database.getClient({ Users });
 const sql = db.diff();
