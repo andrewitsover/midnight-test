@@ -54,10 +54,10 @@ const run = async () => {
     else {
       console.log('All tests passed');
     }
-    await database.close();
+    database.close();
   }
   catch (e) {
-    await database.close();
+    database.close();
     throw e;
   }
 }
