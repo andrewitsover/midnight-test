@@ -7,6 +7,7 @@ class Users extends Table {
   name;
   createdAt = this.Null(this.Date);
   active = this.Null(this.Bool);
+  social = this.Null(this.Json);
 }
 
 const database = new SQLiteDatabase(':memory:');
@@ -57,4 +58,17 @@ test('supplied', async () => {
   const user = db.users.get({ id });
   assert.equal(user.createdAt.getTime(), createdAt.getTime());
   assert.equal(user.active, false);
+});
+
+test('json', async () => {
+  const social = {
+    instagram: 'cool',
+    twitter: 'person'
+  };
+  const id = db.users.insert({
+    name,
+    social
+  });
+  const user = db.users.get({ id });
+  assert.equal(typeof user.social, 'object');
 });
