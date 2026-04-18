@@ -57,7 +57,9 @@ db.users.insert({
 test('delete primary key', async () => {
   db.users.delete({ id: 4 });
   const exists = db.users.exists({ id: 4 });
+  const count = db.users.count();
   assert.equal(exists, false);
+  assert.equal(count, 4);
 });
 
 test('delete expression', async () => {
@@ -67,7 +69,9 @@ test('delete expression', async () => {
   const exists = db.users.exists({
     createdAt: c => c.lt(new Date(1999, 7, 2))
   });
+  const count = db.users.count();
   assert.equal(exists, false);
+  assert.equal(count, 2);
 });
 
 test('delete or', async () => {
@@ -83,5 +87,7 @@ test('delete or', async () => {
       { gender: female }
     ]
   });
+  const count = db.users.count();
   assert.equal(exists, false);
+  assert.equal(count, 1);
 });
