@@ -138,16 +138,17 @@ test('symbols', async () => {
       fighters: r,
       fighters: b
     } = c;
+    const join = [
+      [f.blueId, b.id],
+      [f.redId, r.id]
+    ];
     return {
       select: {
         id: f.id,
         blue: b.name,
         red: r.name
       },
-      join: [
-        [f.blueId, b.id],
-        [f.redId, r.id]
-      ],
+      join,
       limit: 1
     }
   });
@@ -170,6 +171,11 @@ test('symbols', async () => {
     } = context;
     const b = context.use(born);
     const { id, name } = context.fighters;
+    const join = [
+      [id, b.id],
+      [id, fc.fighterId, 'left'],
+      [c.id, fc.coachId, 'left']
+    ];
     return {
       select: {
         id,
@@ -179,11 +185,7 @@ test('symbols', async () => {
       optional: {
         coach: c.name
       },
-      join: [
-        [id, b.id],
-        [id, fc.fighterId, 'left'],
-        [c.id, fc.coachId, 'left']
-      ],
+      join,
       limit: 5
     }
   });
@@ -409,6 +411,16 @@ test('symbols', async () => {
 test('complex joins', async () => {
   const fights = db.query(context => {
     const { fighters: p, fights: f, cards: c, events: e, eq } = context;
+    const join = [
+      {
+        or: [
+          { [p.id]: f.blueId },
+          { [p.id]: f.redId }
+        ]
+      },
+      [f.cardId, c.id],
+      [c.eventId, e.id]
+    ];
     return {
       select: {
         event: e.name,
@@ -417,16 +429,7 @@ test('complex joins', async () => {
       where: {
         [p.name]: 'Israel Adesanya'
       },
-      join: [
-        {
-          or: [
-            { [p.id]: f.blueId },
-            { [p.id]: f.redId }
-          ]
-        },
-        [f.cardId, c.id],
-        [c.eventId, e.id]
-      ]
+      join
     }
   });
   assert.equal(fights.filter(f => !f.won).length, 1);
