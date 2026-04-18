@@ -128,3 +128,23 @@ test('update json', async () => {
   const user = db.users.get({ id });
   assert.equal(user.social.twitter, 'andrewiscool');
 });
+
+test('update multiple columns', async () => {
+  db.users.update({
+    where: {
+      name: 'John',
+      gender: male
+    },
+    set: {
+      name: 'Susan',
+      gender: female
+    }
+  });
+  const count = db.users.count({ 
+    where: { 
+      name: 'Susan', 
+      gender: female 
+    }
+  });
+  assert.equal(count, 2);
+});

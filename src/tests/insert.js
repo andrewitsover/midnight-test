@@ -72,3 +72,18 @@ test('json', async () => {
   const user = db.users.get({ id });
   assert.equal(typeof user.social, 'object');
 });
+
+test('insert many with different columns', async () => {
+  db.users.delete();
+  const users = [
+    { name },
+    { name, active: true }
+  ];
+  db.users.insertMany(users);
+  const count = db.users.count({
+    where: {
+      active: true
+    }
+  });
+  assert.equal(count, 1);
+});
