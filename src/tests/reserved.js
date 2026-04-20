@@ -39,3 +39,22 @@ test('computed with reserved words', async () => {
   const where = db.users.get(null, 'where');
   assert.equal(where, 'and or');
 });
+
+test('symbol query with reserved words', async () => {
+  const users = db.query(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        and: u.and,
+        where: u.where,
+        computed: c.length(u.select)
+      },
+      where: {
+        [u.and]: c.like('an%')
+      },
+      orderBy: u.from
+    }
+  });
+  const user = users.at(0);
+  assert.equal(user.where, 'and or');
+});
