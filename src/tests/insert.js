@@ -8,6 +8,7 @@ class Users extends Table {
   createdAt = this.Null(this.Date);
   active = this.Null(this.Bool);
   social = this.Null(this.Json);
+  avatar = this.Null(this.Blob);
 }
 
 const database = new SQLiteDatabase(':memory:');
@@ -16,6 +17,7 @@ const sql = db.diff();
 db.migrate(sql);
 
 const name = 'Andrew';
+const avatar = Buffer.from('fake avatar');
 
 const validate = (user) => {
   assert.equal(user.createdAt, null);
@@ -71,6 +73,29 @@ test('json', async () => {
   });
   const user = db.users.get({ id });
   assert.equal(typeof user.social, 'object');
+});
+
+test('blob', async () => {
+  const id = db.users.insert({
+    name,
+    avatar
+  });
+  const user = db.users.get({ id });
+  const isBuffer = Buffer.isBuffer(user.avatar);
+  assert.equal(isBuffer, true);
+});
+
+test('insert many with blobs', async () => {
+  db.users.delete();
+  const users = [
+    { name: 'Andrew', avatar: Buffer.from('Andrew') },
+    { name: 'Susan', avatar: Buffer.from('Susan') }
+  ];
+  db.users.insertMany(users);
+  const count = db.users.count();
+  const user = db.users.get({ name: 'Susan' });
+  assert.equal(count, 2);
+  assert.equal(user.avatar.toString(), 'Susan');
 });
 
 test('insert many with different columns', async () => {
