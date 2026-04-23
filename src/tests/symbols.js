@@ -164,7 +164,7 @@ test('symbols', async () => {
       }
     }
   });
-  const optional = db.query(context => {
+  const maybe = db.query(context => {
     const {
       fighterCoaches: fc,
       coaches: c
@@ -182,14 +182,14 @@ test('symbols', async () => {
         name,
         birthday: b.birthday
       },
-      optional: {
+      maybe: {
         coach: c.name
       },
       join,
       limit: 5
     }
   });
-  assert.equal(optional.at(0).coach, null);
+  assert.equal(maybe.at(0).coach, null);
   const types = db.query(c => {
     const {
       events: e
@@ -352,7 +352,7 @@ test('symbols', async () => {
       select: {
         name: e.name
       },
-      optional: {
+      maybe: {
         startTime: e.startTime
       }
     }

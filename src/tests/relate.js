@@ -121,3 +121,93 @@ db.cars.insert({
   name: 'F-150',
   ownerId: 3
 });
+db.cars.insert({
+  name: 'Jaguar',
+  ownerId: 3
+});
+db.cars.insert({
+  name: 'Cybertruck',
+  ownerId: 2
+});
+
+test('no joins and only a computed column', async () => {
+  const users = db.queryValues(c => {
+    const { users: u, concat } = c;
+    return {
+      select: concat(u.id, ': ', u.name)
+    }
+  });
+  const user = users.at(0);
+  assert.equal(user, '1: Andrew');
+});
+
+test('implied many-to-many join', async () => {
+  const users = db.query(c => {
+    const { users: u, userRoles: ur, roles: r } = c;
+    return {
+      select: {
+        id: u.id,
+        name: u.name,
+        roles: c.group({
+          id: ur.id,
+          name: r.name,
+          added: ur.added
+        })
+      }
+    }
+  });
+  const driver = users.at(0).roles.some(r => r.name === 'Driver');
+  const count = users.at(1).roles.length;
+  assert.equal(driver, true);
+  assert.equal(count, 2);
+});
+
+test('implied one-to-many join', async () => {
+  const users = db.query(context => {
+    const { users: u, cars: c, group } = context;
+    return {
+      select: {
+        ...u,
+        cars: group(c.name)
+      },
+      where: {
+        [u.id]: 2
+      }
+    }
+  });
+  const cars = users.at(0).cars;
+  const exists = cars.some(c => c === 'Cybertruck');
+  assert.equal(exists, true);
+  assert.equal(cars.length, 2);
+});
+
+test('implied many-to-one join', async () => {
+  const cars = db.query(context => {
+    const { cars: c, users: u, object } = context;
+    return {
+      select: {
+        id: c.id,
+        name: c.name,
+        owner: object({
+          id: u.id,
+          name: u.name
+        })
+      }
+    }
+  });
+  const count = cars.filter(c => c.owner.name === 'Susan').length;
+  assert.equal(count, 2);
+});
+
+test('invalid join', async () => {
+  const getCars = () => db.query(context => {
+    const { cars: c, roles: r } = context;
+    return {
+      select: {
+        car: c.name,
+        role: r.name
+      }
+    }
+  });
+  assert.throws(getCars);
+});

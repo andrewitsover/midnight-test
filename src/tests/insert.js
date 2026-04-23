@@ -5,6 +5,7 @@ import { strict as assert } from 'assert';
 class Users extends Table {
   id = this.IntPrimary;
   name;
+  age = 18;
   createdAt = this.Null(this.Date);
   active = this.Null(this.Bool);
   social = this.Null(this.Json);
@@ -111,4 +112,15 @@ test('insert many with different columns', async () => {
     }
   });
   assert.equal(count, 1);
+});
+
+test('insert with missing default', async () => {
+  db.users.delete();
+  const users = [
+    { name, age: 20 },
+    { name }
+  ];
+  db.users.insertMany(users);
+  const count = db.users.count();
+  assert.equal(count, 2);
 });
