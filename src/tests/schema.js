@@ -214,9 +214,7 @@ test('null foreign key', async () => {
   }
   class Events extends Table {
     name = this.Text;
-    locationId = this.References(Locations, {
-      notNull: false
-    });
+    locationId = this.Null(this.References(Locations));
     code = this.Default('x');
   }
   const result = from({ Locations, Events });

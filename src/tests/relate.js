@@ -52,6 +52,11 @@ db.users.insert({
   name: 'Samuel',
   createdAt: new Date(2001, 0, 13)
 });
+db.users.insert({
+  id: 6,
+  name: 'James',
+  createdAt: new Date(2001, 0, 17)
+});
 
 db.roles.insert({
   id: 1,
@@ -210,4 +215,20 @@ test('invalid join', async () => {
     }
   });
   assert.throws(getCars);
+});
+
+test('implied many-to-many left join', async () => {
+  const users = db.query(c => {
+    const { users: u, userRoles: ur, roles: r } = c;
+    return {
+      select: u,
+      maybe: {
+        roles: c.group({
+          id: ur.id,
+          name: r.name
+        })
+      }
+    }
+  });
+  assert.equal(users.at(-1).roles.length, 0);
 });

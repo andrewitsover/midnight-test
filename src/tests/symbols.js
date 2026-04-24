@@ -21,7 +21,7 @@ test('symbols', async () => {
   const names = db.query(c => {
     const { id, name } = c.fighters;
     const n = c.otherNames;
-    const otherNames = c.group({
+    const otherNames = c.windowGroup({
       select: n.name,
       where: {
         [n.name]: c.not(null)
