@@ -1,4 +1,4 @@
-import { SQLiteDatabase, Unicode61, FTSTable, Table } from '@andrewitsover/midnight';
+import { Database, Unicode61, FTSTable, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -20,7 +20,7 @@ class Tests extends Table {
   emailId = this.Cascade(Emails);
 }
 
-const database = new SQLiteDatabase(':memory:');
+const database = new Database(':memory:');
 const db = database.getClient({ Emails, Tests });
 const sql = db.diff();
 db.migrate(sql);

@@ -1,4 +1,4 @@
-import { SQLiteDatabase, Table } from '@andrewitsover/midnight';
+import { Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -15,7 +15,7 @@ class Roles extends Table {
   on = this.Cascade(Users);
 }
 
-const database = new SQLiteDatabase(':memory:');
+const database = new Database(':memory:');
 const db = database.getClient({ Users, Roles });
 const sql = db.diff();
 

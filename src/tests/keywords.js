@@ -1,6 +1,6 @@
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-import { SQLiteDatabase, Table } from '@andrewitsover/midnight';
+import { Database, Table } from '@andrewitsover/midnight';
 
 class Users extends Table {
   id = this.IntPrimary;
@@ -14,7 +14,7 @@ class Drawings extends Table {
   data;
 }
 
-const database = new SQLiteDatabase(':memory:');
+const database = new Database(':memory:');
 const db = database.getClient({ Users, Drawings });
 const sql = db.diff();
 db.migrate(sql);
