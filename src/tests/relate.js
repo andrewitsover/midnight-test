@@ -250,6 +250,19 @@ test('certain', async () => {
   assert.equal(user.city, 'Orlando');
 });
 
+test('certain values', async () => {
+  const users = db.queryValues(c => {
+    const { users: u, not } = c;
+    return {
+      certain: u.city,
+      where: {
+        [u.city]: not(null)
+      }
+    }
+  });
+  assert.equal(users.length, 1);
+});
+
 test('unused tables', async () => {
   const users = db.query(c => {
     const { users: u, userRoles, roles: r } = c;
