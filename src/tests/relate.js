@@ -4,6 +4,7 @@ import { strict as assert } from 'assert';
 
 class Users extends Table {
   name;
+  city = this.Null(this.Text);
   createdAt = this.Date;
 }
 
@@ -44,6 +45,7 @@ db.users.insert({
 });
 db.users.insert({
   id: 4,
+  city: 'Orlando',
   name: 'Penelope',
   createdAt: new Date(2000, 0, 10)
 });
@@ -231,4 +233,32 @@ test('implied many-to-many left join', async () => {
     }
   });
   assert.equal(users.at(-1).roles.length, 0);
+});
+
+test('certain', async () => {
+  const user = db.first(c => {
+    const { users: u, not } = c;
+    return {
+      certain: {
+        city: u.city
+      },
+      where: {
+        [u.city]: not(null)
+      }
+    }
+  });
+  assert.equal(user.city, 'Orlando');
+});
+
+test('unused tables', async () => {
+  const users = db.query(c => {
+    const { users: u, userRoles, roles: r } = c;
+    return {
+      select: {
+        user: u.name,
+        role: r.name
+      }
+    }
+  });
+  assert.equal(users.length, 8);
 });
