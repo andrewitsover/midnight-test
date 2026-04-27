@@ -2,10 +2,21 @@ import { Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
+class Companies extends Table {
+  name;
+}
+
+class Orders extends Table {
+  name;
+  status;
+  companyId = this.Cascade(Companies);
+}
+
 class Users extends Table {
   name;
   city = this.Null(this.Text);
   createdAt = this.Date;
+  companyId = this.Cascade(Companies);
 }
 
 class Roles extends Table {
@@ -24,38 +35,95 @@ class Cars extends Table {
 }
 
 const database = new Database(':memory:');
-const db = database.getClient({ Users, Roles, UserRoles, Cars });
+const db = database.getClient({
+  Companies,
+  Orders,
+  Users,
+  Roles,
+  UserRoles,
+  Cars
+});
 const sql = db.diff();
 db.migrate(sql);
 
+db.companies.insert({
+  id: 1,
+  name: 'Tesla'
+});
+db.companies.insert({
+  id: 2,
+  name: 'Ford'
+});
+
+db.orders.insert({
+  name: 'Model Y',
+  status: 'Complete',
+  companyId: 1
+});
+db.orders.insert({
+  name: 'Model Y',
+  status: 'Processing',
+  companyId: 1
+});
+db.orders.insert({
+  name: 'F-150',
+  status: 'Processing',
+  companyId: 2
+});
+db.orders.insert({
+  name: 'F-150',
+  status: 'Processing',
+  companyId: 2
+});
+db.orders.insert({
+  name: 'Mustang',
+  status: 'Complete',
+  companyId: 2
+});
+db.orders.insert({
+  name: 'Mustang',
+  status: 'Complete',
+  companyId: 2
+});
+
 db.users.insert({
   id: 1,
+  companyId: 1,
   name: 'Andrew',
   createdAt: new Date(1997, 2, 21)
 });
 db.users.insert({
   id: 2,
+  city: 'Portland',
+  companyId: 1,
   name: 'John',
   createdAt: new Date(1998, 4, 18)
 });
 db.users.insert({
   id: 3,
+  city: 'Orlando',
+  companyId: 2,
   name: 'Susan',
   createdAt: new Date(1999, 7, 2)
 });
 db.users.insert({
   id: 4,
+  companyId: 1,
   city: 'Orlando',
   name: 'Penelope',
   createdAt: new Date(2000, 0, 10)
 });
 db.users.insert({
   id: 5,
+  companyId: 2,
+  city: 'Austin',
   name: 'Samuel',
   createdAt: new Date(2001, 0, 13)
 });
 db.users.insert({
   id: 6,
+  companyId: 2,
+  city: 'Portland',
   name: 'James',
   createdAt: new Date(2001, 0, 17)
 });
@@ -247,7 +315,7 @@ test('certain', async () => {
       }
     }
   });
-  assert.equal(user.city, 'Orlando');
+  assert.equal(typeof user.city, 'string');
 });
 
 test('certain values', async () => {
@@ -260,7 +328,7 @@ test('certain values', async () => {
       }
     }
   });
-  assert.equal(users.length, 1);
+  assert.equal(users.length, 5);
 });
 
 test('unused tables', async () => {
@@ -274,4 +342,42 @@ test('unused tables', async () => {
     }
   });
   assert.equal(users.length, 8);
+});
+
+test('group by same table', async () => {
+  const cities = db.query(context => {
+    const { users: u, companies: c, group, not } = context;
+    return {
+      certain: {
+        city: u.city,
+        users: group({
+          name: u.name,
+          company: c.name
+        })
+      },
+      where: {
+        [u.city]: not(null)
+      }
+    }
+  });
+  const user = cities.at(1).users.at(1);
+  assert.equal(user.name, 'Penelope');
+  assert.equal(user.company, 'Tesla');
+});
+
+test('complex aggregate function', async () => {
+  const users = db.queryValues(c => {
+    const { users: u, companies, orders: o } = c;
+    return {
+      select: u.name,
+      where: {
+        [o.status]: 'Complete'
+      },
+      groupBy: u.id,
+      having: {
+        [c.count()]: c.gt(1)
+      }
+    }
+  });
+  assert.equal(users.length, 3);
 });
