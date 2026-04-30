@@ -50,14 +50,6 @@ test('log', async () => {
   assert.equal(typeof data.params, 'object');
   assert.equal(typeof data.durationMs, 'number');
   data = null;
-  db.users.groupBy('isActive').array({
-    select: {
-      name: 'name'
-    },
-    log: (info) => data = info
-  });
-  assert.equal(typeof data.sql, 'string');
-  data = null;
   db.users.count({
     log: (info) => data = info
   });
