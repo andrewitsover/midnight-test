@@ -2,25 +2,69 @@ import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
 
-test('symbols', async () => {
-  const detailed = db.query(c => {
-    const {
-      locations: l,
-      events: e
-    } = c;
+test('hint', async () => {
+  const fights = db.query(c => {
+    const { fights: f, fighters: b } = c;
+    c.hint(f.blueId, b);
     return {
       select: {
-        ...e,
-        location: l.name
+        id: f.id,
+        blue: b.name,
+        red: c.fighters.name
       },
-      join: [e.locationId, l.id],
+      limit: 1
+    }
+  });
+  const fight = fights.at(0);
+  assert.equal(fight.blue, 'Royce Gracie');
+  assert.equal(fight.red, 'Gerard Gordeau');
+});
+
+test('use', async () => {
+  const born = db.subquery(c => {
+    const { id, born } = c.fighters;
+    return {
+      select: {
+        id,
+        birthday: born
+      }
+    }
+  });
+  const maybe = db.query(context => {
+    const {
+      fighters: f,
+      fighterCoaches: fc,
+      coaches: c
+    } = context;
+    const b = context.use(born);
+    return {
+      select: {
+        id: f.id,
+        name: f.name,
+        birthday: b.birthday
+      },
+      maybe: {
+        coach: c.name
+      },
+      limit: 5
+    }
+  });
+  assert.equal(maybe.at(0).coach, null);
+});
+
+test('symbols', async () => {
+  const detailed = db.query(c => {
+    return {
+      select: {
+        ...c.events,
+        location: c.locations.name
+      },
       limit: 3
     }
   });
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
   const names = db.query(c => {
-    const { id, name } = c.fighters;
-    const n = c.otherNames;
+    const { fighters: f, otherNames: n } = c;
     const otherNames = c.windowGroup({
       select: n.name,
       where: {
@@ -29,15 +73,13 @@ test('symbols', async () => {
     });
     return {
       select: {
-        id,
-        name,
+        id: f.id,
+        name: f.name,
         otherNames
       },
       where: {
-        [id]: 104
+        [f.id]: 104
       },
-      join: [id, n.fighterId],
-      groupBy: id,
       having: {
         [c.arrayLength(otherNames)]: c.gt(1)
       }
@@ -45,22 +87,19 @@ test('symbols', async () => {
   });
   assert.equal(names.at(0).otherNames.length, 2);
   const locations = db.query(c => {
-    const { id, name } = c.locations;
-    const e = c.events;
+    const { locations: l, events: e } = c;
     return {
       select: {
-        id,
-        name,
+        id: l.id,
+        name: l.name,
         events: c.group({
           id: e.id,
           name: e.name
         })
       },
-      join: [id, e.locationId],
       where: {
-        [id]: 10
-      },
-      groupBy: id
+        [l.id]: 10
+      }
     }
   });
   assert.equal(locations.at(0).id, 10);
@@ -74,11 +113,12 @@ test('symbols', async () => {
         locationId,
         startTime: c.max(startTime)
       },
-      groupBy: locationId,
       limit: 1
     }
   });
-  assert.equal(eventTimes.at(0).startTime instanceof Date, true);
+  const expected = new Date('1993-11-12T22:00:00.000Z');
+  const supplied = eventTimes.at(0).startTime;
+  assert.equal(supplied.getTime(), expected.getTime());
   const ranks = db.query(c => {
     const { 
       id, 
@@ -132,64 +172,6 @@ test('symbols', async () => {
     }
   });
   assert.equal(fighters.at(0).stats.heightCm, 170);
-  const fights = db.query(c => {
-    const { 
-      fights: f,
-      fighters: r,
-      fighters: b
-    } = c;
-    const join = [
-      [f.blueId, b.id],
-      [f.redId, r.id]
-    ];
-    return {
-      select: {
-        id: f.id,
-        blue: b.name,
-        red: r.name
-      },
-      join,
-      limit: 1
-    }
-  });
-  const fight = fights.at(0);
-  assert.equal(fight.blue, 'Royce Gracie');
-  assert.equal(fight.red, 'Gerard Gordeau');
-  const born = db.subquery(c => {
-    const { id, born } = c.fighters;
-    return {
-      select: {
-        id,
-        birthday: born
-      }
-    }
-  });
-  const maybe = db.query(context => {
-    const {
-      fighterCoaches: fc,
-      coaches: c
-    } = context;
-    const b = context.use(born);
-    const { id, name } = context.fighters;
-    const join = [
-      [id, b.id],
-      [id, fc.fighterId, 'left'],
-      [c.id, fc.coachId, 'left']
-    ];
-    return {
-      select: {
-        id,
-        name,
-        birthday: b.birthday
-      },
-      maybe: {
-        coach: c.name
-      },
-      join,
-      limit: 5
-    }
-  });
-  assert.equal(maybe.at(0).coach, null);
   const types = db.query(c => {
     const {
       events: e
@@ -218,17 +200,11 @@ test('symbols', async () => {
   });
   assert.equal(compare.at(0).notEqual, true);
   const eventCards = db.subquery(c => {
-    const {
-      events: e,
-      cards
-    } = c;
     return {
       select: {
-        eventId: e.id,
-        cards: c.group(cards)
-      },
-      join: [e.id, cards.eventId],
-      groupBy: e.id
+        eventId: c.events.id,
+        cards: c.group(c.cards)
+      }
     }
   });
   const cards = db.subquery(c => {
@@ -252,7 +228,7 @@ test('symbols', async () => {
       locations: l,
       events: e
     } = c;
-    const { cards, eventId } = c.use(eventCards);
+    const { cards } = c.use(eventCards);
     return {
       select: {
         ...l,
@@ -261,11 +237,6 @@ test('symbols', async () => {
           cards
         })
       },
-      join: [
-        [l.id, e.locationId],
-        [e.id, eventId]
-      ],
-      groupBy: l.id,
       limit: 1
     }
   });
@@ -340,7 +311,6 @@ test('symbols', async () => {
           isActive: f.isActive
         })
       },
-      groupBy: f.heightCm,
       limit: 3
     }
   });
@@ -399,7 +369,6 @@ test('symbols', async () => {
           name
         })
       },
-      groupBy: locationId,
       having: {
         [c.count()]: c.gt(10)
       },
