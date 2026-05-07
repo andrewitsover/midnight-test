@@ -14,7 +14,7 @@ class Orders extends Table {
 
 class Users extends Table {
   name;
-  city = this.Null(this.Text);
+  city = this.Null.Text;
   createdAt = this.Date;
   companyId = this.Cascade(Companies);
 }

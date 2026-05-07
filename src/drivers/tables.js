@@ -16,36 +16,33 @@ export class Locations extends Table {
 export class Events extends Table {
   name;
   startTime = this.Index(this.Date);
-  locationId = this.Cascade(Locations, {
-    index: false,
-    notNull: false
-  });
+  locationId = this.Null.Cascade(Locations, { index: false });
 }
 
 export class Cards extends Table {
   eventId = this.Cascade(Events);
   cardName;
   cardOrder = this.Int;
-  startTime = this.Null(this.Date);
+  startTime = this.Null.Date;
 }
 
 export class Coaches extends Table {
   name;
   city;
-  profile = this.Null(this.Json);
+  profile = this.Null.Json;
 }
 
 export class Fighters extends Table {
   name = this.Text;
   nickname = this.Text;
-  born = this.Null(this.Text);
-  heightCm = this.Null(this.Int);
-  reachCm = this.Null(this.Int);
+  born = this.Null.Text;
+  heightCm = this.Null.Int;
+  reachCm = this.Null.Int;
   hometown;
-  social = this.Null(this.Json);
+  social = this.Null.Json;
   isActive = this.Index(this.Bool);
-  phone = this.Null(this.Json);
-  documents = this.Null(this.Json);
+  phone = this.Null.Json;
+  documents = this.Null.Json;
   
   displayName = this.Concat(this.name, ' (', this.nickname, ')');
   heightInches = this.Round(this.Divide(this.heightCm, 2.54));
@@ -61,7 +58,7 @@ export class FighterCoaches extends Table {
   coachId = this.Cascade(Coaches, { index: false });
   fighterId = this.Cascade(Fighters, { index: false });
   startDate;
-  endDate = this.Null(this.Text);
+  endDate = this.Null.Text;
 
   Attributes = () => {
     this.Unique(this.fighterId, this.coachId);
@@ -89,20 +86,17 @@ export class Fights extends Table {
   fightOrder = this.Int;
   blueId = this.Cascade(Fighters);
   redId = this.Cascade(Fighters);
-  winnerId = this.Cascade(Fighters, {
-    index: false,
-    notNull: false
-  });
+  winnerId = this.Null.Cascade(Fighters, { index: false });
   methodId = this.Cascade(Methods, { index: false });
-  methodDescription = this.Null(this.Text);
-  endRound = this.Null(this.Int);
-  endSeconds = this.Null(this.Int);
+  methodDescription = this.Null.Text;
+  endRound = this.Null.Int;
+  endSeconds = this.Null.Int;
   titleFight = this.Bool;
   isInterim = this.Bool;
   weightClassId = this.Cascade(WeightClasses, { index: false });
-  oddsBlue = this.Null(this.Int);
-  oddsRed = this.Null(this.Int);
-  catchweightLbs = this.Null(this.Int);
+  oddsBlue = this.Null.Int;
+  oddsRed = this.Null.Int;
+  catchweightLbs = this.Null.Int;
 }
 
 export class CancelledFights extends Table {

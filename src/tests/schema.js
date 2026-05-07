@@ -95,7 +95,7 @@ test('alter columns', async () => {
     hometown = this.Text;
   }
   const current = class Users extends Table {
-    name = this.Index(this.Null(this.Text));
+    name = this.Index(this.Null.Text);
     hometown = 'Brisbane';
   }
   const sql = diff({ Users: previous }, { Users: current });
@@ -214,7 +214,7 @@ test('null foreign key', async () => {
   }
   class Events extends Table {
     name = this.Text;
-    locationId = this.Null(this.References(Locations));
+    locationId = this.Null.References(Locations);
     code = this.Default('x');
   }
   const result = from({ Locations, Events });
@@ -267,7 +267,7 @@ test('contentless fts5 table', async () => {
     Prefix = 3;
   }
   const result = from({ Emails });
-  const table = from({ Emails }).schema.find(t => t.name === 'emails');
+  const table = result.schema.find(t => t.name === 'emails');
   const count = table.columns.filter(c => c.name === 'rowid').length;
   assert.equal(count, 1);
 });

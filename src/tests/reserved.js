@@ -7,7 +7,7 @@ class Users extends Table {
   or = this.Index(this.Text);
   check = this.Check(this.Text, { in: ['m', 'f'] });
   select = this.Index(this.Text);
-  from = this.Null(this.Text);
+  from = this.Null.Text;
   where = this.Concat(this.and, ' ', this.or);
 }
 

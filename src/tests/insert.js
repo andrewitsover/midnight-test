@@ -1,4 +1,4 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { BaseTable, Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -6,10 +6,10 @@ class Users extends Table {
   id = this.IntPrimary;
   name;
   age = 18;
-  createdAt = this.Null(this.Date);
-  active = this.Null(this.Bool);
-  social = this.Null(this.Json);
-  avatar = this.Null(this.Blob);
+  createdAt = this.Null.Date;
+  active = this.Null.Bool;
+  social = this.Null.Json;
+  avatar = this.Null.Blob;
 }
 
 const database = new Database(':memory:');
