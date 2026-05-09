@@ -1,4 +1,4 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, Table, pick, omit } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -384,15 +384,61 @@ test('complex aggregate function', async () => {
 
 test('count with relations', async () => {
   const users = db.query(c => {
-    const { name: company } = c.companies;
+    const { users: u } = c;
     return {
       select: {
-        ...c.users,
-        company,
+        id: u.id,
+        name: u.name,
+        company: c.companies.name,
         count: c.count(c.userRoles.roleId)
-      },
+      }
     }
   });
   assert.equal(users.length, 5);
+});
+
+test('symbol pick', async () => {
+  const users = db.query(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        ...pick(u, [
+          'id',
+          'name',
+          'createdAt'
+        ]),
+        company: c.companies.name,
+        count: c.count(c.userRoles.roleId)
+      }
+    }
+  });
+  const user = users.at(0);
+  assert.equal('createdAt' in user, true);
+  assert.equal('companyId' in user, false);
+  assert.equal('city' in user, false);
+});
+
+test('symbol omit', async () => {
+  const users = db.query(context => {
+    const { 
+      users: u,
+      userRoles: ur,
+      companies: c,
+      count
+    } = context
+    return {
+      select: {
+        ...omit(u, [
+          'companyId',
+          'city'
+        ]),
+        company: c.name,
+        count: count(ur.roleId)
+      }
+    }
+  });
+  const user = users.at(0);
+  assert.equal('createdAt' in user, true);
+  assert.equal('companyId' in user, false);
 });
 
