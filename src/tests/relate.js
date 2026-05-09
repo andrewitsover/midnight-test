@@ -382,8 +382,6 @@ test('complex aggregate function', async () => {
   assert.equal(users.length, 3);
 });
 
-const spread = (u, c) => Object.fromEntries(c.map(c => [c, u[c]]));
-
 test('count with relations', async () => {
   const users = db.query(c => {
     const { name: company } = c.companies;
@@ -392,7 +390,7 @@ test('count with relations', async () => {
         ...c.users,
         company,
         count: c.count(c.userRoles.roleId)
-      }
+      },
     }
   });
   assert.equal(users.length, 5);
