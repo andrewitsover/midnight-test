@@ -441,4 +441,3 @@ test('symbol omit', async () => {
   assert.equal('createdAt' in user, true);
   assert.equal('companyId' in user, false);
 });
-
