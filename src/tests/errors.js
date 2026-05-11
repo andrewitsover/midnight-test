@@ -53,7 +53,7 @@ test('no column', async () => {
     })
   ];
   for (const query of queries) {
-    const message = 'SqliteError: no such column: fake';
+    const message = 'Error: no such column: fake';
     const predicate = (e) => e.message.startsWith(message);
     assert.throws(query, predicate, query);
   }

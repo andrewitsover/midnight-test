@@ -18,7 +18,9 @@ const sql = db.diff();
 db.migrate(sql);
 
 const name = 'Andrew';
-const avatar = Buffer.from('fake avatar');
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+const avatar = encoder.encode('fake avatar');
 
 const validate = (user) => {
   assert.equal(user.createdAt, null);
@@ -82,21 +84,20 @@ test('blob', async () => {
     avatar
   });
   const user = db.users.get({ id });
-  const isBuffer = Buffer.isBuffer(user.avatar);
-  assert.equal(isBuffer, true);
+  assert.equal(user.avatar instanceof Uint8Array, true);
 });
 
 test('insert many with blobs', async () => {
   db.users.delete();
   const users = [
-    { name: 'Andrew', avatar: Buffer.from('Andrew') },
-    { name: 'Susan', avatar: Buffer.from('Susan') }
+    { name: 'Andrew', avatar: encoder.encode('Andrew') },
+    { name: 'Susan', avatar: encoder.encode('Susan') }
   ];
   db.users.insertMany(users);
   const count = db.users.count();
   const user = db.users.get({ name: 'Susan' });
   assert.equal(count, 2);
-  assert.equal(user.avatar.toString(), 'Susan');
+  assert.equal(decoder.decode(user.avatar), 'Susan');
 });
 
 test('insert many with different columns', async () => {
