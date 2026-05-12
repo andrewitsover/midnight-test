@@ -6,7 +6,7 @@ class Users extends Table {
   id = this.IntPrimary;
   name;
   age = 18;
-  createdAt = this.Null.Date;
+  createdAt = this.Null.Instant;
   active = this.Null.Bool;
   social = this.Null.Json;
   avatar = this.Null.Blob;
@@ -54,14 +54,14 @@ test('null', async () => {
 });
 
 test('supplied', async () => {
-  const createdAt = new Date();
+  const createdAt = Temporal.Now.instant();
   const id = db.users.insert({ 
     name,
     createdAt,
     active: false
   });
   const user = db.users.get({ id });
-  assert.equal(user.createdAt.getTime(), createdAt.getTime());
+  assert.equal(user.createdAt.equals(createdAt), true);
   assert.equal(user.active, false);
 });
 

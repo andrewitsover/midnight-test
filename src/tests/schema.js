@@ -19,10 +19,10 @@ test('schema', async () => {
   const rank = rankResult.schema.at(0);
   assert.equal(rank.columns.find(c => c.name === 'rank').default, 2);
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
-  const date = new Date(Date.UTC(1997, 1, 2));
+  const date = new Temporal.PlainDate(1997, 1, 2);
   class Users extends Table {
     name = this.Unique(this.Text);
-    createdAt = this.Check(this.Now, { is: this.Gt(date) });
+    createdAt = this.Check(this.Now.PlainDate, { is: this.Gt(date) });
 
     Attributes = () => {
       const computed = this.Cast(this.StrfTime('%Y', this.createdAt), 'integer');
@@ -39,9 +39,9 @@ test('schema', async () => {
   const expected = `create table users (
       id integer not null,
       name text not null,
-      createdAt text not null default (date() || 'T' || time() || '.000Z'),
+      createdAt text not null,
       primary key (id),
-      check (createdAt > '1997-02-02T00:00:00.000Z')
+      check (createdAt > '1997-01-02')
     ) strict;
 
     create unique index users_unique_name on users(name);

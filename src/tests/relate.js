@@ -2,6 +2,8 @@ import { Database, Table, pick, omit } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
+const Date = Temporal.PlainDate;
+
 class Companies extends Table {
   name;
 }
@@ -15,7 +17,7 @@ class Orders extends Table {
 class Users extends Table {
   name;
   city = this.Null.Text;
-  createdAt = this.Date;
+  createdAt = this.PlainDate;
   companyId = this.Cascade(Companies);
 }
 
@@ -26,7 +28,7 @@ class Roles extends Table {
 class UserRoles extends Table {
   userId = this.Cascade(Users);
   roleId = this.Cascade(Roles);
-  added = this.Date;
+  added = this.PlainDate;
 }
 
 class Cars extends Table {
@@ -90,42 +92,42 @@ db.users.insert({
   id: 1,
   companyId: 1,
   name: 'Andrew',
-  createdAt: new Date(1997, 2, 21)
+  createdAt: new Date(1997, 3, 21)
 });
 db.users.insert({
   id: 2,
   city: 'Portland',
   companyId: 1,
   name: 'John',
-  createdAt: new Date(1998, 4, 18)
+  createdAt: new Date(1998, 5, 18)
 });
 db.users.insert({
   id: 3,
   city: 'Orlando',
   companyId: 2,
   name: 'Susan',
-  createdAt: new Date(1999, 7, 2)
+  createdAt: new Date(1999, 8, 2)
 });
 db.users.insert({
   id: 4,
   companyId: 1,
   city: 'Orlando',
   name: 'Penelope',
-  createdAt: new Date(2000, 0, 10)
+  createdAt: new Date(2000, 1, 10)
 });
 db.users.insert({
   id: 5,
   companyId: 2,
   city: 'Austin',
   name: 'Samuel',
-  createdAt: new Date(2001, 0, 13)
+  createdAt: new Date(2001, 1, 13)
 });
 db.users.insert({
   id: 6,
   companyId: 2,
   city: 'Portland',
   name: 'James',
-  createdAt: new Date(2001, 0, 17)
+  createdAt: new Date(2001, 1, 17)
 });
 
 db.roles.insert({
@@ -144,44 +146,44 @@ db.roles.insert({
 db.userRoles.insert({
   userId: 1,
   roleId: 1,
-  added: new Date(2025, 0, 1)
+  added: new Date(2025, 1, 1)
 });
 db.userRoles.insert({
   userId: 2,
   roleId: 1,
-  added: new Date(2026, 0, 1)
+  added: new Date(2026, 1, 1)
 });
 db.userRoles.insert({
   userId: 3,
   roleId: 1,
-  added: new Date(2026, 0, 1)
+  added: new Date(2026, 1, 1)
 });
 
 db.userRoles.insert({
   userId: 1,
   roleId: 2,
-  added: new Date(2025, 0, 1)
+  added: new Date(2025, 1, 1)
 });
 db.userRoles.insert({
   userId: 4,
   roleId: 2,
-  added: new Date(2026, 0, 1)
+  added: new Date(2026, 1, 1)
 });
 db.userRoles.insert({
   userId: 5,
   roleId: 2,
-  added: new Date(2026, 0, 1)
+  added: new Date(2026, 1, 1)
 });
 
 db.userRoles.insert({
   userId: 2,
   roleId: 3,
-  added: new Date(2024, 0, 1)
+  added: new Date(2024, 1, 1)
 });
 db.userRoles.insert({
   userId: 3,
   roleId: 3,
-  added: new Date(2026, 0, 1)
+  added: new Date(2026, 1, 1)
 });
 
 db.cars.insert({

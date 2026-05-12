@@ -5,7 +5,6 @@ import { randomUUID } from 'crypto';
 
 class Users extends BaseTable {
   id = this.Function(this.TextPrimary, () => randomUUID());
-  createdAt = this.Function(this.Date, () => new Date());
   name;
 }
 const database = new Database(':memory:');

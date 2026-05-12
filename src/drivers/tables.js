@@ -15,7 +15,7 @@ export class Locations extends Table {
 
 export class Events extends Table {
   name;
-  startTime = this.Index(this.Date);
+  startTime = this.Index(this.ZonedDateTime);
   locationId = this.Null.Cascade(Locations, { index: false });
 }
 
@@ -23,7 +23,7 @@ export class Cards extends Table {
   eventId = this.Cascade(Events);
   cardName;
   cardOrder = this.Int;
-  startTime = this.Null.Date;
+  startTime = this.Null.ZonedDateTime;
 }
 
 export class Coaches extends Table {
@@ -57,8 +57,8 @@ export class OtherNames extends Table {
 export class FighterCoaches extends Table {
   coachId = this.Cascade(Coaches, { index: false });
   fighterId = this.Cascade(Fighters, { index: false });
-  startDate;
-  endDate = this.Null.Text;
+  startDate = this.PlainDate;
+  endDate = this.Null.PlainDate;
 
   Attributes = () => {
     this.Unique(this.fighterId, this.coachId);
@@ -104,7 +104,7 @@ export class CancelledFights extends Table {
   cardOrder = this.Int;
   blueId = this.Int;
   redId = this.Int;
-  cancelledAt = this.Date;
+  cancelledAt = this.Instant;
   cancellationReason;
 }
 
@@ -112,7 +112,7 @@ export class TitleRemovals extends Table {
   fighterId = this.Cascade(FighterCoaches, { column: 'fighterId' });
   weightClassId = this.Cascade(WeightClasses, { index: false });
   isInterim = this.Bool;
-  removedAt = this.Date;
+  removedAt = this.Instant;
   reason;
 }
 

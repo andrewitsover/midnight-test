@@ -2,6 +2,8 @@ import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
 
+const now = Temporal.Now.zonedDateTimeISO();
+
 test('hint', async () => {
   const fights = db.query(c => {
     const { fights: f, fighters: b } = c;
@@ -116,9 +118,9 @@ test('symbols', async () => {
       limit: 1
     }
   });
-  const expected = new Date('1993-11-12T22:00:00.000Z');
+  const expected = Temporal.ZonedDateTime.from('1993-11-12T15:00:00-07:00[America/Denver]');
   const supplied = eventTimes.at(0).startTime;
-  assert.equal(supplied.getTime(), expected.getTime());
+  assert.equal(supplied.equals(expected), true);
   const ranks = db.query(c => {
     const { 
       id, 
@@ -141,7 +143,6 @@ test('symbols', async () => {
   assert.equal(ranks.at(0).heightCm, 213);
   const max = db.query(c => {
     const { id, name, startTime } = c.events;
-    const now = new Date();
     const max = c.max(c.timeDiff(startTime, now));
     return {
       select: {
@@ -176,17 +177,15 @@ test('symbols', async () => {
     const {
       events: e
     } = c;
-    const start = new Date();
-    const end = new Date();
     const notNull = c.not(e.startTime, null);
     return {
       select: {
-        date: c.if(notNull, start, end)
+        date: c.if(notNull, now, now)
       },
       limit: 10
     }
   });
-  assert.equal(types.at(0).date instanceof Date, true);
+  assert.equal(types.at(0).date instanceof Temporal.ZonedDateTime, true);
   const compare = db.query(c => {
     const { id } = c.fighters;
     return {
@@ -216,7 +215,7 @@ test('symbols', async () => {
     eventId: 3
   });
   assert.equal(exists, true);
-  const date = new Date(Date.UTC(1997, 1, 2));
+  const date = now.with({ year: 1997, month: 1 });
   const aggregate = db.use(cards).count({
     where: {
       startTime: c => c.lt(date)

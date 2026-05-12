@@ -108,8 +108,8 @@ test('queries', async () => {
   const sum = db.fighters.sum({ column: 'heightCm' });
   const avg = db.fighters.avg({ column: 'heightCm' });
   assert.equal(avg, sum / total);
-  const time = new Date();
-  time.setFullYear(1997);
+  const now = Temporal.Now.zonedDateTimeISO();
+  const time = now.with({ year: 1997 });
   const conditions = db.events.query({
     where: {
       id: n => n.lt(29),
@@ -154,7 +154,7 @@ test('queries', async () => {
       id: c => c.lt(10)
     }
   });
-  assert.equal(max instanceof Date, true);
+  assert.equal(max instanceof Temporal.ZonedDateTime, true);
 });
 
 cleanUp('queries', async () => {

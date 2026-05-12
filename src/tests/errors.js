@@ -6,7 +6,7 @@ class Users extends Table {
   id = this.IntPrimary;
   name;
   isActive = true;
-  createdAt = this.Now;
+  createdAt = this.Now.Instant;
 }
 
 class Drawings extends Table {
