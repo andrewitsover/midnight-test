@@ -69,3 +69,26 @@ test('bigInt in symbol max', async () => {
   });
   assert.equal(max, distance);
 });
+
+test('insert many with bigInt', async () => {
+  db.buildings.delete();
+  const distance = 325n;
+  const name = 'The Empire State Building';
+  const rows = [
+    {
+      name,
+      height: 24.5,
+      age: 30,
+      distance
+    },
+    {
+      name: 'Changzhou Library',
+      height: 10,
+      age: 5,
+      distance: 29842n
+    }
+  ];
+  db.buildings.insertMany(rows);
+  const building = db.buildings.get({ name });
+  assert.equal(building.distance, distance);
+});
