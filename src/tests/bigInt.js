@@ -1,4 +1,4 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, BaseTable, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
@@ -91,4 +91,22 @@ test('insert many with bigInt', async () => {
   db.buildings.insertMany(rows);
   const building = db.buildings.get({ name });
   assert.equal(building.distance, distance);
+});
+
+test('insert with bigInt primary key', async () => {
+  class Buildings extends BaseTable {
+    id = this.BigIntPrimary;
+    name;
+  }
+
+  const database = new Database(':memory:');
+  const db = database.getClient({ Buildings });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  const id = db.buildings.insert({
+    id: 1n,
+    name: 'The Empire State Building'
+  });
+  assert.equal(id, 1n);
 });

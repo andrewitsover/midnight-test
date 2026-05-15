@@ -1,8 +1,8 @@
-import { BaseTable, Database, Table } from '@andrewitsover/midnight';
+import { BaseTable, Database } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 
-class Users extends Table {
+class Users extends BaseTable {
   id = this.IntPrimary;
   name;
   age = 18;
@@ -124,4 +124,55 @@ test('insert with missing default', async () => {
   db.users.insertMany(users);
   const count = db.users.count();
   assert.equal(count, 2);
+});
+
+test('insert with date primary key', async () => {
+  class Users extends BaseTable {
+    id = this.InstantPrimary;
+    name;
+  }
+
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  const date = Temporal.Now.instant();
+
+  const id = db.users.insert({
+    id: date,
+    name: 'Andrew'
+  });
+  assert.equal(id instanceof Temporal.Instant, true);
+  assert.equal(id.equals(date), true);
+});
+
+test('returnInsert', async () => {
+  const user = db.users.returnInsert({ name });
+  assert.equal(user.name, name);
+});
+
+test('returnUpsert', async () => {
+  const user = db.users.returnUpsert({
+    values: {
+      id: 1,
+      name
+    },
+    target: 'id',
+    set: {
+      name: 'Penelope'
+    }
+  });
+  assert.equal(user.name, 'Penelope');
+});
+
+test('returnInsertMany', async () => {
+  const createdAt = Temporal.Now.instant();
+  const rows = [
+    { name: 'Andrew', createdAt },
+    { name: 'Penelope', createdAt }
+  ];
+  const users = db.users.returnInsertMany(rows);
+  assert.equal(users.length, 2);
+  assert.equal(users.every(u => u.createdAt.equals(createdAt)), true);
 });
