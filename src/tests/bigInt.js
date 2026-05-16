@@ -40,21 +40,6 @@ test('symbol bigInt', async () => {
   assert.equal(typeof building.distance, 'bigint');
 });
 
-test('bigInt in json', async () => {
-  const building = db.first(c => {
-    const { buildings: b } = c;
-    return {
-      select: {
-        id: b.id,
-        test: c.object({
-          distance: b.distance
-        })
-      }
-    }
-  });
-  assert.equal(building.test.distance, distance.toString());
-});
-
 test('bigInt in max', async () => {
   const max = db.buildings.max({ column: 'distance' });
   assert.equal(max, distance);
@@ -109,4 +94,36 @@ test('insert with bigInt primary key', async () => {
     name: 'The Empire State Building'
   });
   assert.equal(id, 1n);
+});
+
+test('bigInt in json object', async () => {
+  const building = db.first(c => {
+    const { buildings: b } = c;
+    return {
+      select: {
+        id: b.id,
+        rest: c.object({
+          name: b.name,
+          distance: b.distance
+        })
+      }
+    }
+  });
+  assert.equal(typeof building.rest.distance, 'bigint');
+});
+
+test('bigInt in json array', async () => {
+  const building = db.first(c => {
+    const { buildings: b } = c;
+    return {
+      select: {
+        id: b.id,
+        rest: c.group({
+          name: b.name,
+          distance: b.distance
+        })
+      }
+    }
+  });
+  assert.equal(typeof building.rest.at(0).distance, 'bigint');
 });

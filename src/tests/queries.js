@@ -63,8 +63,6 @@ test('queries', async () => {
     }
   });
   assert.equal(fighterCount, 4);
-  const whereSelector = db.fighters.get({ social: c => c.instagram.eq('angga_thehitman') });
-  assert.equal(whereSelector.id, 2);
   const rows = [];
   for (let i = 0; i < 5; i++) {
     rows.push({

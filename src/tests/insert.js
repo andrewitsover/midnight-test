@@ -176,3 +176,54 @@ test('returnInsertMany', async () => {
   assert.equal(users.length, 2);
   assert.equal(users.every(u => u.createdAt.equals(createdAt)), true);
 });
+
+test('get blob in json', async () => {
+  db.users.insert({
+    name,
+    avatar: encoder.encode(name)
+  });
+  const user = db.first(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        id: u.id,
+        rest: c.object({
+          name: u.name,
+          avatar: u.avatar
+        })
+      },
+      where: {
+        [u.avatar]: c.not(null)
+      }
+    }
+  });
+  const avatar = decoder.decode(user.rest.avatar);
+  assert.equal(user.rest.avatar instanceof Uint8Array, true);
+  assert.equal(avatar, 'Andrew');
+});
+
+test('get instant in json', async () => {
+  const createdAt = Temporal.Now.instant();
+  const userId = db.users.insert({
+    name,
+    createdAt
+  });
+  const user = db.first(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        id: u.id,
+        rest: c.object({
+          name: u.name,
+          createdAt: u.createdAt
+        })
+      },
+      where: {
+        [u.id]: userId
+      }
+    }
+  });
+  const date = user.rest.createdAt;
+  assert.equal(date instanceof Temporal.Instant, true);
+  assert.equal(date.equals(createdAt), true);
+});
