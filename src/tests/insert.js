@@ -227,3 +227,26 @@ test('get instant in json', async () => {
   assert.equal(date instanceof Temporal.Instant, true);
   assert.equal(date.equals(createdAt), true);
 });
+
+test('get null instant in json', async () => {
+  const userId = db.users.insert({
+    name,
+    createdAt: null
+  });
+  const user = db.first(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        id: u.id,
+        rest: c.object({
+          name: u.name,
+          createdAt: u.createdAt
+        })
+      },
+      where: {
+        [u.id]: userId
+      }
+    }
+  });
+  assert.equal(user.rest.createdAt, null);
+});
