@@ -34,18 +34,18 @@ test('schema', async () => {
   assert.equal(user.indexes.at(0).type, 'unique');
   assert.equal(user.indexes.at(0).on, 'name');
   assert.equal(user.indexes.at(1).on, `cast(strftime('%Y', createdAt) as integer)`);
-  assert.equal(user.checks.at(0).startsWith(`createdAt > '1997`), true);
+  assert.equal(user.checks.at(0).sql.startsWith(`createdAt > '1997`), true);
   const userSql = userResult.database.diff();
   const expected = `create table users (
       id integer not null,
       name text not null,
       createdAt text not null,
       primary key (id),
-      check (createdAt > '1997-01-02')
+      constraint users_3e857fda check (createdAt > '1997-01-02')
     ) strict;
 
-    create unique index users_unique_name on users(name);
-    create index users_caststrftimey_created_at_as_integer on users(cast(strftime('%Y', createdAt) as integer));`;
+    create unique index users_cf21f6de on users(name);
+    create index users_b8644331 on users(cast(strftime('%Y', createdAt) as integer));`;
   compare(userSql, expected);
 });
 
@@ -84,9 +84,9 @@ test('add and remove indexes', async () => {
     name = this.Unique(this.Text);
   }
   const add = diff({ Users: previous }, { Users: current });
-  compare(add, 'create unique index users_unique_name on users(name);');
+  compare(add, 'create unique index users_cf21f6de on users(name);');
   const remove = diff({ Users: current }, { Users: previous });
-  compare(remove, 'drop index users_unique_name;');
+  compare(remove, 'drop index users_cf21f6de;');
 });
 
 test('alter columns', async () => {
@@ -110,7 +110,7 @@ test('alter columns', async () => {
     insert into temp_users (id, name, hometown) select id, name, hometown from users;
     drop table users;
     alter table temp_users rename to users;
-    create index users_name on users(name);
+    create index users_82a3537f on users(name);
     pragma foreign_key_check;`;
   compare(sql, expected);
 });
@@ -241,7 +241,7 @@ test('complex checks', async () => {
   }
   const result = from({ Users });
   const users = result.schema.find(t => t.name === 'users');
-  assert.equal(users.checks.at(0), `name = 'Andrew' or age = 3`);
+  assert.equal(users.checks.at(0).sql, `name = 'Andrew' or age = 3`);
 });
 
 test('content fts5 table', async () => {
@@ -270,4 +270,64 @@ test('contentless fts5 table', async () => {
   const table = result.schema.find(t => t.name === 'emails');
   const count = table.columns.filter(c => c.name === 'rowid').length;
   assert.equal(count, 1);
+});
+
+test('add not null to column', async () => {
+  const previous = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Null.Text;
+    author = this.Text;
+  }
+  const current = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Text;
+  }
+  const sql = diff({ Books: previous }, { Books: current });
+  compare(sql, 'alter table books alter column title set not null;');
+});
+
+test('drop not null from column', async () => {
+  const previous = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Text;
+  }
+  const current = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Null.Text;
+    author = this.Text;
+  }
+  const sql = diff({ Books: previous }, { Books: current });
+  compare(sql, 'alter table books alter column title drop not null;');
+});
+
+test('add check to column', async () => {
+  const previous = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Text;
+  }
+  const current = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Check(this.Text, { is: 'Andrew' });
+  }
+  const sql = diff({ Books: previous }, { Books: current });
+  compare(sql, `alter table books add constraint books_17eef01c check (author = 'Andrew');`);
+});
+
+test('remove check from column', async () => {
+  const previous = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Check(this.Text, { is: 'Andrew' });
+  }
+  const current = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    author = this.Text;
+  }
+  const sql = diff({ Books: previous }, { Books: current });
+  compare(sql, `alter table books drop constraint books_17eef01c;`);
 });
