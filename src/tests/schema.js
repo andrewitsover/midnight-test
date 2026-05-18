@@ -39,7 +39,7 @@ test('schema', async () => {
   const expected = `create table users (
       id integer not null,
       name text not null,
-      createdAt text not null,
+      createdAt text not null default (temporal_now_plain_date()),
       primary key (id),
       constraint users_3e857fda check (createdAt > '1997-01-02')
     ) strict;
