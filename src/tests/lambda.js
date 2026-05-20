@@ -25,6 +25,7 @@ class Users extends BaseTable {
   id = uuid();
   name;
   createdAt = this.Null.ZonedDateTime;
+  isActive = this.Null.Bool;
 }
 const db = database.getClient({ Users });
 const sql = db.diff();
@@ -94,4 +95,75 @@ test('function in where', async () => {
   });
   assert.equal(users.length, 2);
   assert.equal(users.some(u => u.name === 'Andrew'), false);
+});
+
+test('regex', async () => {
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew' },
+    { name: 'Penelope' },
+    { name: 'James' }
+  ]);
+  const users = db.users.many({ name: c => c.like(/e[a-z]$/) });
+  assert.equal(users.length, 2);
+  assert.equal(users.some(u => u.name === 'Penelope'), false);
+});
+
+test('symbol regex', async () => {
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew' },
+    { name: 'Penelope' },
+    { name: 'James' }
+  ]);
+  const users = db.query(c => {
+    const { users: u, like } = c;
+    return {
+      select: u,
+      where: {
+        [u.name]: like(/e[a-z]$/)
+      }
+    }
+  });
+  assert.equal(users.length, 2);
+  assert.equal(users.some(u => u.name === 'Penelope'), false);
+});
+
+test('symbol regex with two arguments', async () => {
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew', isActive: false },
+    { name: 'Penelope', isActive: false },
+    { name: 'James', isActive: true }
+  ]);
+  const users = db.query(c => {
+    const { users: u, like } = c;
+    return {
+      select: u,
+      where: {
+        [u.isActive]: like(u.name, /e[a-z]$/)
+      }
+    }
+  });
+  assert.equal(users.length, 2);
+  assert.equal(users.some(u => u.name === 'Andrew'), false);
+});
+
+test('symbol regex in select', async () => {
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew' },
+    { name: 'Penelope' },
+    { name: 'James' }
+  ]);
+  const users = db.query(c => {
+    const { users: u, like } = c;
+    return {
+      select: {
+        name: u.name,
+        matches: like(u.name, /e[a-z]$/)
+      }
+    }
+  });
+  assert.equal(users.filter(u => u.matches).length, 2);
 });
