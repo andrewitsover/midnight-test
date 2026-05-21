@@ -167,3 +167,67 @@ test('symbol regex in select', async () => {
   });
   assert.equal(users.filter(u => u.matches).length, 2);
 });
+
+test('compare zonedDateTimes', async () => {
+  const { from } = Temporal.ZonedDateTime;
+  const same = from('2024-12-31T19:00:00-05:00[America/New_York]');
+  const middle = from('2025-01-01T00:30:00+14:00[Pacific/Kiritimati]');
+
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew', createdAt: middle },
+    { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },
+    { name: 'James', createdAt: from('2025-01-01T09:00:00+09:00[Asia/Tokyo]') }
+  ]);
+  const gt = db.users.many({ createdAt: c => c.gt(middle) });
+  const found = db.users.get({ createdAt: same });
+  const sorted = db.users.query({ orderBy: 'createdAt' });
+  
+  assert.equal(gt.length, 2);
+  assert.equal(found !== undefined, true);
+  assert.equal(found.name, 'James');
+  assert.equal(sorted.at(-1).name, 'Penelope');
+});
+
+test('symbol compare zonedDateTimes', async () => {
+  const { from } = Temporal.ZonedDateTime;
+  const same = from('2024-12-31T19:00:00-05:00[America/New_York]');
+  const middle = from('2025-01-01T00:30:00+14:00[Pacific/Kiritimati]');
+
+  db.users.delete();
+  db.users.insertMany([
+    { name: 'Andrew', createdAt: middle },
+    { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },
+    { name: 'James', createdAt: from('2025-01-01T09:00:00+09:00[Asia/Tokyo]') }
+  ]);
+  const gt = db.query(c => {
+    const { users: u, gt } = c;
+    return {
+      select: u,
+      where: {
+        [u.createdAt]: gt(middle)
+      }
+    }
+  });
+  const found = db.first(c => {
+    const { users: u } = c;
+    return {
+      select: u,
+      where: {
+        [u.createdAt]: same
+      }
+    }
+  });
+  const sorted = db.query(c => {
+    const { users: u } = c;
+    return {
+      select: u,
+      orderBy: u.createdAt
+    }
+  });
+  
+  assert.equal(gt.length, 2);
+  assert.equal(found !== undefined, true);
+  assert.equal(found.name, 'James');
+  assert.equal(sorted.at(-1).name, 'Penelope');
+});
