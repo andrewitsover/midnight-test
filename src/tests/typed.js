@@ -7,7 +7,7 @@ class Users extends Table {
   documents = this.TypedArray({
     id: this.Int,
     contents: this.Text,
-    createdAt: this.ZonedDateTime,
+    createdAt: this.Text,
     authors: this.TypedArray(this.Text)
   });
 }
@@ -49,5 +49,5 @@ test('typed array with symbols', async () => {
       }
     }
   });
-  console.log(user);
+  assert.equal(user.documents.at(0).authors.length, 2);
 });
