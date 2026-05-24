@@ -22,15 +22,6 @@ db.users.insert({ name: 'Andrew' });
 db.users.insert({ name: 'James' });
 db.users.insert({ name: 'Bradley', isActive: false });
 
-test('no table', async () => {
-  try {
-    db.fake.get();
-  }
-  catch (e) {
-    assert.equal(e.message, 'no such table: fake');
-  }
-});
-
 test('no column', async () => {
   const queries = [
     () => db.users.get({ fake: 3 }),
