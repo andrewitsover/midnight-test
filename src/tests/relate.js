@@ -443,3 +443,28 @@ test('symbol omit', async () => {
   assert.equal('createdAt' in user, true);
   assert.equal('companyId' in user, false);
 });
+
+test('subquery', async () => {
+  const company = db.subquery(c => {
+    const { companyId, ...order } = c.orders;
+    return {
+      select: {
+        companyId,
+        orders: c.group(order)
+      }
+    }
+  });
+  const users = db.query(c => {
+    const { users: u } = c;
+    return {
+      select: {
+        ...u,
+        orders: company.orders
+      }
+    }
+  });
+  const first = users.filter(u => u.orders.length === 2);
+  const second = users.filter(u => u.orders.length === 4);
+  assert.equal(users.length, 6);
+  assert.equal(first.length, second.length);
+});

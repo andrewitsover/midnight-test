@@ -4,24 +4,6 @@ import { db } from '../drivers/sqlite.js';
 
 const now = Temporal.Now.zonedDateTimeISO();
 
-test('hint', async () => {
-  const fights = db.query(c => {
-    const { fights: f, fighters: b } = c;
-    c.hint(f.blueId, b);
-    return {
-      select: {
-        id: f.id,
-        blue: b.name,
-        red: c.fighters.name
-      },
-      limit: 1
-    }
-  });
-  const fight = fights.at(0);
-  assert.equal(fight.blue, 'Royce Gracie');
-  assert.equal(fight.red, 'Gerard Gordeau');
-});
-
 test('use', async () => {
   const born = db.subquery(c => {
     const { id, born } = c.fighters;
@@ -38,12 +20,11 @@ test('use', async () => {
       fighterCoaches: fc,
       coaches: c
     } = context;
-    const b = context.use(born);
     return {
       select: {
         id: f.id,
         name: f.name,
-        birthday: b.birthday
+        birthday: born.birthday
       },
       maybe: {
         coach: c.name
@@ -227,7 +208,7 @@ test('symbols', async () => {
       locations: l,
       events: e
     } = c;
-    const { cards } = c.use(eventCards);
+    const { cards } = eventCards;
     return {
       select: {
         ...l,
