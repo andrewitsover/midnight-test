@@ -446,11 +446,11 @@ test('symbol omit', async () => {
 
 test('subquery', async () => {
   const company = db.subquery(c => {
-    const { companyId, ...order } = c.orders;
+    const { companyId, ...orders } = c.orders;
     return {
       select: {
         companyId,
-        orders: c.group(order)
+        orders
       }
     }
   });
@@ -467,4 +467,22 @@ test('subquery', async () => {
   const second = users.filter(u => u.orders.length === 4);
   assert.equal(users.length, 6);
   assert.equal(first.length, second.length);
+});
+
+test('implied group', async () => {
+  const companies = db.query(context => {
+    const { companies: c, orders, object } = context;
+    return {
+      select: {
+        ...c,
+        test: object({
+          name: c.name
+        }),
+        orders
+      }
+    }
+  });
+  const company = companies.find(c => c.orders.length === 4);
+  const completed = company.orders.filter(o => o.status === 'Complete');
+  assert.equal(completed.length, 2);
 });
