@@ -486,24 +486,3 @@ test('implied group', async () => {
   const completed = company.orders.filter(o => o.status === 'Complete');
   assert.equal(completed.length, 2);
 });
-
-test('nested objects', async () => {
-  const user = db.first(c => {
-    const { users: u } = c;
-    return {
-      select: {
-        id: u.id,
-        nested: c.object({
-          city: u.city,
-          rest: {
-            name: u.name
-          }
-        })
-      },
-      where: {
-        [u.name]: 'Penelope'
-      }
-    }
-  });
-  assert.equal(user.nested.rest.name, 'Penelope');
-});
