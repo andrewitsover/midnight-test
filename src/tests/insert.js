@@ -187,7 +187,7 @@ test('get blob in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: c.object({
+        rest: () => ({
           name: u.name,
           avatar: u.avatar
         })
@@ -213,7 +213,7 @@ test('get instant in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: c.object({
+        rest: () => ({
           name: u.name,
           createdAt: u.createdAt
         })
@@ -238,7 +238,7 @@ test('get null instant in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: c.object({
+        rest: () => ({
           name: u.name,
           createdAt: u.createdAt
         })

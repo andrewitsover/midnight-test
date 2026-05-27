@@ -102,7 +102,7 @@ test('bigInt in json object', async () => {
     return {
       select: {
         id: b.id,
-        rest: c.object({
+        rest: () => ({
           name: b.name,
           distance: b.distance
         })

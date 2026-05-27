@@ -145,7 +145,7 @@ test('symbols', async () => {
       select: {
         id,
         name,
-        stats: c.object({
+        stats: () => ({
           heightCm,
           reachCm
         })

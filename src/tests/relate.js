@@ -260,12 +260,12 @@ test('implied one-to-many join', async () => {
 
 test('implied many-to-one join', async () => {
   const cars = db.query(context => {
-    const { cars: c, users: u, object } = context;
+    const { cars: c, users: u } = context;
     return {
       select: {
         id: c.id,
         name: c.name,
-        owner: object({
+        owner: () => ({
           id: u.id,
           name: u.name
         })
@@ -471,11 +471,11 @@ test('subquery', async () => {
 
 test('implied group', async () => {
   const companies = db.query(context => {
-    const { companies: c, orders, object } = context;
+    const { companies: c, orders } = context;
     return {
       select: {
         ...c,
-        test: object({
+        test: () => ({
           name: c.name
         }),
         orders
@@ -493,7 +493,7 @@ test('nested objects', async () => {
     return {
       select: {
         id: u.id,
-        nested: c.object({
+        nested: () => ({
           city: u.city,
           rest: {
             name: u.name
