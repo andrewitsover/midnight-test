@@ -75,10 +75,10 @@ test('symbols', async () => {
       select: {
         id: l.id,
         name: l.name,
-        events: c.group({
+        events: [{
           id: e.id,
           name: e.name
-        })
+        }]
       },
       where: {
         [l.id]: 10
@@ -183,7 +183,7 @@ test('symbols', async () => {
     return {
       select: {
         eventId: c.events.id,
-        cards: c.group(c.cards)
+        cards: [c.cards]
       }
     }
   });
@@ -212,10 +212,10 @@ test('symbols', async () => {
     return {
       select: {
         ...l,
-        events: c.group({
+        events: [{
           ...e,
           cards
-        })
+        }]
       },
       limit: 1
     }
@@ -286,10 +286,10 @@ test('symbols', async () => {
     return {
       select: {
         height: f.heightCm,
-        fighters: c.group({
+        fighters: [{
           id: f.id,
           isActive: f.isActive
-        })
+        }]
       },
       limit: 3
     }
@@ -344,10 +344,10 @@ test('symbols', async () => {
     return {
       select: {
         locationId,
-        events: c.group({
+        events: [{
           id,
           name
-        })
+        }]
       },
       having: {
         [c.count()]: c.gt(10)

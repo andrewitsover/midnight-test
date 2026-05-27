@@ -225,11 +225,11 @@ test('implied many-to-many join', async () => {
       select: {
         id: u.id,
         name: u.name,
-        roles: c.group({
+        roles: [{
           id: ur.id,
           name: r.name,
           added: ur.added
-        })
+        }]
       }
     }
   });
@@ -241,11 +241,11 @@ test('implied many-to-many join', async () => {
 
 test('implied one-to-many join', async () => {
   const users = db.query(context => {
-    const { users: u, cars: c, group } = context;
+    const { users: u, cars: c } = context;
     return {
       select: {
         ...u,
-        cars: group(c.name)
+        cars: [c.name]
       },
       where: {
         [u.id]: 2
@@ -295,10 +295,10 @@ test('implied many-to-many left join', async () => {
     return {
       select: u,
       maybe: {
-        roles: c.group({
+        roles: [{
           id: ur.id,
           name: r.name
-        })
+        }]
       }
     }
   });
@@ -348,14 +348,14 @@ test('unused tables', async () => {
 
 test('group by same table', async () => {
   const cities = db.query(context => {
-    const { users: u, companies: c, group, not } = context;
+    const { users: u, companies: c, not } = context;
     return {
       certain: {
         city: u.city,
-        users: group({
+        users: [{
           name: u.name,
           company: c.name
-        })
+        }]
       },
       where: {
         [u.city]: not(null)

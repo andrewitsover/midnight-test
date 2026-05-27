@@ -118,10 +118,10 @@ test('bigInt in json array', async () => {
     return {
       select: {
         id: b.id,
-        rest: c.group({
+        rest: [{
           name: b.name,
           distance: b.distance
-        })
+        }]
       }
     }
   });
