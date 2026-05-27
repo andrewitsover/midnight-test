@@ -501,9 +501,9 @@ test('nested objects', async () => {
         })
       },
       where: {
-        [u.name]: 'Penelope'
+        [u.id]: 6
       }
     }
   });
-  assert.equal(user.nested.rest.name, 'Penelope');
+  assert.equal(user.nested.rest.name, 'James');
 });
