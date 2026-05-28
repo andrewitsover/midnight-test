@@ -536,3 +536,31 @@ test('subquery in where', async () => {
   assert.equal(users.length, 2);
   assert.equal(users.some(u => u.cars.length > 0), false);
 });
+
+test('subquery in where methods', async () => {
+  const userIds = db.subquery(c => {
+    const { users: u, userRoles } = c;
+    return {
+      select: {
+        id: u.id
+      },
+      groupBy: u.id,
+      having: {
+        [c.count()]: 1
+      }
+    }
+  });
+  const users = db.query(c => {
+    const { users: u, cars } = c;
+    return {
+      select: u,
+      maybe: {
+        cars
+      },
+      where: {
+        [u.id]: c.not(userIds)
+      }
+    }
+  });
+  assert.equal(users.length, 4);
+});
