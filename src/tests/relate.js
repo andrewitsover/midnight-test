@@ -510,7 +510,7 @@ test('nested objects', async () => {
 
 test('subquery in where', async () => {
   const userIds = db.subquery(c => {
-    const { users: u, userRoles: ur } = c;
+    const { users: u, userRoles } = c;
     return {
       select: {
         id: u.id
