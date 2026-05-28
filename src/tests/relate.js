@@ -544,7 +544,6 @@ test('subquery in where methods', async () => {
       select: {
         id: u.id
       },
-      groupBy: u.id,
       having: {
         [c.count()]: 1
       }
