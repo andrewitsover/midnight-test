@@ -302,7 +302,25 @@ test('implied many-to-many left join', async () => {
       }
     }
   });
-  assert.equal(users.at(-1).roles.length, 0);
+  const user = users.find(u => u.id === 6);
+  assert.equal(user.roles.length, 0);
+});
+
+test('find many-to-many', async () => {
+  const users = db.query(c => {
+    const { users: u, roles: r } = c;
+    return {
+      select: u,
+      maybe: {
+        roles: [{
+          id: r.id,
+          name: r.name
+        }]
+      }
+    }
+  });
+  const user = users.find(u => u.id === 3);
+  assert.equal(user.roles.length, 2);
 });
 
 test('certain', async () => {
