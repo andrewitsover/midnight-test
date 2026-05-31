@@ -51,3 +51,19 @@ test('typed array with symbols', async () => {
   });
   assert.equal(user.documents.at(0).authors.length, 2);
 });
+
+test('get symbol from structured type', async () => {
+  const user = db.first(c => {
+    const { users: u } = c;
+    const symbol = c.symbol(u.documents)
+    return {
+      select: {
+        name: u.name
+      },
+      where: {
+        [symbol]: c.not(null)
+      }
+    }
+  });
+  assert.equal(user !== undefined, true);
+});
