@@ -183,7 +183,7 @@ test('symbols', async () => {
     return {
       select: {
         eventId: c.events.id,
-        cards: c.cards
+        cards: [c.cards]
       }
     }
   });

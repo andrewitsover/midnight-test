@@ -468,7 +468,7 @@ test('subquery', async () => {
     return {
       select: {
         companyId,
-        orders
+        orders: [orders]
       }
     }
   });
@@ -544,7 +544,7 @@ test('subquery in where', async () => {
     return {
       select: u,
       maybe: {
-        cars
+        cars: [cars]
       },
       where: {
         [u.id]: userIds
@@ -572,7 +572,7 @@ test('subquery in where methods', async () => {
     return {
       select: u,
       maybe: {
-        cars
+        cars: [cars]
       },
       where: {
         [u.id]: c.not(userIds)
