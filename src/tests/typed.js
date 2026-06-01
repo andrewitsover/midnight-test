@@ -67,3 +67,25 @@ test('get symbol from structured type', async () => {
   });
   assert.equal(user !== undefined, true);
 });
+
+test('extract typed json', async () => {
+  const now = Temporal.Now.zonedDateTimeISO();
+  const authors = ['Andrew', 'Penelope'];
+  const documents = [
+    { id: 1, contents: 'It was raining when we arrived.', createdAt: now, authors },
+    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }), authors }
+  ];
+  db.users.delete();
+  const id = db.users.insert({ name: 'Andrew', documents });
+  const user = db.first(c => {
+    const { users: u } = c;
+    const authors = c.extract(u.documents, (items) => items.at(0).authors);
+    return {
+      select: {
+        id: u.id,
+        authors
+      }
+    }
+  });
+  assert.equal(user.authors.length, 2);
+});
