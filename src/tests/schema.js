@@ -17,7 +17,7 @@ test('schema', async () => {
   }
   const rankResult = from({ Rankings });
   const rank = rankResult.schema.at(0);
-  assert.equal(rank.columns.find(c => c.name === 'rank').default, 2);
+  assert.equal(rank.columns.find(c => c.name === 'rank').default, '2');
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
   const date = new Temporal.PlainDate(1997, 1, 2);
   class Users extends Table {
@@ -141,7 +141,7 @@ test('default literals', async () => {
   const result = from({ Locations });
   const table = result.schema.at(0);
   const column = table.columns.find(c => c.name === 'name');
-  assert.equal(column.default, 'Brisbane');
+  assert.equal(column.default, `'Brisbane'`);
 });
 
 test('foreign keys in attributes', async () => {
@@ -222,7 +222,7 @@ test('null foreign key', async () => {
   const locationId = events.columns.find(c => c.name === 'locationId');
   const code = events.columns.find(c => c.name === 'code');
   assert.equal(locationId.notNull, false);
-  assert.equal(code.default, 'x');
+  assert.equal(code.default, `'x'`);
 });
 
 test('complex checks', async () => {
