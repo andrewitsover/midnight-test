@@ -345,3 +345,11 @@ test('add column with expression default', async () => {
   const sql = diff({ Books: previous }, { Books: current });
   assert.equal(sql.startsWith('create table temp_books'), true);
 });
+
+test('invalid table name', async () => {
+  class Highlight extends Table {
+    name = this.Text;
+  }
+  const run = () => from({ Highlight });
+  assert.throws(run);
+});
