@@ -331,3 +331,17 @@ test('remove check from column', async () => {
   const sql = diff({ Books: previous }, { Books: current });
   compare(sql, `alter table books drop constraint books_17eef01c;`);
 });
+
+test('add column with expression default', async () => {
+  const previous = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+  }
+  const current = class Books extends BaseTable {
+    id = this.IntPrimary;
+    title = this.Text;
+    createdAt = this.Now.Instant;
+  }
+  const sql = diff({ Books: previous }, { Books: current });
+  assert.equal(sql.startsWith('create table temp_books'), true);
+});
