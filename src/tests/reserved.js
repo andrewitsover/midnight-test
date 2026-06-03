@@ -1,6 +1,9 @@
 import { Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import { functions } from '@andrewitsover/midnight';
+
+const { length, like } = functions;
 
 class Users extends Table {
   and;
@@ -47,10 +50,10 @@ test('symbol query with reserved words', async () => {
       select: {
         and: u.and,
         where: u.where,
-        computed: c.length(u.select)
+        computed: length(u.select)
       },
       where: {
-        [u.and]: c.like('an%')
+        [u.and]: like('an%')
       },
       orderBy: u.from
     }

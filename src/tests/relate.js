@@ -1,6 +1,9 @@
 import { Database, Table, pick, omit } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import { functions } from '@andrewitsover/midnight';
+
+const { concat, not, gt, count } = functions;
 
 const Date = Temporal.PlainDate;
 
@@ -209,7 +212,7 @@ db.cars.insert({
 
 test('no joins and only a computed column', async () => {
   const users = db.queryValues(c => {
-    const { users: u, concat } = c;
+    const { users: u } = c;
     return {
       select: concat(u.id, ': ', u.name)
     }
@@ -325,7 +328,7 @@ test('find many-to-many', async () => {
 
 test('certain', async () => {
   const user = db.first(c => {
-    const { users: u, not } = c;
+    const { users: u } = c;
     return {
       certain: {
         city: u.city
@@ -340,7 +343,7 @@ test('certain', async () => {
 
 test('certain values', async () => {
   const users = db.queryValues(c => {
-    const { users: u, not } = c;
+    const { users: u } = c;
     return {
       certain: u.city,
       where: {
@@ -366,7 +369,7 @@ test('unused tables', async () => {
 
 test('group by same table', async () => {
   const cities = db.query(context => {
-    const { users: u, companies: c, not } = context;
+    const { users: u, companies: c } = context;
     return {
       certain: {
         city: u.city,
@@ -395,7 +398,7 @@ test('complex aggregate function', async () => {
       },
       groupBy: u.id,
       having: {
-        [c.count()]: c.gt(1)
+        [count()]: gt(1)
       }
     }
   });
@@ -410,7 +413,7 @@ test('count with relations', async () => {
         id: u.id,
         name: u.name,
         company: c.companies.name,
-        count: c.count(c.userRoles.roleId)
+        count: count(c.userRoles.roleId)
       }
     }
   });
@@ -428,7 +431,7 @@ test('symbol pick', async () => {
           'createdAt'
         ]),
         company: c.companies.name,
-        count: c.count(c.userRoles.roleId)
+        count: count(c.userRoles.roleId)
       }
     }
   });
@@ -443,8 +446,7 @@ test('symbol omit', async () => {
     const { 
       users: u,
       userRoles: ur,
-      companies: c,
-      count
+      companies: c
     } = context
     return {
       select: {
@@ -535,7 +537,7 @@ test('subquery in where', async () => {
       },
       groupBy: u.id,
       having: {
-        [c.count()]: 1
+        [count()]: 1
       }
     }
   });
@@ -563,7 +565,7 @@ test('subquery in where methods', async () => {
         id: u.id
       },
       having: {
-        [c.count()]: 1
+        [count()]: 1
       }
     }
   });
@@ -575,7 +577,7 @@ test('subquery in where methods', async () => {
         cars: [cars]
       },
       where: {
-        [u.id]: c.not(userIds)
+        [u.id]: not(userIds)
       }
     }
   });

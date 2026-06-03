@@ -2,6 +2,9 @@ import { BaseTable, Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 import { randomUUID } from 'crypto';
+import { functions } from '@andrewitsover/midnight';
+
+const { gte, like, gt } = functions;
 
 const database = new Database(':memory:');
 const uuid = database.createFunction({
@@ -84,7 +87,7 @@ test('function in where', async () => {
   ];
   db.users.insertMany(rows);
   const users = db.query(c => {
-    const { users: u, gte } = c;
+    const { users: u } = c;
     const compared = compare(u.createdAt, now);
     return {
       select: u,
@@ -117,7 +120,7 @@ test('symbol regex', async () => {
     { name: 'James' }
   ]);
   const users = db.query(c => {
-    const { users: u, like } = c;
+    const { users: u } = c;
     return {
       select: u,
       where: {
@@ -137,7 +140,7 @@ test('symbol regex with two arguments', async () => {
     { name: 'James', isActive: true }
   ]);
   const users = db.query(c => {
-    const { users: u, like } = c;
+    const { users: u } = c;
     return {
       select: u,
       where: {
@@ -157,7 +160,7 @@ test('symbol regex in select', async () => {
     { name: 'James' }
   ]);
   const users = db.query(c => {
-    const { users: u, like } = c;
+    const { users: u } = c;
     return {
       select: {
         name: u.name,
@@ -200,8 +203,8 @@ test('symbol compare zonedDateTimes', async () => {
     { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },
     { name: 'James', createdAt: from('2025-01-01T09:00:00+09:00[Asia/Tokyo]') }
   ]);
-  const gt = db.query(c => {
-    const { users: u, gt } = c;
+  const greaterThan = db.query(c => {
+    const { users: u } = c;
     return {
       select: u,
       where: {
@@ -226,7 +229,7 @@ test('symbol compare zonedDateTimes', async () => {
     }
   });
   
-  assert.equal(gt.length, 2);
+  assert.equal(greaterThan.length, 2);
   assert.equal(found !== undefined, true);
   assert.equal(found.name, 'James');
   assert.equal(sorted.at(-1).name, 'Penelope');

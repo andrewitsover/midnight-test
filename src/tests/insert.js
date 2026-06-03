@@ -1,6 +1,9 @@
 import { BaseTable, Database } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import { functions } from '@andrewitsover/midnight';
+
+const { not } = functions;
 
 class Users extends BaseTable {
   id = this.IntPrimary;
@@ -193,7 +196,7 @@ test('get blob in json', async () => {
         })
       },
       where: {
-        [u.avatar]: c.not(null)
+        [u.avatar]: not(null)
       }
     }
   });

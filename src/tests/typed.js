@@ -1,6 +1,9 @@
 import { Table, Database } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import { functions } from '@andrewitsover/midnight';
+
+const { symbol, not, extract } = functions;
 
 class Users extends Table {
   name;
@@ -55,13 +58,13 @@ test('typed array with symbols', async () => {
 test('get symbol from structured type', async () => {
   const user = db.first(c => {
     const { users: u } = c;
-    const symbol = c.symbol(u.documents)
+    const key = symbol(u.documents)
     return {
       select: {
         name: u.name
       },
       where: {
-        [symbol]: c.not(null)
+        [key]: not(null)
       }
     }
   });
@@ -79,7 +82,7 @@ test('extract typed json', async () => {
   const id = db.users.insert({ name: 'Andrew', documents });
   const user = db.first(c => {
     const { users: u } = c;
-    const authors = c.extract(u.documents, (items) => items.at(0).authors);
+    const authors = extract(u.documents, (items) => items.at(0).authors);
     return {
       select: {
         id: u.id,

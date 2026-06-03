@@ -1,6 +1,9 @@
 import { Database, BaseTable, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import { functions } from '@andrewitsover/midnight';
+
+const { max } = functions;
 
 class Buildings extends Table {
   name;
@@ -46,13 +49,13 @@ test('bigInt in max', async () => {
 });
 
 test('bigInt in symbol max', async () => {
-  const max = db.firstValue(c => {
-    const { buildings: b, max } = c;
+  const longest = db.firstValue(c => {
+    const { buildings: b } = c;
     return {
       select: max(b.distance)
     }
   });
-  assert.equal(max, distance);
+  assert.equal(longest, distance);
 });
 
 test('insert many with bigInt', async () => {

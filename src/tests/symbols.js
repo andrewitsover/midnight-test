@@ -1,6 +1,21 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
+import { functions } from '@andrewitsover/midnight';
+
+const { 
+  windowGroup,
+  not,
+  gt,
+  max,
+  rowNumber,
+  timeDiff,
+  iif,
+  eq,
+  arrayLength,
+  lt,
+  count
+} = functions;
 
 const now = Temporal.Now.zonedDateTimeISO();
 
@@ -48,10 +63,10 @@ test('symbols', async () => {
   assert.equal(detailed.at(0).location, 'McNichols Sports Arena');
   const names = db.query(c => {
     const { fighters: f, otherNames: n } = c;
-    const otherNames = c.windowGroup({
+    const otherNames = windowGroup({
       select: n.name,
       where: {
-        [n.name]: c.not(null)
+        [n.name]: not(null)
       }
     });
     return {
@@ -64,7 +79,7 @@ test('symbols', async () => {
         [f.id]: 104
       },
       having: {
-        [c.arrayLength(otherNames)]: c.gt(1)
+        [arrayLength(otherNames)]: gt(1)
       }
     };
   });
@@ -94,7 +109,7 @@ test('symbols', async () => {
     return {
       select: {
         locationId,
-        startTime: c.max(startTime)
+        startTime: max(startTime)
       },
       limit: 1
     }
@@ -113,7 +128,7 @@ test('symbols', async () => {
         id,
         name,
         heightCm,
-        heightRank: c.rowNumber({
+        heightRank: rowNumber({
           orderBy: heightCm,
           desc: true
         })
@@ -122,18 +137,17 @@ test('symbols', async () => {
     }
   });
   assert.equal(ranks.at(0).heightCm, 213);
-  const max = db.query(c => {
+  const maximum = db.query(c => {
     const { id, name, startTime } = c.events;
-    const max = c.max(c.timeDiff(startTime, now));
     return {
       select: {
         id,
         name,
-        max
+        max: max(timeDiff(startTime, now))
       }
     }
   });
-  assert.equal(max.at(0).id, 1);
+  assert.equal(maximum.at(0).id, 1);
   const fighters = db.query(c => {
     const {
       id,
@@ -158,10 +172,10 @@ test('symbols', async () => {
     const {
       events: e
     } = c;
-    const notNull = c.not(e.startTime, null);
+    const notNull = not(e.startTime, null);
     return {
       select: {
-        date: c.if(notNull, now, now)
+        date: iif(notNull, now, now)
       },
       limit: 10
     }
@@ -171,7 +185,7 @@ test('symbols', async () => {
     const { id } = c.fighters;
     return {
       select: {
-        notEqual: c.not(id, 3)
+        notEqual: not(id, 3)
       },
       where: {
         [id]: 10
@@ -350,7 +364,7 @@ test('symbols', async () => {
         }]
       },
       having: {
-        [c.count()]: c.gt(10)
+        [count()]: gt(10)
       },
       limit: 3
     }
@@ -359,7 +373,7 @@ test('symbols', async () => {
 
 test('complex joins', async () => {
   const fights = db.query(context => {
-    const { fighters: p, fights: f, cards: c, events: e, eq } = context;
+    const { fighters: p, fights: f, cards: c, events: e } = context;
     const join = [
       {
         or: [
