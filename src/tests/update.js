@@ -1,6 +1,8 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, Table, functions } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+
+const { gt, lt, iif, eq } = functions;
 
 const Date = Temporal.PlainDate;
 
@@ -62,8 +64,8 @@ test('update range', async () => {
   db.users.update({
     where: {
       and: [
-        { createdAt: c => c.gt(after) },
-        { createdAt: c => c.lt(before) }
+        { createdAt: gt(after) },
+        { createdAt: lt(before) }
       ]
     },
     set: {
@@ -77,7 +79,7 @@ test('update range', async () => {
 test('update conditionally', async () => {
   db.users.update({
     set: {
-      name: (c, f) => f.if(f.eq(c.gender, male), 'John', 'Susan')
+      name: c => iif(eq(c.gender, male), 'John', 'Susan')
     },
     where: {
       name: 'unknown'

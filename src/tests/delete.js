@@ -1,6 +1,8 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, Table, functions } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+
+const { lt } = functions;
 
 const Date = Temporal.PlainDate;
 
@@ -66,10 +68,10 @@ test('delete primary key', async () => {
 
 test('delete expression', async () => {
   db.users.delete({
-    createdAt: c => c.lt(new Date(1999, 8, 2))
+    createdAt: lt(new Date(1999, 8, 2))
   });
   const exists = db.users.exists({
-    createdAt: c => c.lt(new Date(1999, 8, 2))
+    createdAt: lt(new Date(1999, 8, 2))
   });
   const count = db.users.count();
   assert.equal(exists, false);

@@ -213,7 +213,7 @@ test('symbols', async () => {
   const date = now.with({ year: 1997, month: 1 });
   const aggregate = db.use(cards).count({
     where: {
-      startTime: c => c.lt(date)
+      startTime: lt(date)
     }
   });
   assert.equal(aggregate, 54);

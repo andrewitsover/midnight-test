@@ -1,6 +1,8 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, Table, functions } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+
+const { not } = functions;
 
 const Date = Temporal.PlainDate;
 
@@ -92,7 +94,7 @@ test('distinct count', async () => {
 
 test('exists true', async () => {
   const exists = db.users.exists({
-    name: c => c.not('John'),
+    name: not('John'),
     createdAt: new Date(1998, 5, 18)
   });
   assert.equal(exists, true);

@@ -2,10 +2,13 @@ import { strict as assert } from 'assert';
 import { compare } from '../utils.js';
 import { test, cleanUp } from '../run.js';
 import { db } from '../drivers/sqlite.js';
+import { functions } from '@andrewitsover/midnight';
+
+const { like, gt, lt, not, concat } = functions;
 
 test('queries', async () => {
   const cards = db.cards.many({ eventId: 100 });
-  const fighterId = db.fighters.get({ name: s => s.like('Israel%') }, 'id');
+  const fighterId = db.fighters.get({ name: like('Israel%') }, 'id');
 
   compare(cards, 'cardsGet');
   assert.equal(fighterId, 17);
@@ -57,8 +60,8 @@ test('queries', async () => {
   const fighterCount = db.fighters.count({
     where: {
       and: [
-        { id: c => c.gt(10) },
-        { id: c => c.lt(15) }
+        { id: gt(10) },
+        { id: lt(15) }
       ]
     }
   });
@@ -100,7 +103,7 @@ test('queries', async () => {
   assert.equal(first.id, 3);
   const total = db.fighters.count({
     where: {
-      heightCm: n => n.not(null)
+      heightCm: not(null)
     }
   });
   const sum = db.fighters.sum({ column: 'heightCm' });
@@ -110,14 +113,14 @@ test('queries', async () => {
   const time = now.with({ year: 1997 });
   const conditions = db.events.query({
     where: {
-      id: n => n.lt(29),
+      id: lt(29),
       or: [
-        { name: n => n.like('UFC 1_: The%') },
-        { id: n => n.lt(10) },
+        { name: like('UFC 1_: The%') },
+        { id: lt(10) },
         {
           and: [
-            { startTime: n => n.gt(time) },
-            { name: n => n.like('%Japan%') }
+            { startTime: gt(time) },
+            { name: like('%Japan%') }
           ]
         }
       ]
@@ -137,7 +140,7 @@ test('queries', async () => {
   });
   db.coaches.update({
     set: {
-      city: (c, f) => f.concat(c.city, ', Australia')
+      city: c => concat(c.city, ', Australia')
     },
     where: {
       id: coachId
@@ -149,7 +152,7 @@ test('queries', async () => {
   const max = db.events.max({
     column: 'startTime',
     where: {
-      id: c => c.lt(10)
+      id: lt(10)
     }
   });
   assert.equal(max instanceof Temporal.ZonedDateTime, true);

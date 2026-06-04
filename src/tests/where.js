@@ -1,6 +1,8 @@
-import { Database, Table } from '@andrewitsover/midnight';
+import { Database, Table, functions } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+
+const { gt, lt, not } = functions;
 
 const Date = Temporal.PlainDate;
 
@@ -89,8 +91,8 @@ test('query and', async () => {
   const users = db.users.query({
     where: {
       and: [
-        { createdAt: c => c.gt(new Date(1997, 4, 21)) },
-        { createdAt: c => c.lt(new Date(2001, 1, 13)) },
+        { createdAt: gt(new Date(1997, 4, 21)) },
+        { createdAt: lt(new Date(2001, 1, 13)) },
       ]
     }
   });
@@ -117,7 +119,7 @@ test('query and or', async () => {
         {
           or: [
             { gender: female },
-            { createdAt: c => c.not(new Date(1997, 3, 21)) }
+            { createdAt: not(new Date(1997, 3, 21)) }
           ]
         }
       ]
@@ -134,7 +136,7 @@ test('query or and', async () => {
         {
           and: [
             { gender: female },
-            { createdAt: c => c.gt(new Date(1999, 8, 2)) }
+            { createdAt: gt(new Date(1999, 8, 2)) }
           ]
         }
       ]

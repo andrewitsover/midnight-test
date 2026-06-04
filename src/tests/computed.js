@@ -1,6 +1,9 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
+import { functions } from '@andrewitsover/midnight';
+
+const { gt, lt, not, lower, substring } = functions;
 
 test('computed', async () => {
   const displayName = db.fighters.get(null, 'displayName');
@@ -15,17 +18,17 @@ test('computed', async () => {
     return: 'instagram',
     where: {
       and: [
-        { id: c => c.gt(100) },
-        { id: c => c.lt(120) },
-        { instagram: c => c.not(null) }
+        { id: gt(100) },
+        { id: lt(120) },
+        { instagram: not(null) }
       ]
     },
-    orderBy: (c, f) => f.lower(c.instagram)
+    orderBy: c => lower(c.instagram)
   });
   assert.equal(orderBy.at(2), 'aoriqileng');
   assert.equal(orderBy.at(-3), 'SertanejoUFC');
   const subMethod = db.events.query({
-    orderBy: (c, f) => f.lower(f.substring(c.name, 7, 2)),
+    orderBy: c => lower(substring(c.name, 7, 2)),
     limit: 5
   });
   assert.equal(subMethod.at(0).id, 547);

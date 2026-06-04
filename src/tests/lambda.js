@@ -107,7 +107,7 @@ test('regex', async () => {
     { name: 'Penelope' },
     { name: 'James' }
   ]);
-  const users = db.users.many({ name: c => c.like(/e[a-z]$/) });
+  const users = db.users.many({ name: like(/e[a-z]$/) });
   assert.equal(users.length, 2);
   assert.equal(users.some(u => u.name === 'Penelope'), false);
 });
@@ -182,11 +182,11 @@ test('compare zonedDateTimes', async () => {
     { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },
     { name: 'James', createdAt: from('2025-01-01T09:00:00+09:00[Asia/Tokyo]') }
   ]);
-  const gt = db.users.many({ createdAt: c => c.gt(middle) });
+  const greaterThan = db.users.many({ createdAt: gt(middle) });
   const found = db.users.get({ createdAt: same });
   const sorted = db.users.query({ orderBy: 'createdAt' });
   
-  assert.equal(gt.length, 2);
+  assert.equal(greaterThan.length, 2);
   assert.equal(found !== undefined, true);
   assert.equal(found.name, 'James');
   assert.equal(sorted.at(-1).name, 'Penelope');
