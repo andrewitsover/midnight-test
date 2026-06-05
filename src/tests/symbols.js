@@ -1,9 +1,7 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
-import { functions } from '@andrewitsover/midnight';
-
-const { 
+import {
   windowGroup,
   not,
   gt,
@@ -14,8 +12,7 @@ const {
   eq,
   arrayLength,
   lt,
-  count
-} = functions;
+  count } from '@andrewitsover/midnight';
 
 const now = Temporal.Now.zonedDateTimeISO();
 

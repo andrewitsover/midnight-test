@@ -1,8 +1,13 @@
-import { Database, Table, functions } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-
-const { gt, lt, iif, eq } = functions;
+import {
+  Database, 
+  Table, 
+  gt, 
+  lt, 
+  iif, 
+  eq 
+} from '@andrewitsover/midnight';
 
 const Date = Temporal.PlainDate;
 

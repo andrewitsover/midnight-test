@@ -1,10 +1,14 @@
-import { BaseTable, Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
 import { randomUUID } from 'crypto';
-import { functions } from '@andrewitsover/midnight';
-
-const { gte, like, gt } = functions;
+import { 
+  BaseTable, 
+  Database, 
+  Table, 
+  gte, 
+  like, 
+  gt 
+} from '@andrewitsover/midnight';
 
 const database = new Database(':memory:');
 const uuid = database.createFunction({

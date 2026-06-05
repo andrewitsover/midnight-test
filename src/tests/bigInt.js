@@ -1,9 +1,6 @@
-import { Database, BaseTable, Table } from '@andrewitsover/midnight';
+import { Database, BaseTable, Table, max } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-import { functions } from '@andrewitsover/midnight';
-
-const { max } = functions;
 
 class Buildings extends Table {
   name;

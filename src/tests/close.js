@@ -1,8 +1,6 @@
 import { test } from '../run.js';
 import { db, database } from '../drivers/sqlite.js';
-import { functions } from '@andrewitsover/midnight';
-
-const { like } = functions;
+import { like } from '@andrewitsover/midnight';
 
 test('close', async () => {
   db.cards.many({ eventId: 100 });

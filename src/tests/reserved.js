@@ -1,9 +1,11 @@
-import { Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-import { functions } from '@andrewitsover/midnight';
-
-const { length, like } = functions;
+import { 
+  Database, 
+  Table, 
+  length, 
+  like 
+} from '@andrewitsover/midnight';
 
 class Users extends Table {
   and;

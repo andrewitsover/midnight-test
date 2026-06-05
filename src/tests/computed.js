@@ -1,9 +1,7 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { db } from '../drivers/sqlite.js';
-import { functions } from '@andrewitsover/midnight';
-
-const { gt, lt, not, lower, substring } = functions;
+import { gt, lt, not, lower, substring } from '@andrewitsover/midnight';
 
 test('computed', async () => {
   const displayName = db.fighters.get(null, 'displayName');

@@ -2,9 +2,7 @@ import { strict as assert } from 'assert';
 import { compare } from '../utils.js';
 import { test, cleanUp } from '../run.js';
 import { db } from '../drivers/sqlite.js';
-import { functions } from '@andrewitsover/midnight';
-
-const { like, gt, lt, not, concat } = functions;
+import { like, gt, lt, not, concat } from '@andrewitsover/midnight';
 
 test('queries', async () => {
   const cards = db.cards.many({ eventId: 100 });

@@ -1,9 +1,15 @@
-import { Database, Table, pick, omit } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-import { functions } from '@andrewitsover/midnight';
-
-const { concat, not, gt, count } = functions;
+import { 
+  Database, 
+  Table, 
+  pick, 
+  omit, 
+  concat, 
+  not, 
+  gt, 
+  count 
+} from '@andrewitsover/midnight';
 
 const Date = Temporal.PlainDate;
 
