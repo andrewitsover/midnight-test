@@ -1,23 +1,31 @@
-import { Database, Unicode61, FTSTable, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import {
+  Database,
+  Unicode61,
+  FTSTable,
+  Table,
+  text,
+  tokenizer,
+  cascade
+} from '@andrewitsover/midnight';
 
-const tokenizer = new Unicode61({
+const unicode = new Unicode61({
   removeDiacritics: true,
   porter: true
 });
 
 class Emails extends FTSTable {
-  from;
-  to;
-  body;
+  from = text;
+  to = text;
+  body = text;
 
-  Tokenizer = tokenizer;
+  [tokenizer] = unicode;
 }
 
 class Tests extends Table {
-  name;
-  emailId = this.Cascade(Emails);
+  name = text;
+  emailId = cascade(Emails);
 }
 
 const database = new Database(':memory:');

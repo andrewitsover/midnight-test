@@ -1,17 +1,39 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
 import { from, diff } from '../drivers/sqlite.js';
-import { Table, BaseTable, FTSTable, ExternalFTSTable } from '@andrewitsover/midnight';
+import {
+  Table,
+  BaseTable,
+  FTSTable,
+  ExternalFTSTable,
+  check,
+  primary,
+  index,
+  gt,
+  unique,
+  text,
+  now,
+  attributes,
+  cast,
+  strfTime,
+  nil,
+  references,
+  init,
+  int,
+  unindexed,
+  prefix,
+  cascade
+} from '@andrewitsover/midnight';
 
 const squash = (s) => s.replaceAll(/\s+/gm, ' ').trim();
 const compare = (a, b) => assert.equal(squash(a), squash(b));
 
 test('schema', async () => {
   class Rankings extends BaseTable {
-    id = this.Check(this.IntPrimary, { is: 1 });
-    rank = this.Index(this.Check(2, { in: [1, 2, 3] }), rank => ({
+    id = check(primary.int, { is: 1 });
+    rank = index(check(2, { in: [1, 2, 3] }), rank => ({
       where: {
-        [rank]: this.Gt(1)
+        [rank]: gt(1)
       }
     }));
   }
@@ -21,12 +43,12 @@ test('schema', async () => {
   assert.equal(rank.indexes.at(0).where, 'rank > 1');
   const date = new Temporal.PlainDate(1997, 1, 2);
   class Users extends Table {
-    name = this.Unique(this.Text);
-    createdAt = this.Check(this.Now.PlainDate, { is: this.Gt(date) });
+    name = unique(text);
+    createdAt = check(now.plainDate, { is: gt(date) });
 
-    Attributes = () => {
-      const computed = this.Cast(this.StrfTime('%Y', this.createdAt), 'integer');
-      this.Index(computed);
+    [attributes] = () => {
+      const computed = cast(strfTime('%Y', this.createdAt), 'integer');
+      return index(computed);
     }
   };
   const userResult = from({ Users });
@@ -51,11 +73,11 @@ test('schema', async () => {
 
 test('add and remove column', async () => {
   const previous = class Users extends BaseTable {
-    id = this.IntPrimary;
+    id = primary.int;
   }
   const current = class Users extends BaseTable {
-    id = this.IntPrimary;
-    name = this.Text;
+    id = primary.int;
+    name = text;
   }
   const add = diff({ Users: previous }, { Users: current });
   compare(add, 'alter table users add column name text not null;');
@@ -65,12 +87,12 @@ test('add and remove column', async () => {
 
 test('rename column', async () => {
   const previous = class Users extends BaseTable {
-    id = this.IntPrimary;
-    name = this.Text;
+    id = primary.int;
+    name = text;
   }
   const current = class Users extends BaseTable {
-    id = this.IntPrimary;
-    displayName = this.Text;
+    id = primary.int;
+    displayName = text;
   }
   const rename = diff({ Users: previous }, { Users: current });
   compare(rename, 'alter table users rename column name to displayName;');
@@ -78,10 +100,10 @@ test('rename column', async () => {
 
 test('add and remove indexes', async () => {
   const previous = class Users extends Table {
-    name = this.Text;
+    name = text;
   }
   const current = class Users extends Table {
-    name = this.Unique(this.Text);
+    name = unique(text);
   }
   const add = diff({ Users: previous }, { Users: current });
   compare(add, 'create unique index users_cf21f6de on users(name);');
@@ -91,11 +113,11 @@ test('add and remove indexes', async () => {
 
 test('alter columns', async () => {
   const previous = class Users extends Table {
-    name = this.Index(this.Text);
-    hometown = this.Text;
+    name = index(text);
+    hometown = text;
   }
   const current = class Users extends Table {
-    name = this.Index(this.Null.Text);
+    name = index(nil.text);
     hometown = 'Brisbane';
   }
   const sql = diff({ Users: previous }, { Users: current });
@@ -117,11 +139,11 @@ test('alter columns', async () => {
 
 test('drop tables', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.References(Locations);
+    name = text;
+    locationId = references(Locations);
   }
   const current = {
     Locations,
@@ -146,11 +168,11 @@ test('default literals', async () => {
 
 test('foreign keys in attributes', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.References(Locations);
+    name = text;
+    locationId = references(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -161,11 +183,11 @@ test('foreign keys in attributes', async () => {
 
 test('foreign keys in fields', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.References(Locations);
+    name = text;
+    locationId = references(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -176,11 +198,11 @@ test('foreign keys in fields', async () => {
 
 test('multiple actions', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.References(Locations, {
+    name = text;
+    locationId = references(Locations, {
       onDelete: 'cascade',
       onUpdate: 'set default'
     });
@@ -194,11 +216,11 @@ test('multiple actions', async () => {
 
 test('foreign key options', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.Cascade(Locations);
+    name = text;
+    locationId = cascade(Locations);
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -210,12 +232,12 @@ test('foreign key options', async () => {
 
 test('null foreign key', async () => {
   class Locations extends Table {
-    name = this.Text;
+    name = text;
   }
   class Events extends Table {
-    name = this.Text;
-    locationId = this.Null.References(Locations);
-    code = this.Default('x');
+    name = text;
+    locationId = nil.references(Locations);
+    code = init('x');
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
@@ -227,11 +249,11 @@ test('null foreign key', async () => {
 
 test('complex checks', async () => {
   class Users extends Table {
-    name = this.Text;
-    age = this.Int;
+    name = text;
+    age = int;
 
-    Attributes = () => {
-      this.Check({
+    [attributes] = () => {
+      return check({
         or: [
           { [this.name]: 'Andrew' },
           { [this.age]: 3 }
@@ -246,8 +268,8 @@ test('complex checks', async () => {
 
 test('content fts5 table', async () => {
   class Emails extends Table {
-    to = this.Text;
-    body = this.Text;
+    to = text;
+    body = text;
   }
   const email = new Emails();
   class Searches extends ExternalFTSTable {
@@ -260,11 +282,11 @@ test('content fts5 table', async () => {
 
 test('contentless fts5 table', async () => {
   class Emails extends FTSTable {
-    uuid = this.Unindexed;
-    to;
-    body;
+    uuid = unindexed;
+    to = text;
+    body = text;
 
-    Prefix = 3;
+    [prefix] = 3;
   }
   const result = from({ Emails });
   const table = result.schema.find(t => t.name === 'emails');
@@ -274,14 +296,14 @@ test('contentless fts5 table', async () => {
 
 test('add not null to column', async () => {
   const previous = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Null.Text;
-    author = this.Text;
+    id = primary.int;
+    title = nil.text;
+    author = text;
   }
   const current = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Text;
+    id = primary.int;
+    title = text;
+    author = text;
   }
   const sql = diff({ Books: previous }, { Books: current });
   compare(sql, 'alter table books alter column title set not null;');
@@ -289,14 +311,14 @@ test('add not null to column', async () => {
 
 test('drop not null from column', async () => {
   const previous = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Text;
+    id = primary.int;
+    title = text;
+    author = text;
   }
   const current = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Null.Text;
-    author = this.Text;
+    id = primary.int;
+    title = nil.text;
+    author = text;
   }
   const sql = diff({ Books: previous }, { Books: current });
   compare(sql, 'alter table books alter column title drop not null;');
@@ -304,14 +326,14 @@ test('drop not null from column', async () => {
 
 test('add check to column', async () => {
   const previous = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Text;
+    id = primary.int;
+    title = text;
+    author = text;
   }
   const current = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Check(this.Text, { is: 'Andrew' });
+    id = primary.int;
+    title = text;
+    author = check(text, { is: 'Andrew' });
   }
   const sql = diff({ Books: previous }, { Books: current });
   compare(sql, `alter table books add constraint books_17eef01c check (author = 'Andrew');`);
@@ -319,14 +341,14 @@ test('add check to column', async () => {
 
 test('remove check from column', async () => {
   const previous = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Check(this.Text, { is: 'Andrew' });
+    id = primary.int;
+    title = text;
+    author = check(text, { is: 'Andrew' });
   }
   const current = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    author = this.Text;
+    id = primary.int;
+    title = text;
+    author = text;
   }
   const sql = diff({ Books: previous }, { Books: current });
   compare(sql, `alter table books drop constraint books_17eef01c;`);
@@ -334,13 +356,13 @@ test('remove check from column', async () => {
 
 test('add column with expression default', async () => {
   const previous = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
+    id = primary.int;
+    title = text;
   }
   const current = class Books extends BaseTable {
-    id = this.IntPrimary;
-    title = this.Text;
-    createdAt = this.Now.Instant;
+    id = primary.int;
+    title = text;
+    createdAt = now.instant;
   }
   const sql = diff({ Books: previous }, { Books: current });
   assert.equal(sql.startsWith('create table temp_books'), true);

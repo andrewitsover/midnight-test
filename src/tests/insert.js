@@ -1,15 +1,22 @@
-import { BaseTable, Database, not } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import {
+  BaseTable,
+  Database,
+  nil,
+  not,
+  primary,
+  text
+} from '@andrewitsover/midnight';
 
 class Users extends BaseTable {
-  id = this.IntPrimary;
-  name;
+  id = primary.int;
+  name = text;
   age = 18;
-  createdAt = this.Null.Instant;
-  active = this.Null.Bool;
-  social = this.Null.Json;
-  avatar = this.Null.Blob;
+  createdAt = nil.instant;
+  active = nil.bool;
+  social = nil.json;
+  avatar = nil.blob;
 }
 
 const database = new Database(':memory:');
@@ -128,8 +135,8 @@ test('insert with missing default', async () => {
 
 test('insert with date primary key', async () => {
   class Users extends BaseTable {
-    id = this.InstantPrimary;
-    name;
+    id = primary.instant;
+    name = text;
   }
 
   const database = new Database(':memory:');

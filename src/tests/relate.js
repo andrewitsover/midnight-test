@@ -8,41 +8,45 @@ import {
   concat, 
   not, 
   gt, 
-  count 
+  count, 
+  text,
+  cascade,
+  nil,
+  plainDate
 } from '@andrewitsover/midnight';
 
 const Date = Temporal.PlainDate;
 
 class Companies extends Table {
-  name;
+  name = text;
 }
 
 class Orders extends Table {
-  name;
-  status;
-  companyId = this.Cascade(Companies);
+  name = text;
+  status = text;
+  companyId = cascade(Companies);
 }
 
 class Users extends Table {
-  name;
-  city = this.Null.Text;
-  createdAt = this.PlainDate;
-  companyId = this.Cascade(Companies);
+  name = text;
+  city = nil.text;
+  createdAt = plainDate;
+  companyId = cascade(Companies);
 }
 
 class Roles extends Table {
-  name;
+  name = text;
 }
 
 class UserRoles extends Table {
-  userId = this.Cascade(Users);
-  roleId = this.Cascade(Roles);
-  added = this.PlainDate;
+  userId = cascade(Users);
+  roleId = cascade(Roles);
+  added = plainDate;
 }
 
 class Cars extends Table {
-  name;
-  ownerId = this.Cascade(Users);
+  name = text;
+  ownerId = cascade(Users);
 }
 
 const database = new Database(':memory:');

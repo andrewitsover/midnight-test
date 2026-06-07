@@ -5,16 +5,19 @@ import {
   Database, 
   symbol, 
   not, 
-  extract 
+  extract, 
+  text,
+  int,
+  typedArray
 } from '@andrewitsover/midnight';
 
 class Users extends Table {
-  name;
-  documents = this.TypedArray({
-    id: this.Int,
-    contents: this.Text,
-    createdAt: this.Text,
-    authors: this.TypedArray(this.Text)
+  name = text;
+  documents = typedArray({
+    id: int,
+    contents: text,
+    createdAt: text,
+    authors: typedArray(text)
   });
 }
 

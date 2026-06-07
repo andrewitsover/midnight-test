@@ -6,17 +6,20 @@ import {
   gt, 
   lt, 
   iif, 
-  eq 
+  eq, 
+  text,
+  plainDate,
+  check,
+  json
 } from '@andrewitsover/midnight';
 
 const Date = Temporal.PlainDate;
 
 class Users extends Table {
-  id = this.IntPrimary;
-  name;
-  createdAt = this.PlainDate;
-  gender = this.Check(this.Text, { in: ['m', 'f'] });
-  social = this.Json;
+  name = text;
+  createdAt = plainDate;
+  gender = check(text, { in: ['m', 'f'] });
+  social = json;
 }
 
 const database = new Database(':memory:');

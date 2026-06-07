@@ -1,10 +1,13 @@
-import { Database, Table } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import {
+  Database,
+  Table,
+  text
+} from '@andrewitsover/midnight';
 
 class Users extends Table {
-  id = this.IntPrimary;
-  name;
+  name = text;
 }
 
 test('memory', async () => {

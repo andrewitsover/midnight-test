@@ -1,17 +1,22 @@
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
-import { Database, Table } from '@andrewitsover/midnight';
+import {
+  cascade,
+  Database,
+  now,
+  Table,
+  text
+} from '@andrewitsover/midnight';
 
 class Users extends Table {
-  id = this.IntPrimary;
-  name;
+  name = text;
   isActive = true;
-  createdAt = this.Now.Instant;
+  createdAt = now.instant;
 }
 
 class Drawings extends Table {
-  userId = this.Cascade(Users);
-  data;
+  userId = cascade(Users);
+  data = text;
 }
 
 const database = new Database(':memory:');

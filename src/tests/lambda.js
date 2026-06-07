@@ -7,16 +7,20 @@ import {
   Table, 
   gte, 
   like, 
-  gt 
+  gt, 
+  text,
+  nil,
+  primary,
+  int
 } from '@andrewitsover/midnight';
 
 const database = new Database(':memory:');
 const uuid = database.createFunction({
-  returnType: Table.TextPrimary,
+  returnType: primary.text,
   lambda: () => randomUUID()
 });
 const compare = database.createFunction({
-  returnType: Table.Int,
+  returnType: int,
   options: {
     deterministic: true
   },
@@ -30,9 +34,9 @@ const compare = database.createFunction({
 
 class Users extends BaseTable {
   id = uuid();
-  name;
-  createdAt = this.Null.ZonedDateTime;
-  isActive = this.Null.Bool;
+  name = text;
+  createdAt = nil.zonedDateTime;
+  isActive = nil.bool;
 }
 const db = database.getClient({ Users });
 const sql = db.diff();

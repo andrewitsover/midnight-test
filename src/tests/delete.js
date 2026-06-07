@@ -1,15 +1,22 @@
-import { Database, Table, lt } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import {
+  Database,
+  Table,
+  check,
+  json,
+  lt,
+  plainDate,
+  text
+} from '@andrewitsover/midnight';
 
 const Date = Temporal.PlainDate;
 
 class Users extends Table {
-  id = this.IntPrimary;
-  name;
-  createdAt = this.PlainDate;
-  gender = this.Check(this.Text, { in: ['m', 'f'] });
-  social = this.Json;
+  name = text;
+  createdAt = plainDate;
+  gender = check(text, { in: ['m', 'f'] });
+  social = json;
 }
 
 const database = new Database(':memory:');
@@ -65,11 +72,12 @@ test('delete primary key', async () => {
 });
 
 test('delete expression', async () => {
+  const date = new Date(1999, 8, 2);
   db.users.delete({
-    createdAt: lt(new Date(1999, 8, 2))
+    createdAt: lt(date)
   });
   const exists = db.users.exists({
-    createdAt: lt(new Date(1999, 8, 2))
+    createdAt: lt(date)
   });
   const count = db.users.count();
   assert.equal(exists, false);

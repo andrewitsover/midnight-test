@@ -1,12 +1,22 @@
-import { Database, BaseTable, Table, max } from '@andrewitsover/midnight';
 import { test } from '../run.js';
 import { strict as assert } from 'assert';
+import {
+  Database,
+  BaseTable,
+  Table,
+  max,
+  text,
+  real,
+  int,
+  bigInt,
+  primary
+} from '@andrewitsover/midnight';
 
 class Buildings extends Table {
-  name;
-  height = this.Real;
-  age = this.Int;
-  distance = this.BigInt;
+  name = text;
+  height = real;
+  age = int;
+  distance = bigInt;
 }
 
 const database = new Database(':memory:');
@@ -80,8 +90,8 @@ test('insert many with bigInt', async () => {
 
 test('insert with bigInt primary key', async () => {
   class Buildings extends BaseTable {
-    id = this.BigIntPrimary;
-    name;
+    id = primary.bigInt;
+    name = text;
   }
 
   const database = new Database(':memory:');

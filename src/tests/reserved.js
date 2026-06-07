@@ -3,21 +3,29 @@ import { strict as assert } from 'assert';
 import { 
   Database, 
   Table, 
+  cascade, 
+  check, 
+  computed, 
+  concat, 
+  index, 
   length, 
-  like 
+  like, 
+  nil, 
+  text
 } from '@andrewitsover/midnight';
 
 class Users extends Table {
-  and;
-  or = this.Index(this.Text);
-  check = this.Check(this.Text, { in: ['m', 'f'] });
-  select = this.Index(this.Text);
-  from = this.Null.Text;
-  where = this.Concat(this.and, ' ', this.or);
+  and = text;
+  or = index(text);
+  check = check(text, { in: ['m', 'f'] });
+  select = index(text);
+  from = nil.text;
+
+  where = () => concat(this.and, ' ', this.or);
 }
 
 class Roles extends Table {
-  on = this.Cascade(Users);
+  on = cascade(Users);
 }
 
 const database = new Database(':memory:');
