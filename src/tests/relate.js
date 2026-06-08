@@ -508,7 +508,7 @@ test('implied group', async () => {
         test: () => ({
           name: c.name
         }),
-        orders
+        orders: [orders]
       }
     }
   });

@@ -18,7 +18,6 @@ import {
   strfTime,
   nil,
   references,
-  init,
   int,
   unindexed,
   prefix,
@@ -237,7 +236,7 @@ test('null foreign key', async () => {
   class Events extends Table {
     name = text;
     locationId = nil.references(Locations);
-    code = init('x');
+    code = 'x';
   }
   const result = from({ Locations, Events });
   const events = result.schema.find(t => t.name === 'events');
