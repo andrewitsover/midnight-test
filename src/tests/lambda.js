@@ -17,14 +17,14 @@ import {
 const database = new Database(':memory:');
 const uuid = database.createFunction({
   returnType: primary.text,
-  lambda: () => randomUUID()
+  function: () => randomUUID()
 });
 const compare = database.createFunction({
   returnType: int,
   options: {
     deterministic: true
   },
-  lambda: (a, b) => {
+  function: (a, b) => {
     const { from, compare } = Temporal.ZonedDateTime;
     const d = from(a);
     const e = from(b);
