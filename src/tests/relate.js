@@ -278,10 +278,10 @@ test('implied many-to-one join', async () => {
       select: {
         id: c.id,
         name: c.name,
-        owner: () => ({
+        owner: {
           id: u.id,
           name: u.name
-        })
+        }
       }
     }
   });
@@ -505,9 +505,9 @@ test('implied group', async () => {
     return {
       select: {
         ...c,
-        test: () => ({
+        test: {
           name: c.name
-        }),
+        },
         orders: [orders]
       }
     }
@@ -523,12 +523,12 @@ test('nested objects', async () => {
     return {
       select: {
         id: u.id,
-        nested: () => ({
+        nested: {
           city: u.city,
           rest: {
             name: u.name
           }
-        })
+        }
       },
       where: {
         [u.name]: 'Penelope'

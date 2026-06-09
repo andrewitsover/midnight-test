@@ -194,10 +194,10 @@ test('get blob in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: () => ({
+        rest: {
           name: u.name,
           avatar: u.avatar
-        })
+        }
       },
       where: {
         [u.avatar]: not(null)
@@ -220,10 +220,10 @@ test('get instant in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: () => ({
+        rest: {
           name: u.name,
           createdAt: u.createdAt
-        })
+        }
       },
       where: {
         [u.id]: userId
@@ -245,10 +245,10 @@ test('get null instant in json', async () => {
     return {
       select: {
         id: u.id,
-        rest: () => ({
+        rest: {
           name: u.name,
           createdAt: u.createdAt
-        })
+        }
       },
       where: {
         [u.id]: userId

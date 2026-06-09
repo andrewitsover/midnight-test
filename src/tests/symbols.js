@@ -156,10 +156,10 @@ test('symbols', async () => {
       select: {
         id,
         name,
-        stats: () => ({
+        stats: {
           heightCm,
           reachCm
-        })
+        }
       },
       limit: 1
     }
