@@ -52,7 +52,11 @@ test('queries', async () => {
     where: { name: 'Andrew' },
     set: { name: 'Eugene' }
   });
-  const count = db.coaches.count({ name: 'Eugene' });
+  const count = db.coaches.count({
+    where: {
+      name: 'Eugene'
+    }
+  });
   assert.equal(count, 2);
   db.coaches.delete();
   const fighterCount = db.fighters.count({
