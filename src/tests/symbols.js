@@ -173,9 +173,7 @@ test('symbols', async () => {
     const notNull = not(e.startTime, null);
     return {
       select: {
-        date: iif([
-          [notNull, now]
-        ], now)
+        date: iif([notNull, now], now)
       },
       limit: 10
     }
