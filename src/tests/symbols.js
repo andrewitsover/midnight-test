@@ -12,7 +12,8 @@ import {
   eq,
   arrayLength,
   lt,
-  count } from '@andrewitsover/midnight';
+  count
+} from '@andrewitsover/midnight';
 
 const now = Temporal.Now.zonedDateTimeISO();
 
@@ -172,7 +173,9 @@ test('symbols', async () => {
     const notNull = not(e.startTime, null);
     return {
       select: {
-        date: iif(notNull, now, now)
+        date: iif([
+          [notNull, now]
+        ], now)
       },
       limit: 10
     }

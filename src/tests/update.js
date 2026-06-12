@@ -87,7 +87,9 @@ test('update range', async () => {
 test('update conditionally', async () => {
   db.users.update({
     set: {
-      name: c => iif(eq(c.gender, male), 'John', 'Susan')
+      name: c => iif([
+        [eq(c.gender, male), 'John']
+      ], 'Susan')
     },
     where: {
       name: 'unknown'
