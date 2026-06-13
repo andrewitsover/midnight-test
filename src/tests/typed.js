@@ -30,8 +30,8 @@ test('typed array', async () => {
   const now = Temporal.Now.zonedDateTimeISO();
   const authors = ['Andrew', 'Penelope'];
   const documents = [
-    { id: 1, contents: 'It was raining when we arrived.', createdAt: now, authors },
-    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }), authors }
+    { id: 1, contents: 'It was raining when we arrived.', createdAt: now.toString(), authors },
+    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }).toString(), authors }
   ];
   const user = db.users.returnInsert({ name: 'Andrew', documents });
   assert.equal(user.documents.at(0).authors.length, 2);
@@ -41,8 +41,8 @@ test('typed array with symbols', async () => {
   const now = Temporal.Now.zonedDateTimeISO();
   const authors = ['Andrew', 'Penelope'];
   const documents = [
-    { id: 1, contents: 'It was raining when we arrived.', createdAt: now, authors },
-    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }), authors }
+    { id: 1, contents: 'It was raining when we arrived.', createdAt: now.toString(), authors },
+    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }).toString(), authors }
   ];
   db.users.delete();
   const id = db.users.insert({ name: 'Andrew', documents });
@@ -81,8 +81,8 @@ test('extract typed json', async () => {
   const now = Temporal.Now.zonedDateTimeISO();
   const authors = ['Andrew', 'Penelope'];
   const documents = [
-    { id: 1, contents: 'It was raining when we arrived.', createdAt: now, authors },
-    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }), authors }
+    { id: 1, contents: 'It was raining when we arrived.', createdAt: now.toString(), authors },
+    { id: 2, contents: 'We came to the house unprepared.', createdAt: now.add({ days: 1 }).toString(), authors }
   ];
   db.users.delete();
   const id = db.users.insert({ name: 'Andrew', documents });
