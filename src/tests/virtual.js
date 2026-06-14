@@ -93,7 +93,7 @@ test('near', () => {
   assert.equal(pass, true);
 });
 
-test('log', () => {
+test('virtual log', () => {
   using db = setup();
   let data;
   db.emails.match({
