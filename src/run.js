@@ -1,72 +1,40 @@
-import { database } from './drivers/sqlite.js';
-
 const tests = [];
-const clean = new Map();
-let last;
 
 const testName = process.argv[3];
 
-const addTests = (name, testGroup) => {
+const addTests = (name, test) => {
   if (testName && name !== testName) {
     return;
   }
-  if (name === 'close') {
-    last = { name, tests: testGroup };
-  }
-  else {
-    tests.push({ name, tests: testGroup });
-  }
+  tests.push({ name, test });
 };
-const addCleanUp = (name, cleanUp) => {
-  clean.set(name, cleanUp);
+
+if (testName && tests.length === 0) {
+  throw Error(`there is no test named "${testName}"`);
 }
 
-const makeRun = (group) => {
-  const { name, tests } = group;
-  const cleanUp = clean.get(name);
-  return async () => {
+const run = async () => {
+  for (const item of tests) {
+    const { name, test } = item;
     try {
-      await tests();
+      await test();
     }
     catch (e) {
-      if (cleanUp) {
-        await cleanUp();
-      }
       console.log(`The ${name} test failed`);
       throw e;
     }
   }
-}
-
-const run = async () => {
-  try {
-    for (const group of tests) {
-      const run = makeRun(group);
-      await run();
-    }
-    if (last) {
-      const run = makeRun(last);
-      await run();
-    }
-    if (testName) {
-      console.log(`${testName} passed`);
-    }
-    else {
-      console.log('All tests passed');
-    }
-    database.close();
+  if (testName) {
+    console.log(`${testName} passed`);
   }
-  catch (e) {
-    database.close();
-    throw e;
+  else {
+    console.log('All tests passed');
   }
 }
 
 const test = addTests;
-const cleanUp = addCleanUp;
 
 export {
   test,
-  cleanUp,
   run
 }

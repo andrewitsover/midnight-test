@@ -32,40 +32,45 @@ class Cities extends Table {
   active = nil.bool;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Buildings, Cities });
-const sql = db.diff();
-db.migrate(sql);
-
 const distance = 2n ** 60n;
 
-db.buildings.insert({
-  id: 1,
-  name: 'The Empire State Building',
-  height: 24.5,
-  age: 30,
-  distance
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Buildings, Cities });
+  const sql = db.diff();
+  db.migrate(sql);
 
-db.cities.insert({
-  id: 1,
-  name: 'New York City',
-  year: 1997,
-  population: 100,
-  area: 240n,
-  created: Temporal.Now.instant(),
-  active: true
-});
-db.cities.insert({
-  id: 2,
-  name: 'Portland',
-  year: 2026,
-  area: 120n,
-  created: Temporal.Now.instant(),
-  active: false
-});
+  db.buildings.insert({
+    id: 1,
+    name: 'The Empire State Building',
+    height: 24.5,
+    age: 30,
+    distance
+  });
+
+  db.cities.insert({
+    id: 1,
+    name: 'New York City',
+    year: 1997,
+    population: 100,
+    area: 240n,
+    created: Temporal.Now.instant(),
+    active: true
+  });
+  db.cities.insert({
+    id: 2,
+    name: 'Portland',
+    year: 2026,
+    area: 120n,
+    created: Temporal.Now.instant(),
+    active: false
+  });
+
+  return db;
+}
 
 test('coalesce bigInt', async () => {
+  using db = setup();
   const city = db.first(t => {
     const { cities: c } = t;
     const year = coalesce(c.population, c.year);

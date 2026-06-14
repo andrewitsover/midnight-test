@@ -19,51 +19,56 @@ class Users extends Table {
   social = json;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
-
 const male = 'm';
 const female = 'f';
 
-db.users.insert({
-  id: 1,
-  name: 'Andrew',
-  createdAt: new Date(1997, 3, 21),
-  gender: male,
-  social: { instagram: 'andrewiscool' }
-});
-db.users.insert({
-  id: 2,
-  name: 'Andrew',
-  createdAt: new Date(1998, 5, 18),
-  gender: male,
-  social: { instagram: 'andrewiscool' }
-});
-db.users.insert({
-  id: 3,
-  name: 'Susan',
-  createdAt: new Date(1999, 8, 2),
-  gender: female,
-  social: { instagram: 'susaniscool' }
-});
-db.users.insert({
-  id: 4,
-  name: 'Penelope',
-  createdAt: new Date(2000, 1, 10),
-  gender: female,
-  social: { instagram: 'penelopeiscool' }
-});
-db.users.insert({
-  id: 5,
-  name: 'Samuel',
-  createdAt: new Date(2001, 1, 13),
-  gender: male,
-  social: { instagram: 'samueliscool' }
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({
+    id: 1,
+    name: 'Andrew',
+    createdAt: new Date(1997, 3, 21),
+    gender: male,
+    social: { instagram: 'andrewiscool' }
+  });
+  db.users.insert({
+    id: 2,
+    name: 'Andrew',
+    createdAt: new Date(1998, 5, 18),
+    gender: male,
+    social: { instagram: 'andrewiscool' }
+  });
+  db.users.insert({
+    id: 3,
+    name: 'Susan',
+    createdAt: new Date(1999, 8, 2),
+    gender: female,
+    social: { instagram: 'susaniscool' }
+  });
+  db.users.insert({
+    id: 4,
+    name: 'Penelope',
+    createdAt: new Date(2000, 1, 10),
+    gender: female,
+    social: { instagram: 'penelopeiscool' }
+  });
+  db.users.insert({
+    id: 5,
+    name: 'Samuel',
+    createdAt: new Date(2001, 1, 13),
+    gender: male,
+    social: { instagram: 'samueliscool' }
+  });
+
+  return db;
+}
 
 test('count', async () => {
+  using db = setup();
   const count = db.users.count({
     where: {
       gender: male
@@ -73,6 +78,7 @@ test('count', async () => {
 });
 
 test('count zero', async () => {
+  using db = setup();
   const count = db.users.count({
     where: {
       gender: male,
@@ -83,11 +89,13 @@ test('count zero', async () => {
 });
 
 test('count without where', async () => {
+  using db = setup();
   const count = db.users.count();
   assert.equal(count, 5);
 });
 
 test('distinct count', async () => {
+  using db = setup();
   const count = db.users.count({
     distinct: 'name',
     where: {
@@ -98,6 +106,7 @@ test('distinct count', async () => {
 });
 
 test('exists true', async () => {
+  using db = setup();
   const exists = db.users.exists({
     name: not('John'),
     createdAt: new Date(1998, 5, 18)
@@ -106,6 +115,7 @@ test('exists true', async () => {
 });
 
 test('exists false', async () => {
+  using db = setup();
   const exists = db.users.exists({
     name: 'John',
     createdAt: new Date(1998, 5, 18)

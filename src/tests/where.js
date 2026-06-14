@@ -21,51 +21,56 @@ class Users extends Table {
   social = json;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
-
 const male = 'm';
 const female = 'f';
 
-db.users.insert({
-  id: 1,
-  name: 'Andrew',
-  createdAt: new Date(1997, 3, 21),
-  gender: male,
-  social: { instagram: 'andrewiscool' }
-});
-db.users.insert({
-  id: 2,
-  name: 'John',
-  createdAt: new Date(1998, 5, 18),
-  gender: male,
-  social: { instagram: 'johniscool' }
-});
-db.users.insert({
-  id: 3,
-  name: 'Susan',
-  createdAt: new Date(1999, 8, 2),
-  gender: female,
-  social: { instagram: 'susaniscool' }
-});
-db.users.insert({
-  id: 4,
-  name: 'Penelope',
-  createdAt: new Date(2000, 1, 10),
-  gender: female,
-  social: { instagram: 'penelopeiscool' }
-});
-db.users.insert({
-  id: 5,
-  name: 'Samuel',
-  createdAt: new Date(2001, 1, 13),
-  gender: male,
-  social: { instagram: 'samueliscool' }
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({
+    id: 1,
+    name: 'Andrew',
+    createdAt: new Date(1997, 3, 21),
+    gender: male,
+    social: { instagram: 'andrewiscool' }
+  });
+  db.users.insert({
+    id: 2,
+    name: 'John',
+    createdAt: new Date(1998, 5, 18),
+    gender: male,
+    social: { instagram: 'johniscool' }
+  });
+  db.users.insert({
+    id: 3,
+    name: 'Susan',
+    createdAt: new Date(1999, 8, 2),
+    gender: female,
+    social: { instagram: 'susaniscool' }
+  });
+  db.users.insert({
+    id: 4,
+    name: 'Penelope',
+    createdAt: new Date(2000, 1, 10),
+    gender: female,
+    social: { instagram: 'penelopeiscool' }
+  });
+  db.users.insert({
+    id: 5,
+    name: 'Samuel',
+    createdAt: new Date(2001, 1, 13),
+    gender: male,
+    social: { instagram: 'samueliscool' }
+  });
+
+  return db;
+}
 
 test('first', async () => {
+  using db = setup();
   const user = db.users.first({
     where: {
       name: 'Samuel'
@@ -75,6 +80,7 @@ test('first', async () => {
 });
 
 test('first ordered', async () => {
+  using db = setup();
   const user = db.users.first({
     where: {
       gender: female
@@ -86,6 +92,7 @@ test('first ordered', async () => {
 });
 
 test('query', async () => {
+  using db = setup();
   const users = db.users.query({
     where: {
       gender: male
@@ -95,6 +102,7 @@ test('query', async () => {
 });
 
 test('query and', async () => {
+  using db = setup();
   const users = db.users.query({
     where: {
       and: [
@@ -107,6 +115,7 @@ test('query and', async () => {
 });
 
 test('query or', async () => {
+  using db = setup();
   const users = db.users.query({
     where: {
       or: [
@@ -119,6 +128,7 @@ test('query or', async () => {
 });
 
 test('query and or', async () => {
+  using db = setup();
   const users = db.users.query({
     where: {
       and: [
@@ -136,6 +146,7 @@ test('query and or', async () => {
 });
 
 test('query or and', async () => {
+  using db = setup();
   const users = db.users.query({
     where: {
       or: [

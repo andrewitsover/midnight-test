@@ -19,10 +19,14 @@ class Users extends BaseTable {
   avatar = nil.blob;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  return db;
+}
 
 const name = 'Andrew';
 const encoder = new TextEncoder();
@@ -35,12 +39,14 @@ const validate = (user) => {
 }
 
 test('empty', async () => {
+  using db = setup();
   const id = db.users.insert({ name });
   const user = db.users.get({ id });
   validate(user);
 });
 
 test('undefined', async () => {
+  using db = setup();
   const id = db.users.insert({ 
     name,
     createdAt: undefined,
@@ -51,6 +57,7 @@ test('undefined', async () => {
 });
 
 test('null', async () => {
+  using db = setup();
   const id = db.users.insert({ 
     name,
     createdAt: null,
@@ -61,6 +68,7 @@ test('null', async () => {
 });
 
 test('supplied', async () => {
+  using db = setup();
   const createdAt = Temporal.Now.instant();
   const id = db.users.insert({ 
     name,
@@ -73,6 +81,7 @@ test('supplied', async () => {
 });
 
 test('json', async () => {
+  using db = setup();
   const social = {
     instagram: 'cool',
     twitter: 'person'
@@ -86,6 +95,7 @@ test('json', async () => {
 });
 
 test('blob', async () => {
+  using db = setup();
   const id = db.users.insert({
     name,
     avatar
@@ -95,6 +105,7 @@ test('blob', async () => {
 });
 
 test('insert many with blobs', async () => {
+  using db = setup();
   db.users.delete();
   const users = [
     { name: 'Andrew', avatar: encoder.encode('Andrew') },
@@ -108,6 +119,7 @@ test('insert many with blobs', async () => {
 });
 
 test('insert many with different columns', async () => {
+  using db = setup();
   db.users.delete();
   const users = [
     { name },
@@ -123,6 +135,7 @@ test('insert many with different columns', async () => {
 });
 
 test('insert with missing default', async () => {
+  using db = setup();
   db.users.delete();
   const users = [
     { name, age: 20 },
@@ -140,7 +153,7 @@ test('insert with date primary key', async () => {
   }
 
   const database = new Database(':memory:');
-  const db = database.getClient({ Users });
+  using db = database.getClient({ Users });
   const sql = db.diff();
   db.migrate(sql);
 
@@ -155,11 +168,14 @@ test('insert with date primary key', async () => {
 });
 
 test('returnInsert', async () => {
+  using db = setup();
   const user = db.users.returnInsert({ name });
   assert.equal(user.name, name);
 });
 
 test('returnUpsert', async () => {
+  using db = setup();
+  db.users.insert({ id: 1, name });
   const user = db.users.returnUpsert({
     values: {
       id: 1,
@@ -174,6 +190,7 @@ test('returnUpsert', async () => {
 });
 
 test('returnInsertMany', async () => {
+  using db = setup();
   const createdAt = Temporal.Now.instant();
   const rows = [
     { name: 'Andrew', createdAt },
@@ -185,6 +202,7 @@ test('returnInsertMany', async () => {
 });
 
 test('get blob in json', async () => {
+  using db = setup();
   db.users.insert({
     name,
     avatar: encoder.encode(name)
@@ -210,6 +228,7 @@ test('get blob in json', async () => {
 });
 
 test('get instant in json', async () => {
+  using db = setup();
   const createdAt = Temporal.Now.instant();
   const userId = db.users.insert({
     name,
@@ -236,6 +255,7 @@ test('get instant in json', async () => {
 });
 
 test('get null instant in json', async () => {
+  using db = setup();
   const userId = db.users.insert({
     name,
     createdAt: null

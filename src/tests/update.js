@@ -22,51 +22,56 @@ class Users extends Table {
   social = json;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
-
 const male = 'm';
 const female = 'f';
 
-db.users.insert({
-  id: 1,
-  name: 'Andrew',
-  createdAt: new Date(1997, 3, 21),
-  gender: male,
-  social: { instagram: 'andrewiscool' }
-});
-db.users.insert({
-  id: 2,
-  name: 'John',
-  createdAt: new Date(1998, 5, 18),
-  gender: male,
-  social: { instagram: 'johniscool' }
-});
-db.users.insert({
-  id: 3,
-  name: 'Susan',
-  createdAt: new Date(1999, 8, 2),
-  gender: female,
-  social: { instagram: 'susaniscool' }
-});
-db.users.insert({
-  id: 4,
-  name: 'Penelope',
-  createdAt: new Date(2000, 1, 10),
-  gender: female,
-  social: { instagram: 'penelopeiscool' }
-});
-db.users.insert({
-  id: 5,
-  name: 'Samuel',
-  createdAt: new Date(2001, 1, 13),
-  gender: male,
-  social: { instagram: 'samueliscool' }
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({
+    id: 1,
+    name: 'Andrew',
+    createdAt: new Date(1997, 3, 21),
+    gender: male,
+    social: { instagram: 'andrewiscool' }
+  });
+  db.users.insert({
+    id: 2,
+    name: 'John',
+    createdAt: new Date(1998, 5, 18),
+    gender: male,
+    social: { instagram: 'johniscool' }
+  });
+  db.users.insert({
+    id: 3,
+    name: 'Susan',
+    createdAt: new Date(1999, 8, 2),
+    gender: female,
+    social: { instagram: 'susaniscool' }
+  });
+  db.users.insert({
+    id: 4,
+    name: 'Penelope',
+    createdAt: new Date(2000, 1, 10),
+    gender: female,
+    social: { instagram: 'penelopeiscool' }
+  });
+  db.users.insert({
+    id: 5,
+    name: 'Samuel',
+    createdAt: new Date(2001, 1, 13),
+    gender: male,
+    social: { instagram: 'samueliscool' }
+  });
+
+  return db;
+}
 
 test('update range', async () => {
+  using db = setup();
   const after = new Date(1997, 5, 1);
   const before = new Date(2000, 1, 1);
   db.users.update({
@@ -85,6 +90,7 @@ test('update range', async () => {
 });
 
 test('update conditionally', async () => {
+  using db = setup();
   db.users.update({
     set: {
       name: c => iif([eq(c.gender, male), 'John'], 'Susan')
@@ -98,6 +104,7 @@ test('update conditionally', async () => {
 });
 
 test('update date', async () => {
+  using db = setup();
   const createdAt = Temporal.Now.plainDateISO();
   const id = 3;
   db.users.update({
@@ -113,6 +120,7 @@ test('update date', async () => {
 });
 
 test('update text with check', async () => {
+  using db = setup();
   const id = 4;
   db.users.update({
     where: {
@@ -127,6 +135,7 @@ test('update text with check', async () => {
 });
 
 test('update json', async () => {
+  using db = setup();
   const id = 1;
   const social = { twitter: 'andrewiscool' };
   db.users.update({
@@ -142,6 +151,7 @@ test('update json', async () => {
 });
 
 test('update multiple columns', async () => {
+  using db = setup();
   db.users.update({
     where: {
       name: 'John',

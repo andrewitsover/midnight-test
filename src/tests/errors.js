@@ -19,15 +19,21 @@ class Drawings extends Table {
   data = text;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users, Drawings });
-const sql = db.diff();
-db.migrate(sql);
-db.users.insert({ name: 'Andrew' });
-db.users.insert({ name: 'James' });
-db.users.insert({ name: 'Bradley', isActive: false });
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users, Drawings });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({ name: 'Andrew' });
+  db.users.insert({ name: 'James' });
+  db.users.insert({ name: 'Bradley', isActive: false });
+
+  return db;
+}
 
 test('no column', async () => {
+  using db = setup();
   const queries = [
     () => db.users.get({ fake: 3 }),
     () => db.users.many({ fake: 3 }),
@@ -56,6 +62,7 @@ test('no column', async () => {
 });
 
 test('wrong types and invalid states', async () => {
+  using db = setup();
   const queries = [
     () => db.users.query({
       select: []

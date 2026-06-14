@@ -1,10 +1,11 @@
 import { strict as assert } from 'assert';
 import { compare } from '../utils.js';
-import { test, cleanUp } from '../run.js';
-import { db } from '../drivers/sqlite.js';
+import { test } from '../run.js';
+import { setup } from '../drivers/sqlite.js';
 import { like, gt, lt, not, concat } from '@andrewitsover/midnight';
 
 test('queries', async () => {
+  using db = setup();
   const cards = db.cards.many({ eventId: 100 });
   const fighterId = db.fighters.get({ name: like('Israel%') }, 'id');
 
@@ -158,8 +159,4 @@ test('queries', async () => {
     }
   });
   assert.equal(max instanceof Temporal.ZonedDateTime, true);
-});
-
-cleanUp('queries', async () => {
-  db.coaches.delete();
 });

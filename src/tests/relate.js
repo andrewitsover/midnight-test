@@ -49,178 +49,183 @@ class Cars extends Table {
   ownerId = cascade(Users);
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({
-  Companies,
-  Orders,
-  Users,
-  Roles,
-  UserRoles,
-  Cars
-});
-const sql = db.diff();
-db.migrate(sql);
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({
+    Companies,
+    Orders,
+    Users,
+    Roles,
+    UserRoles,
+    Cars
+  });
+  const sql = db.diff();
+  db.migrate(sql);
 
-db.companies.insert({
-  id: 1,
-  name: 'Tesla'
-});
-db.companies.insert({
-  id: 2,
-  name: 'Ford'
-});
+  db.companies.insert({
+    id: 1,
+    name: 'Tesla'
+  });
+  db.companies.insert({
+    id: 2,
+    name: 'Ford'
+  });
 
-db.orders.insert({
-  name: 'Model Y',
-  status: 'Complete',
-  companyId: 1
-});
-db.orders.insert({
-  name: 'Model Y',
-  status: 'Processing',
-  companyId: 1
-});
-db.orders.insert({
-  name: 'F-150',
-  status: 'Processing',
-  companyId: 2
-});
-db.orders.insert({
-  name: 'F-150',
-  status: 'Processing',
-  companyId: 2
-});
-db.orders.insert({
-  name: 'Mustang',
-  status: 'Complete',
-  companyId: 2
-});
-db.orders.insert({
-  name: 'Mustang',
-  status: 'Complete',
-  companyId: 2
-});
+  db.orders.insert({
+    name: 'Model Y',
+    status: 'Complete',
+    companyId: 1
+  });
+  db.orders.insert({
+    name: 'Model Y',
+    status: 'Processing',
+    companyId: 1
+  });
+  db.orders.insert({
+    name: 'F-150',
+    status: 'Processing',
+    companyId: 2
+  });
+  db.orders.insert({
+    name: 'F-150',
+    status: 'Processing',
+    companyId: 2
+  });
+  db.orders.insert({
+    name: 'Mustang',
+    status: 'Complete',
+    companyId: 2
+  });
+  db.orders.insert({
+    name: 'Mustang',
+    status: 'Complete',
+    companyId: 2
+  });
 
-db.users.insert({
-  id: 1,
-  companyId: 1,
-  name: 'Andrew',
-  createdAt: new Date(1997, 3, 21)
-});
-db.users.insert({
-  id: 2,
-  city: 'Portland',
-  companyId: 1,
-  name: 'John',
-  createdAt: new Date(1998, 5, 18)
-});
-db.users.insert({
-  id: 3,
-  city: 'Orlando',
-  companyId: 2,
-  name: 'Susan',
-  createdAt: new Date(1999, 8, 2)
-});
-db.users.insert({
-  id: 4,
-  companyId: 1,
-  city: 'Orlando',
-  name: 'Penelope',
-  createdAt: new Date(2000, 1, 10)
-});
-db.users.insert({
-  id: 5,
-  companyId: 2,
-  city: 'Austin',
-  name: 'Samuel',
-  createdAt: new Date(2001, 1, 13)
-});
-db.users.insert({
-  id: 6,
-  companyId: 2,
-  city: 'Portland',
-  name: 'James',
-  createdAt: new Date(2001, 1, 17)
-});
+  db.users.insert({
+    id: 1,
+    companyId: 1,
+    name: 'Andrew',
+    createdAt: new Date(1997, 3, 21)
+  });
+  db.users.insert({
+    id: 2,
+    city: 'Portland',
+    companyId: 1,
+    name: 'John',
+    createdAt: new Date(1998, 5, 18)
+  });
+  db.users.insert({
+    id: 3,
+    city: 'Orlando',
+    companyId: 2,
+    name: 'Susan',
+    createdAt: new Date(1999, 8, 2)
+  });
+  db.users.insert({
+    id: 4,
+    companyId: 1,
+    city: 'Orlando',
+    name: 'Penelope',
+    createdAt: new Date(2000, 1, 10)
+  });
+  db.users.insert({
+    id: 5,
+    companyId: 2,
+    city: 'Austin',
+    name: 'Samuel',
+    createdAt: new Date(2001, 1, 13)
+  });
+  db.users.insert({
+    id: 6,
+    companyId: 2,
+    city: 'Portland',
+    name: 'James',
+    createdAt: new Date(2001, 1, 17)
+  });
 
-db.roles.insert({
-  id: 1,
-  name: 'Driver'
-});
-db.roles.insert({
-  id: 2,
-  name: 'Hacker'
-});
-db.roles.insert({
-  id: 3,
-  name: 'Thief'
-});
+  db.roles.insert({
+    id: 1,
+    name: 'Driver'
+  });
+  db.roles.insert({
+    id: 2,
+    name: 'Hacker'
+  });
+  db.roles.insert({
+    id: 3,
+    name: 'Thief'
+  });
 
-db.userRoles.insert({
-  userId: 1,
-  roleId: 1,
-  added: new Date(2025, 1, 1)
-});
-db.userRoles.insert({
-  userId: 2,
-  roleId: 1,
-  added: new Date(2026, 1, 1)
-});
-db.userRoles.insert({
-  userId: 3,
-  roleId: 1,
-  added: new Date(2026, 1, 1)
-});
+  db.userRoles.insert({
+    userId: 1,
+    roleId: 1,
+    added: new Date(2025, 1, 1)
+  });
+  db.userRoles.insert({
+    userId: 2,
+    roleId: 1,
+    added: new Date(2026, 1, 1)
+  });
+  db.userRoles.insert({
+    userId: 3,
+    roleId: 1,
+    added: new Date(2026, 1, 1)
+  });
 
-db.userRoles.insert({
-  userId: 1,
-  roleId: 2,
-  added: new Date(2025, 1, 1)
-});
-db.userRoles.insert({
-  userId: 4,
-  roleId: 2,
-  added: new Date(2026, 1, 1)
-});
-db.userRoles.insert({
-  userId: 5,
-  roleId: 2,
-  added: new Date(2026, 1, 1)
-});
+  db.userRoles.insert({
+    userId: 1,
+    roleId: 2,
+    added: new Date(2025, 1, 1)
+  });
+  db.userRoles.insert({
+    userId: 4,
+    roleId: 2,
+    added: new Date(2026, 1, 1)
+  });
+  db.userRoles.insert({
+    userId: 5,
+    roleId: 2,
+    added: new Date(2026, 1, 1)
+  });
 
-db.userRoles.insert({
-  userId: 2,
-  roleId: 3,
-  added: new Date(2024, 1, 1)
-});
-db.userRoles.insert({
-  userId: 3,
-  roleId: 3,
-  added: new Date(2026, 1, 1)
-});
+  db.userRoles.insert({
+    userId: 2,
+    roleId: 3,
+    added: new Date(2024, 1, 1)
+  });
+  db.userRoles.insert({
+    userId: 3,
+    roleId: 3,
+    added: new Date(2026, 1, 1)
+  });
 
-db.cars.insert({
-  name: 'Mustang',
-  ownerId: 1
-});
-db.cars.insert({
-  name: 'Model Y',
-  ownerId: 2
-});
-db.cars.insert({
-  name: 'F-150',
-  ownerId: 3
-});
-db.cars.insert({
-  name: 'Jaguar',
-  ownerId: 3
-});
-db.cars.insert({
-  name: 'Cybertruck',
-  ownerId: 2
-});
+  db.cars.insert({
+    name: 'Mustang',
+    ownerId: 1
+  });
+  db.cars.insert({
+    name: 'Model Y',
+    ownerId: 2
+  });
+  db.cars.insert({
+    name: 'F-150',
+    ownerId: 3
+  });
+  db.cars.insert({
+    name: 'Jaguar',
+    ownerId: 3
+  });
+  db.cars.insert({
+    name: 'Cybertruck',
+    ownerId: 2
+  });
+
+  return db;
+}
 
 test('no joins and only a computed column', async () => {
+  using db = setup();
   const users = db.queryValues(c => {
     const { users: u } = c;
     return {
@@ -232,6 +237,7 @@ test('no joins and only a computed column', async () => {
 });
 
 test('implied many-to-many join', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u, userRoles: ur, roles: r } = c;
     return {
@@ -253,6 +259,7 @@ test('implied many-to-many join', async () => {
 });
 
 test('implied one-to-many join', async () => {
+  using db = setup();
   const users = db.query(context => {
     const { users: u, cars: c } = context;
     return {
@@ -272,6 +279,7 @@ test('implied one-to-many join', async () => {
 });
 
 test('implied many-to-one join', async () => {
+  using db = setup();
   const cars = db.query(context => {
     const { cars: c, users: u } = context;
     return {
@@ -290,6 +298,7 @@ test('implied many-to-one join', async () => {
 });
 
 test('invalid join', async () => {
+  using db = setup();
   const getCars = () => db.query(context => {
     const { cars: c, roles: r } = context;
     return {
@@ -303,6 +312,7 @@ test('invalid join', async () => {
 });
 
 test('implied many-to-many left join', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u, userRoles: ur, roles: r } = c;
     return {
@@ -320,6 +330,7 @@ test('implied many-to-many left join', async () => {
 });
 
 test('find many-to-many', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u, roles: r } = c;
     return {
@@ -337,6 +348,7 @@ test('find many-to-many', async () => {
 });
 
 test('certain', async () => {
+  using db = setup();
   const user = db.first(c => {
     const { users: u } = c;
     return {
@@ -352,6 +364,7 @@ test('certain', async () => {
 });
 
 test('certain values', async () => {
+  using db = setup();
   const users = db.queryValues(c => {
     const { users: u } = c;
     return {
@@ -365,6 +378,7 @@ test('certain values', async () => {
 });
 
 test('unused tables', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u, userRoles, roles: r } = c;
     return {
@@ -378,6 +392,7 @@ test('unused tables', async () => {
 });
 
 test('group by same table', async () => {
+  using db = setup();
   const cities = db.query(context => {
     const { users: u, companies: c } = context;
     return {
@@ -399,6 +414,7 @@ test('group by same table', async () => {
 });
 
 test('complex aggregate function', async () => {
+  using db = setup();
   const users = db.queryValues(c => {
     const { users: u, companies, orders: o } = c;
     return {
@@ -416,6 +432,7 @@ test('complex aggregate function', async () => {
 });
 
 test('count with relations', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u } = c;
     return {
@@ -431,6 +448,7 @@ test('count with relations', async () => {
 });
 
 test('symbol pick', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u } = c;
     return {
@@ -452,6 +470,7 @@ test('symbol pick', async () => {
 });
 
 test('symbol omit', async () => {
+  using db = setup();
   const users = db.query(context => {
     const { 
       users: u,
@@ -475,6 +494,7 @@ test('symbol omit', async () => {
 });
 
 test('subquery', async () => {
+  using db = setup();
   const company = db.subquery(c => {
     const { companyId, ...orders } = c.orders;
     return {
@@ -500,6 +520,7 @@ test('subquery', async () => {
 });
 
 test('implied group', async () => {
+  using db = setup();
   const companies = db.query(context => {
     const { companies: c, orders } = context;
     return {
@@ -518,6 +539,7 @@ test('implied group', async () => {
 });
 
 test('nested objects', async () => {
+  using db = setup();
   const user = db.first(c => {
     const { users: u } = c;
     return {
@@ -539,6 +561,7 @@ test('nested objects', async () => {
 });
 
 test('subquery in where', async () => {
+  using db = setup();
   const userIds = db.subquery(c => {
     const { users: u, userRoles } = c;
     return {
@@ -568,6 +591,7 @@ test('subquery in where', async () => {
 });
 
 test('subquery in where methods', async () => {
+  using db = setup();
   const userIds = db.subquery(c => {
     const { users: u, userRoles } = c;
     return {

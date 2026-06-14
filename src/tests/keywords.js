@@ -19,15 +19,21 @@ class Drawings extends Table {
   data = text;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users, Drawings });
-const sql = db.diff();
-db.migrate(sql);
-db.users.insert({ name: 'Andrew' });
-db.users.insert({ name: 'James' });
-db.users.insert({ name: 'Bradley', isActive: false });
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users, Drawings });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({ name: 'Andrew' });
+  db.users.insert({ name: 'James' });
+  db.users.insert({ name: 'Bradley', isActive: false });
+
+  return db;
+}
 
 test('log', async () => {
+  using db = setup();
   let data;
   db.users.query({
     where: {
@@ -62,6 +68,7 @@ test('log', async () => {
 });
 
 test('orderBy', async () => {
+  using db = setup();
   const asc = db.users.query({
     orderBy: 'name'
   });
@@ -75,6 +82,7 @@ test('orderBy', async () => {
 });
 
 test('limit and offset', async () => {
+  using db = setup();
   const limit = db.users.query({
     limit: 2
   });
@@ -88,6 +96,7 @@ test('limit and offset', async () => {
 });
 
 test('distinct', async () => {
+  using db = setup();
   const id = db.users.insert({ name: 'Bradley' });
   const total = db.users.count();
   const distinct = db.users.query({
@@ -99,6 +108,7 @@ test('distinct', async () => {
 });
 
 test('omit', async () => {
+  using db = setup();
   const users = db.users.query({
     omit: 'id'
   });
@@ -109,6 +119,7 @@ test('omit', async () => {
 });
 
 test('return', async () => {
+  using db = setup();
   const names = db.users.query({
     return: 'name'
   });
@@ -124,6 +135,7 @@ test('return', async () => {
 });
 
 test('select', async () => {
+  using db = setup();
   const user = db.users.first({
     select: ['name', 'isActive'],
     where: {

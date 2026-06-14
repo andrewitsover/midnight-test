@@ -14,41 +14,48 @@ import {
   int
 } from '@andrewitsover/midnight';
 
-const database = new Database(':memory:');
-const uuid = database.createFunction({
-  returnType: primary.text,
-  function: () => randomUUID()
-});
-const compare = database.createFunction({
-  returnType: int,
-  options: {
-    deterministic: true
-  },
-  function: (a, b) => {
-    const { from, compare } = Temporal.ZonedDateTime;
-    const d = from(a);
-    const e = from(b);
-    return compare(d, e);
-  }
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const uuid = database.createFunction({
+    returnType: primary.text,
+    function: () => randomUUID()
+  });
+  const compare = database.createFunction({
+    returnType: int,
+    options: {
+      deterministic: true
+    },
+    function: (a, b) => {
+      const { from, compare } = Temporal.ZonedDateTime;
+      const d = from(a);
+      const e = from(b);
+      return compare(d, e);
+    }
+  });
 
-class Users extends BaseTable {
-  id = uuid();
-  name = text;
-  createdAt = nil.zonedDateTime;
-  isActive = nil.bool;
+  class Users extends BaseTable {
+    id = uuid();
+    name = text;
+    createdAt = nil.zonedDateTime;
+    isActive = nil.bool;
+  }
+
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  return db;
 }
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
 
 test('insert lambda', async () => {
+  using db = setup();
   const id = db.users.insert({ name: 'Andrew' });
   const user = db.users.get({ id });
   assert.equal(user.id.length, 36);
 });
 
 test('insert many lambda', async () => {
+  using db = setup();
   const inserts = [
     { id: randomUUID(), name: 'Penelope' },
     { name: 'Susan' },
@@ -61,6 +68,7 @@ test('insert many lambda', async () => {
 });
 
 test('upsert lambda', async () => {
+  using db = setup();
   const name = 'John';
   const id = db.users.upsert({
     values: {
@@ -77,7 +85,30 @@ test('upsert lambda', async () => {
 });
 
 test('function in where', async () => {
-  db.users.delete();
+  const database = new Database(':memory:');
+  const compare = database.createFunction({
+    returnType: int,
+    options: {
+      deterministic: true
+    },
+    function: (a, b) => {
+      const { from, compare } = Temporal.ZonedDateTime;
+      const d = from(a);
+      const e = from(b);
+      return compare(d, e);
+    }
+  });
+
+  class Users extends Table {
+    name = text;
+    createdAt = nil.zonedDateTime;
+    isActive = nil.bool;
+  }
+
+  using db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
   const now = Temporal.Now.zonedDateTimeISO();
   const rows = [
     {
@@ -109,7 +140,7 @@ test('function in where', async () => {
 });
 
 test('regex', async () => {
-  db.users.delete();
+  using db = setup();
   db.users.insertMany([
     { name: 'Andrew' },
     { name: 'Penelope' },
@@ -121,7 +152,7 @@ test('regex', async () => {
 });
 
 test('symbol regex', async () => {
-  db.users.delete();
+  using db = setup();
   db.users.insertMany([
     { name: 'Andrew' },
     { name: 'Penelope' },
@@ -141,7 +172,7 @@ test('symbol regex', async () => {
 });
 
 test('symbol regex with two arguments', async () => {
-  db.users.delete();
+  using db = setup();
   db.users.insertMany([
     { name: 'Andrew', isActive: false },
     { name: 'Penelope', isActive: false },
@@ -161,7 +192,7 @@ test('symbol regex with two arguments', async () => {
 });
 
 test('symbol regex in select', async () => {
-  db.users.delete();
+  using db = setup();
   db.users.insertMany([
     { name: 'Andrew' },
     { name: 'Penelope' },
@@ -180,11 +211,11 @@ test('symbol regex in select', async () => {
 });
 
 test('compare zonedDateTimes', async () => {
+  using db = setup();
   const { from } = Temporal.ZonedDateTime;
   const same = from('2024-12-31T19:00:00-05:00[America/New_York]');
   const middle = from('2025-01-01T00:30:00+14:00[Pacific/Kiritimati]');
 
-  db.users.delete();
   db.users.insertMany([
     { name: 'Andrew', createdAt: middle },
     { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },
@@ -201,11 +232,11 @@ test('compare zonedDateTimes', async () => {
 });
 
 test('symbol compare zonedDateTimes', async () => {
+  using db = setup();
   const { from } = Temporal.ZonedDateTime;
   const same = from('2024-12-31T19:00:00-05:00[America/New_York]');
   const middle = from('2025-01-01T00:30:00+14:00[Pacific/Kiritimati]');
 
-  db.users.delete();
   db.users.insertMany([
     { name: 'Andrew', createdAt: middle },
     { name: 'Penelope', createdAt: from('2024-12-31T23:00:00-10:00[Pacific/Honolulu]') },

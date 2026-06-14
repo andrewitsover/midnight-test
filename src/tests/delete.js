@@ -19,51 +19,56 @@ class Users extends Table {
   social = json;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users });
-const sql = db.diff();
-db.migrate(sql);
-
 const male = 'm';
 const female = 'f';
 
-db.users.insert({
-  id: 1,
-  name: 'Andrew',
-  createdAt: new Date(1997, 3, 21),
-  gender: male,
-  social: { instagram: 'andrewiscool' }
-});
-db.users.insert({
-  id: 2,
-  name: 'John',
-  createdAt: new Date(1998, 5, 18),
-  gender: male,
-  social: { instagram: 'johniscool' }
-});
-db.users.insert({
-  id: 3,
-  name: 'Susan',
-  createdAt: new Date(1999, 8, 2),
-  gender: female,
-  social: { instagram: 'susaniscool' }
-});
-db.users.insert({
-  id: 4,
-  name: 'Penelope',
-  createdAt: new Date(2000, 1, 10),
-  gender: female,
-  social: { instagram: 'penelopeiscool' }
-});
-db.users.insert({
-  id: 5,
-  name: 'Samuel',
-  createdAt: new Date(2001, 1, 13),
-  gender: male,
-  social: { instagram: 'samueliscool' }
-});
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users });
+  const sql = db.diff();
+  db.migrate(sql);
+
+  db.users.insert({
+    id: 1,
+    name: 'Andrew',
+    createdAt: new Date(1997, 3, 21),
+    gender: male,
+    social: { instagram: 'andrewiscool' }
+  });
+  db.users.insert({
+    id: 2,
+    name: 'John',
+    createdAt: new Date(1998, 5, 18),
+    gender: male,
+    social: { instagram: 'johniscool' }
+  });
+  db.users.insert({
+    id: 3,
+    name: 'Susan',
+    createdAt: new Date(1999, 8, 2),
+    gender: female,
+    social: { instagram: 'susaniscool' }
+  });
+  db.users.insert({
+    id: 4,
+    name: 'Penelope',
+    createdAt: new Date(2000, 1, 10),
+    gender: female,
+    social: { instagram: 'penelopeiscool' }
+  });
+  db.users.insert({
+    id: 5,
+    name: 'Samuel',
+    createdAt: new Date(2001, 1, 13),
+    gender: male,
+    social: { instagram: 'samueliscool' }
+  });
+
+  return db;
+}
 
 test('delete primary key', async () => {
+  using db = setup();
   db.users.delete({ id: 4 });
   const exists = db.users.exists({ id: 4 });
   const count = db.users.count();
@@ -72,6 +77,7 @@ test('delete primary key', async () => {
 });
 
 test('delete expression', async () => {
+  using db = setup();
   const date = new Date(1999, 8, 2);
   db.users.delete({
     createdAt: lt(date)
@@ -81,10 +87,11 @@ test('delete expression', async () => {
   });
   const count = db.users.count();
   assert.equal(exists, false);
-  assert.equal(count, 2);
+  assert.equal(count, 3);
 });
 
 test('delete or', async () => {
+  using db = setup();
   db.users.delete({
     or: [
       { name: 'Susan' },
@@ -99,5 +106,5 @@ test('delete or', async () => {
   });
   const count = db.users.count();
   assert.equal(exists, false);
-  assert.equal(count, 1);
+  assert.equal(count, 3);
 });

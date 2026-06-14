@@ -1,9 +1,10 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
-import { db } from '../drivers/sqlite.js';
+import { setup } from '../drivers/sqlite.js';
 import { gt, lt, not, lower, substring } from '@andrewitsover/midnight';
 
 test('computed', async () => {
+  using db = setup();
   const displayName = db.fighters.get(null, 'displayName');
   assert.equal(displayName, 'Angga (The Hitman)');
   const fighter = db.fighters.first({

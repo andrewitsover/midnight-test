@@ -3,8 +3,12 @@ import { join } from 'path';
 import * as tables from './tables.js';
 
 const path = join(import.meta.dirname, `../../databases/test.db`);
-const database = new Database(path);
-const db = database.getClient(tables);
+const setup = () => {
+  const database = new Database(path);
+  const db = database.getClient(tables);
+  return db;
+}
+
 const from = (schema) => {
   const database = new Database();
   database.getClient(schema);
@@ -23,8 +27,7 @@ const diff = (previous, current) => {
 }
 
 export {
-  db,
-  database,
+  setup,
   from,
   diff
 }

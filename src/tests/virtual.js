@@ -28,33 +28,38 @@ class Tests extends Table {
   emailId = cascade(Emails);
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Emails, Tests });
-const sql = db.diff();
-db.migrate(sql);
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Emails, Tests });
+  const sql = db.diff();
+  db.migrate(sql);
 
-db.emails.insert({
-  from: 'andrew@gmail.com',
-  to: 'elon@gmail.com',
-  body: 'When is my CyberTruck arriving?'
-});
-db.emails.insert({
-  from: 'elon@gmail.com',
-  to: 'andrew@gmail.com',
-  body: 'Very soon. We are adding the afterburners.'
-});
-db.emails.insert({
-  from: 'dhh@hey.com',
-  to: 'andrew@gmail.com',
-  body: 'When are you going to install Omarchy?'
-});
-db.emails.insert({
-  from: 'andrew@gmail.com',
-  to: 'dhh@hey.com',
-  body: 'When I finish my current project.'
-});
+  db.emails.insert({
+    from: 'andrew@gmail.com',
+    to: 'elon@gmail.com',
+    body: 'When is my CyberTruck arriving?'
+  });
+  db.emails.insert({
+    from: 'elon@gmail.com',
+    to: 'andrew@gmail.com',
+    body: 'Very soon. We are adding the afterburners.'
+  });
+  db.emails.insert({
+    from: 'dhh@hey.com',
+    to: 'andrew@gmail.com',
+    body: 'When are you going to install Omarchy?'
+  });
+  db.emails.insert({
+    from: 'andrew@gmail.com',
+    to: 'dhh@hey.com',
+    body: 'When I finish my current project.'
+  });
+
+  return db;
+}
 
 test('and startsWith', () => {
+  using db = setup();
   const emails = db.emails.match({
     return: 'rowid',
     where: {
@@ -67,6 +72,7 @@ test('and startsWith', () => {
 });
 
 test('or', () => {
+  using db = setup();
   const emails = db.emails.match({
     or: ['CyberTruck', 'Omarchy']
   });
@@ -74,6 +80,7 @@ test('or', () => {
 });
 
 test('near', () => {
+  using db = setup();
   const distance = (n) => {
     const result = db.emails.match({
       near: ['finish', 'project', n]
@@ -87,6 +94,7 @@ test('near', () => {
 });
 
 test('log', () => {
+  using db = setup();
   let data;
   db.emails.match({
     phrase: 'CyberTruck',
@@ -96,6 +104,7 @@ test('log', () => {
 });
 
 test('select and return', () => {
+  using db = setup();
   const near = ['finish', 'project', 2];
   const select = db.emails.match({
     select: ['from', 'to'],

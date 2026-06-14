@@ -12,6 +12,8 @@ import {
   primary
 } from '@andrewitsover/midnight';
 
+const distance = 2n ** 60n;
+
 class Buildings extends Table {
   name = text;
   height = real;
@@ -19,27 +21,30 @@ class Buildings extends Table {
   distance = bigInt;
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Buildings });
-const sql = db.diff();
-db.migrate(sql);
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Buildings });
+  const sql = db.diff();
+  db.migrate(sql);
 
-const distance = 2n ** 60n;
-
-db.buildings.insert({
-  name: 'The Empire State Building',
-  height: 24.5,
-  age: 30,
-  distance
-});
+  db.buildings.insert({
+    name: 'The Empire State Building',
+    height: 24.5,
+    age: 30,
+    distance
+  });
+  return db;
+}
 
 test('query bigInt', async () => {
+  using db = setup();
   const building = db.buildings.get();
   assert.equal(typeof building.age, 'number');
   assert.equal(typeof building.distance, 'bigint');
 });
 
 test('symbol bigInt', async () => {
+  using db = setup();
   const building = db.first(c => {
     const { buildings: b } = c;
     return {
@@ -51,11 +56,13 @@ test('symbol bigInt', async () => {
 });
 
 test('bigInt in max', async () => {
+  using db = setup();
   const max = db.buildings.max({ column: 'distance' });
   assert.equal(max, distance);
 });
 
 test('bigInt in symbol max', async () => {
+  using db = setup();
   const longest = db.firstValue(c => {
     const { buildings: b } = c;
     return {
@@ -66,6 +73,7 @@ test('bigInt in symbol max', async () => {
 });
 
 test('insert many with bigInt', async () => {
+  using db = setup();
   db.buildings.delete();
   const distance = 325n;
   const name = 'The Empire State Building';
@@ -95,7 +103,7 @@ test('insert with bigInt primary key', async () => {
   }
 
   const database = new Database(':memory:');
-  const db = database.getClient({ Buildings });
+  using db = database.getClient({ Buildings });
   const sql = db.diff();
   db.migrate(sql);
 
@@ -107,6 +115,7 @@ test('insert with bigInt primary key', async () => {
 });
 
 test('bigInt in json object', async () => {
+  using db = setup();
   const building = db.first(c => {
     const { buildings: b } = c;
     return {
@@ -123,6 +132,7 @@ test('bigInt in json object', async () => {
 });
 
 test('bigInt in json array', async () => {
+  using db = setup();
   const building = db.first(c => {
     const { buildings: b } = c;
     return {

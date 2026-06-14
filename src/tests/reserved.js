@@ -28,32 +28,38 @@ class Roles extends Table {
   on = cascade(Users);
 }
 
-const database = new Database(':memory:');
-const db = database.getClient({ Users, Roles });
-const sql = db.diff();
-
-test('reserved words in table definitions', async () => {
+const setup = () => {
+  const database = new Database(':memory:');
+  const db = database.getClient({ Users, Roles });
+  const sql = db.diff();
   db.migrate(sql);
-});
 
-test('insert reserved words', async () => {
-  const id = db.users.insert({
+  db.users.insert({
     and: 'and',
     or: 'or',
     check: 'm',
     select: 'select',
     from: 'from'
   });
-  const exists = db.users.exists({ id });
-  assert.equal(exists, true);
+
+  return db;
+}
+
+test('reserved words in table definitions', async () => {
+  const database = new Database(':memory:');
+  using db = database.getClient({ Users, Roles });
+  const sql = db.diff();
+  db.migrate(sql);
 });
 
 test('computed with reserved words', async () => {
+  using db = setup();
   const where = db.users.get(null, 'where');
   assert.equal(where, 'and or');
 });
 
 test('symbol query with reserved words', async () => {
+  using db = setup();
   const users = db.query(c => {
     const { users: u } = c;
     return {

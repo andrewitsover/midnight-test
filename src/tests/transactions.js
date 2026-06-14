@@ -1,8 +1,9 @@
 import { strict as assert } from 'assert';
-import { test, cleanUp } from '../run.js';
-import { db } from '../drivers/sqlite.js';
+import { test } from '../run.js';
+import { setup } from '../drivers/sqlite.js';
 
 test('transactions', async () => {
+  using db = setup();
   let javierId;
   try {
     db.begin();
@@ -56,8 +57,4 @@ test('transactions', async () => {
     }
   });
   assert.equal(methodCount, 45);
-});
-
-cleanUp('transactions', async () => {
-  db.coaches.delete();
 });

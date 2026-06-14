@@ -12,12 +12,11 @@ class Users extends Table {
 
 test('memory', async () => {
   const database = new Database(':memory:');
-  const db = database.getClient({ Users });
+  using db = database.getClient({ Users });
   const sql = db.diff();
   db.migrate(sql);
   db.users.insert({ name: 'Andrew' });
   const users = db.users.many();
   assert.equal(users.length, 1);
   assert.equal(users.at(0).name, 'Andrew');
-  database.close();
 });

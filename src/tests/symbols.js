@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import { test } from '../run.js';
-import { db } from '../drivers/sqlite.js';
+import { setup } from '../drivers/sqlite.js';
 import {
   windowGroup,
   not,
@@ -18,6 +18,7 @@ import {
 const now = Temporal.Now.zonedDateTimeISO();
 
 test('use', async () => {
+  using db = setup();
   const born = db.subquery(c => {
     const { id, born } = c.fighters;
     return {
@@ -49,6 +50,7 @@ test('use', async () => {
 });
 
 test('symbols', async () => {
+  const db = setup();
   const detailed = db.query(c => {
     return {
       select: {
@@ -370,6 +372,7 @@ test('symbols', async () => {
 });
 
 test('complex joins', async () => {
+  const db = setup();
   const fights = db.query(context => {
     const { fighters: p, fights: f, cards: c, events: e } = context;
     return {
