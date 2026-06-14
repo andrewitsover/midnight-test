@@ -2,7 +2,7 @@ const tests = [];
 
 const testName = process.argv[3];
 
-const addTests = (name, test) => {
+const addTest = (name, test) => {
   if (testName && name !== testName) {
     return;
   }
@@ -31,7 +31,7 @@ const run = async () => {
   }
 }
 
-const test = addTests;
+const test = addTest;
 
 export {
   test,
