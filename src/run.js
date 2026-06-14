@@ -9,11 +9,10 @@ const addTests = (name, test) => {
   tests.push({ name, test });
 };
 
-if (testName && tests.length === 0) {
-  throw Error(`there is no test named "${testName}"`);
-}
-
 const run = async () => {
+  if (testName && tests.length === 0) {
+    throw Error(`there is no test named "${testName}"`);
+  }
   for (const item of tests) {
     const { name, test } = item;
     try {
