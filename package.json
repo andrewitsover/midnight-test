@@ -10,11 +10,9 @@
   "author": "Andrew Jones",
   "license": "MIT",
   "devDependencies": {
-    "@andrewitsover/midnight": "file:../midnight",
-    "@libsql/client": "^0.15.3",
-    "better-sqlite3": "^11.9.1"
+    "@andrewitsover/midnight": "file:../midnight"
   },
   "engines": {
-    "node": ">=22.13.1"
+    "node": ">=26.1.0"
   }
 }
