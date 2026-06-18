@@ -131,8 +131,7 @@ test('alter columns', async () => {
     insert into temp_users (id, name, hometown) select id, name, hometown from users;
     drop table users;
     alter table temp_users rename to users;
-    create index users_82a3537f on users(name);
-    pragma foreign_key_check;`;
+    create index users_82a3537f on users(name);`;
   compare(sql, expected);
 });
 

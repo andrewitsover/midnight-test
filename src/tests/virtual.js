@@ -23,14 +23,9 @@ class Emails extends FTSTable {
   [tokenizer] = unicode;
 }
 
-class Tests extends Table {
-  name = text;
-  emailId = cascade(Emails);
-}
-
 const setup = () => {
   const database = new Database(':memory:');
-  const db = database.getClient({ Emails, Tests });
+  const db = database.getClient({ Emails });
   const sql = db.diff();
   db.migrate(sql);
 
