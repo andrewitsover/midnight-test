@@ -11,9 +11,9 @@ const setup = () => {
 
 const from = (schema) => {
   const database = new Database();
-  database.getClient(schema);
+  const db = database.getClient(schema);
   return {
-    database,
+    database: db,
     schema: database.schema
   }
 }
@@ -21,9 +21,10 @@ const diff = (previous, current) => {
   const previousDb = new Database();
   previousDb.getClient(previous);
   const saved = previousDb.getSchema();
-  const db = new Database();
-  db.getClient(current);
-  return db.diff(saved);
+  const database = new Database();
+  const db = database.getClient(current);
+  const result = db.diff(saved);
+  return result.sql;
 }
 
 export {

@@ -56,7 +56,7 @@ test('schema', async () => {
   assert.equal(user.indexes.at(0).on, 'name');
   assert.equal(user.indexes.at(1).on, `cast(strftime('%Y', createdAt) as integer)`);
   assert.equal(user.checks.at(0).sql.startsWith(`createdAt > '1997`), true);
-  const userSql = userResult.database.diff();
+  const migration = userResult.database.diff();
   const expected = `create table users (
       id integer not null,
       name text not null,
@@ -67,7 +67,7 @@ test('schema', async () => {
 
     create unique index users_cf21f6de on users(name);
     create index users_b8644331 on users(cast(strftime('%Y', createdAt) as integer));`;
-  compare(userSql, expected);
+  compare(migration.sql, expected);
 });
 
 test('add and remove column', async () => {
